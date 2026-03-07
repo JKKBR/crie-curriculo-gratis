@@ -7,8 +7,8 @@ document.getElementById("objetivo").addEventListener("input", function() {
 // Função para calcular páginas estimadas
 function atualizarPaginas() {
   const totalBlocos = document.querySelectorAll("#experiencias div, #formacoes div, #habilidades div, #cursos div, #idiomas div").length;
-  const linhasEstimadas = totalBlocos * 8 + 30; // estimativa simples
-  const paginas = Math.ceil(linhasEstimadas / 40); // 40 linhas por página
+  const linhasEstimadas = totalBlocos * 6 + 20; // cada bloco ~6 linhas
+  const paginas = Math.ceil(linhasEstimadas / 50); // ~50 linhas por página
   document.getElementById("contadorPaginas").innerText = `Estimativa: ${paginas} páginas A4`;
 }
 
@@ -353,3 +353,4 @@ function gerarPDF() {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
