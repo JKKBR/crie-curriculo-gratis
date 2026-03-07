@@ -4,12 +4,13 @@ document.getElementById("objetivo").addEventListener("input", function() {
   this.style.height = (this.scrollHeight) + "px";
 });
 
-// Função para calcular páginas estimadas
-function atualizarPaginas() {
-  const totalBlocos = document.querySelectorAll("#experiencias div, #formacoes div, #habilidades div, #cursos div, #idiomas div").length;
-  const linhasEstimadas = totalBlocos * 6 + 20; // cada bloco ~6 linhas
-  const paginas = Math.ceil(linhasEstimadas / 50); // ~50 linhas por página
-  document.getElementById("contadorPaginas").innerText = `Estimativa: ${paginas} páginas A4`;
+function atualizarEstimativa() {
+  // Pegamos todo o texto do preview
+  const texto = document.getElementById("previewCurriculo").innerText;
+  // Aproximação: cada página A4 comporta ~1800 caracteres
+  const caracteresPorPagina = 1800;
+  const paginas = Math.max(1, Math.ceil(texto.length / caracteresPorPagina));
+  document.getElementById("contadorPaginas").innerText = `Estimativa: ${paginas} página(s) A4`;
 }
 
 // Função para adicionar experiência
@@ -248,13 +249,14 @@ html += `</div>`;
   if (idiomas) html += `<h2 style="font-size:14px;">Idiomas</h2>${idiomas}`;
 
   document.getElementById("previewCurriculo").innerHTML = html;
+atualizarEstimativa();
 }
+
 
 // Eventos para atualizar preview em tempo real nos campos básicos
 ["nomeCompleto","telefone","email","localizacao","linkedin","portfolio","objetivo"].forEach(id => {
   document.getElementById(id).addEventListener("input", atualizarPreview);
 });
-
 
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
@@ -418,6 +420,7 @@ function gerarPDF() {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
