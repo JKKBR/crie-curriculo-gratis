@@ -266,6 +266,76 @@ async function gerarWord() {
   saveAs(blob, "curriculo.docx");
 }
 
+function atualizarPreview() {
+  let html = "";
+
+  // Nome
+  const nome = document.getElementById("nomeCompleto").value;
+  if (nome) html += `<h3>${nome}</h3>`;
+
+  // Contato
+  const telefone = document.getElementById("telefone").value;
+  const email = document.getElementById("email").value;
+  const localizacao = document.getElementById("localizacao").value;
+  const linkedin = document.getElementById("linkedin").value;
+  const portfolio = document.getElementById("portfolio").value;
+  html += `<p>${telefone} | ${email} | ${localizacao} | ${linkedin} | ${portfolio}</p>`;
+
+  // Objetivo
+  const objetivo = document.getElementById("objetivo").value;
+  if (objetivo) html += `<p><strong>Objetivo:</strong> ${objetivo}</p>`;
+
+  // Experiências
+  const experiencias = Array.from(document.querySelectorAll("#experiencias div")).map(div => {
+    const empresa = div.querySelector("input[placeholder='Empresa']").value;
+    const cargo = div.querySelector("input[placeholder='Cargo']").value;
+    const inicio = div.querySelector(".inicio").value;
+    const fim = div.querySelector(".fim").value;
+    const descricao = div.querySelector("textarea").value;
+    return `<p><strong>${cargo}</strong> - ${empresa} (${inicio} - ${fim})<br>${descricao}</p>`;
+  }).join("");
+  if (experiencias) html += `<h4>Experiência Profissional</h4>${experiencias}`;
+
+  // Formação
+  const formacoes = Array.from(document.querySelectorAll("#formacoes div")).map(div => {
+    const curso = div.querySelector("input[placeholder='Curso']").value;
+    const instituicao = div.querySelector("input[placeholder='Instituição']").value;
+    const ano = div.querySelector(".ano").value;
+    const termino = div.querySelector(".termino").value;
+    return `<p>${curso} - ${instituicao} (${ano || termino})</p>`;
+  }).join("");
+  if (formacoes) html += `<h4>Formação Acadêmica</h4>${formacoes}`;
+
+  // Habilidades
+  const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(i => i.value).filter(Boolean);
+  if (habilidades.length) html += `<h4>Habilidades Técnicas</h4><p>${habilidades.join(", ")}</p>`;
+
+  // Cursos
+  const cursos = Array.from(document.querySelectorAll("#cursos div")).map(div => {
+    const nomeCurso = div.querySelector("input[placeholder='Nome do Curso']").value;
+    const instituicao = div.querySelector("input[placeholder='Instituição']").value;
+    const ano = div.querySelector(".ano").value;
+    const termino = div.querySelector(".termino").value;
+    return `<p>${nomeCurso} - ${instituicao} (${ano || termino})</p>`;
+  }).join("");
+  if (cursos) html += `<h4>Cursos</h4>${cursos}`;
+
+  // Idiomas
+  const idiomas = Array.from(document.querySelectorAll("#idiomas div")).map(div => {
+    const idioma = div.querySelector(".idioma").value;
+    const nivel = div.querySelector(".nivel").value;
+    const outro = div.querySelector(".idiomaOutro").value;
+    return `<p>${idioma === "outro" ? outro : idioma} - ${nivel}</p>`;
+  }).join("");
+  if (idiomas) html += `<h4>Idiomas</h4>${idiomas}`;
+
+  document.getElementById("previewCurriculo").innerHTML = html;
+}
+
+// Atualiza preview em tempo real
+["nomeCompleto","telefone","email","localizacao","linkedin","portfolio","objetivo"].forEach(id => {
+  document.getElementById(id).addEventListener("input", atualizarPreview);
+});
 
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
@@ -484,6 +554,7 @@ if (ativarPalavrasChaves) {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
