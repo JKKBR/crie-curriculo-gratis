@@ -170,6 +170,48 @@ function togglePalavrasChaves() {
   bloco.style.display = checkbox.checked ? "block" : "none";
 }
 
+async function gerarWord() {
+  const { Document, Packer, Paragraph, TextRun } = docx;
+
+  // Coleta dados básicos
+  const nome = document.getElementById("nomeCompleto").value;
+  const telefone = document.getElementById("telefone").value;
+  const email = document.getElementById("email").value;
+  const localizacao = document.getElementById("localizacao").value;
+  const linkedin = document.getElementById("linkedin").value;
+  const portfolio = document.getElementById("portfolio").value;
+  const objetivo = document.getElementById("objetivo").value;
+
+  // Palavras-chave (se ativadas)
+  let palavrasChaves = "";
+  if (document.getElementById("ativarPalavrasChaves").checked) {
+    palavrasChaves = document.getElementById("textoPalavrasChaves").value;
+  }
+
+  // Cria documento Word
+  const doc = new Document({
+    sections: [{
+      children: [
+        new Paragraph({ children: [new TextRun({ text: nome, bold: true, size: 28 })] }),
+        new Paragraph({ text: `Telefone: ${telefone}` }),
+        new Paragraph({ text: `E-mail: ${email}` }),
+        new Paragraph({ text: `Localização: ${localizacao}` }),
+        new Paragraph({ text: `LinkedIn: ${linkedin}` }),
+        new Paragraph({ text: `Portfólio: ${portfolio}` }),
+        new Paragraph({ text: "" }),
+        new Paragraph({ children: [new TextRun({ text: "Objetivo", bold: true, size: 24 })] }),
+        new Paragraph({ text: objetivo }),
+        new Paragraph({ text: "" }),
+        palavrasChaves ? new Paragraph({ text: `Palavras-chave (ocultas): ${palavrasChaves}`, font: "Arial", size: 8 }) : null
+      ].filter(Boolean),
+    }],
+  });
+
+  // Salva arquivo
+  const blob = await Packer.toBlob(doc);
+  saveAs(blob, "curriculo.docx");
+}
+
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -387,6 +429,7 @@ if (ativarPalavrasChaves) {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
