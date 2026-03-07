@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Gerador de Currículo</title>
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
@@ -15,7 +16,7 @@
     <input type="email" id="email" required><br><br>
 
     <label>Telefone:</label><br>
-    <input type="tel" id="telefone"><br><br>
+    <input type="tel" id="telefone" pattern="[0-9]{10,11}" placeholder="Ex: 21999999999"><br><br>
 
     <label>Formação:</label><br>
     <textarea id="formacao" rows="4" cols="50"></textarea><br><br>
@@ -26,40 +27,15 @@
     <label>Habilidades:</label><br>
     <textarea id="habilidades" rows="4" cols="50"></textarea><br><br>
 
+    <label>Template:</label><br>
+    <select id="template">
+      <option value="classico">Clássico</option>
+      <option value="moderno">Moderno</option>
+    </select><br><br>
+
     <button type="button" onclick="gerarPDF()">Gerar PDF</button>
   </form>
 
-  <script>
-    function gerarPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-
-      const nome = document.getElementById("nome").value;
-      const email = document.getElementById("email").value;
-      const telefone = document.getElementById("telefone").value;
-      const formacao = document.getElementById("formacao").value;
-      const experiencia = document.getElementById("experiencia").value;
-      const habilidades = document.getElementById("habilidades").value;
-
-      doc.setFontSize(16);
-      doc.text("Currículo", 10, 10);
-
-      doc.setFontSize(12);
-      doc.text(`Nome: ${nome}`, 10, 20);
-      doc.text(`Email: ${email}`, 10, 30);
-      doc.text(`Telefone: ${telefone}`, 10, 40);
-
-      doc.text("Formação:", 10, 50);
-      doc.text(formacao, 10, 60);
-
-      doc.text("Experiência:", 10, 80);
-      doc.text(experiencia, 10, 90);
-
-      doc.text("Habilidades:", 10, 110);
-      doc.text(habilidades, 10, 120);
-
-      doc.save("curriculo.pdf");
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
