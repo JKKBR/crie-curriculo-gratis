@@ -211,114 +211,162 @@ function gerarPDF() {
   doc.setFont(globalFont, globalBold ? "bold" : "normal");
   doc.text("Currículo", 10, 10);
 
-  // Dados de contato
-  doc.setFontSize(globalSize);
-  doc.setFont(globalFont, globalBold ? "bold" : "normal");
-  doc.text(`Telefone: ${telefone}`, 10, 20);
-  doc.text(`Email: ${email}`, 10, 30);
-  doc.text(`Localização: ${localizacao}`, 10, 40);
-  doc.text(`LinkedIn: ${linkedin}`, 10, 50);
-  if (portfolio) doc.text(`Portfólio: ${portfolio}`, 10, 60);
+ // Dados de contato
+  doc.setFontSize(11);
+  let y = 50;
+  doc.text(`Telefone: ${document.getElementById("telefone").value}`, 10, y);
+  doc.text(`Email: ${document.getElementById("email").value}`, 10, y+10);
+  doc.text(`Localização: ${document.getElementById("localizacao").value}`, 10, y+20);
+  doc.text(`LinkedIn: ${document.getElementById("linkedin").value}`, 10, y+30);
+  const portfolio = document.getElementById("portfolio").value;
+  if (portfolio) doc.text(`Portfólio: ${portfolio}`, 10, y+40);
 
-  // Objetivo com estilo próprio
-  doc.setFontSize(objetivoSize);
-  doc.setFont(objetivoFont, objetivoBold ? "bold" : "normal");
-  doc.text("Objetivo:", 10, 75);
-  doc.text(doc.splitTextToSize(objetivo, 180), 10, 85);
+  // Objetivo
+  y += 60;
+  doc.setFontSize(14);
+  doc.text("Objetivo:", 10, y);
+  y += 10;
+  doc.setFontSize(12);
+  const objetivo = document.getElementById("objetivo").value;
+  const objetivoTexto = doc.splitTextToSize(objetivo, 180);
+  doc.text(objetivoTexto, 10, y);
+  y += objetivoTexto.length * 6;
 
-  // Experiências
-  let y = 105;
+  // Experiências ordenadas (mais recente primeiro)
+  let experiencias = Array.from(document.querySelectorAll("#experiencias div"));
+  experiencias.sort((a,b) => {
+    const inicioA = a.querySelector(".inicio").value;
+    const inicioB = b.querySelector(".inicio").value;
+    return new Date(inicioB) - new Date(inicioA);
+  });
+
   doc.setFontSize(14);
   doc.text("Experiência Profissional:", 10, y);
   y += 10;
-  const experiencias = document.querySelectorAll("#experiencias div");
   experiencias.forEach(exp => {
+    if (y > 270) { doc.addPage(); y = 20; }
     const empresa = exp.querySelector("input[placeholder='Empresa']").value;
     const cargo = exp.querySelector("input[placeholder='Cargo']").value;
-    const periodo = exp.querySelector("input[placeholder='Período']").value;
+    const inicio = exp.querySelector(".inicio").value;
+    const fim = exp.querySelector(".fim").value;
+    const status = exp.querySelector("select").value;
     const descricao = exp.querySelector("textarea").value;
 
     doc.setFontSize(12);
     doc.text(`Empresa: ${empresa}`, 10, y);
     doc.text(`Cargo: ${cargo}`, 10, y+10);
-    doc.text(`Período: ${periodo}`, 10, y+20);
-    doc.text(doc.splitTextToSize(descricao, 180), 10, y+30);
-    y += 50;
+    doc.text(`Início: ${inicio}`, 10, y+20);
+    if (status !== "atual") doc.text(`Fim: ${fim}`, 10, y+30);
+    doc.text(doc.splitTextToSize(descricao, 180), 10, y+40);
+    y += 60;
   });
 
   // Formações
-  doc.setFontSize(14);
-  doc.text("Formação Acadêmica:", 10, y);
+doc.setFontSize(14);
+doc.text("Formação Acadêmica:", 10, y);
+y += 10;
+
+let formacoes = Array.from(document.querySelectorAll("#formacoes div"));
+formacoes.sort((a,b) => {
+  const anoA = a.querySelector(".ano").value || a.querySelector(".termino").value;
+  const anoB = b.querySelector(".ano").value || b.querySelector(".termino").value;
+  return new Date(anoB) - new Date(anoA);
+});
+
+formacoes.forEach(f => {
+  if (y > 270) { doc.addPage(); y = 20; }
+  const curso = f.querySelector("input[placeholder='Curso']").value;
+  const instituicao = f.querySelector("input[placeholder='Instituição']").value;
+  const status = f.querySelector("select").value;
+  const ano = f.querySelector(".ano").value;
+  const termino = f.querySelector(".termino").value;
+
+  doc.setFontSize(12);
+  doc.text(`Curso: ${curso}`, 10, y);
+  doc.text(`Instituição: ${instituicao}`, 10, y+10);
+  doc.text(`Status: ${status}`, 10, y+20);
+  if (status === "concluido" && ano) doc.text(`Ano de conclusão: ${ano}`, 10, y+30);
+  if (status === "cursando" && termino) doc.text(`Previsão de término: ${termino}`, 10, y+30);
+  y += 40;
+});
+
+// Habilidades
+doc.setFontSize(14);
+doc.text("Habilidades Técnicas:", 10, y);
+y += 10;
+const habilidades = document.querySelectorAll("#habilidades input");
+habilidades.forEach(h => {
+  if (y > 270) { doc.addPage(); y = 20; }
+  doc.setFontSize(12);
+  doc.text(`- ${h.value}`, 10, y);
   y += 10;
-  const formacoes = document.querySelectorAll("#formacoes div");
-  formacoes.forEach(f => {
-    const curso = f.querySelector("input[placeholder='Curso']").value;
-    const instituicao = f.querySelector("input[placeholder='Instituição']").value;
-    const status = f.querySelector("select").value;
-    const ano = f.querySelector(".ano").value;
-    const termino = f.querySelector(".termino").value;
+});
 
-    doc.setFontSize(12);
-    doc.text(`Curso: ${curso}`, 10, y);
-    doc.text(`Instituição: ${instituicao}`, 10, y+10);
-    doc.text(`Status: ${status}`, 10, y+20);
-    if (status === "concluido" && ano) doc.text(`Ano de conclusão: ${ano}`, 10, y+30);
-    if (status === "cursando" && termino) doc.text(`Previsão de término: ${termino}`, 10, y+30);
-    y += 40;
-  });
+// Cursos
+doc.setFontSize(14);
+doc.text("Cursos:", 10, y);
+y += 10;
 
-  // Habilidades
-  doc.setFontSize(14);
-  doc.text("Habilidades Técnicas:", 10, y);
-  y += 10;
-  const habilidades = document.querySelectorAll("#habilidades input");
-  habilidades.forEach(h => {
-    doc.setFontSize(12);
-    doc.text(`- ${h.value}`, 10, y);
-    y += 10;
-  });
+let cursos = Array.from(document.querySelectorAll("#cursos div"));
+let concluidos = cursos.filter(c => c.querySelector("select").value === "concluido");
+let cursando = cursos.filter(c => c.querySelector("select").value === "cursando");
 
-  // Cursos
-  doc.setFontSize(14);
-  doc.text("Cursos:", 10, y);
-  y += 10;
-  const cursos = document.querySelectorAll("#cursos div");
-  cursos.forEach(c => {
-    const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
-    const instituicao = c.querySelector("input[placeholder='Instituição']").value;
-    const status = c.querySelector("select").value;
-    const ano = c.querySelector(".ano").value;
-    const termino = c.querySelector(".termino").value;
+concluidos.sort((a,b) => new Date(b.querySelector(".ano").value) - new Date(a.querySelector(".ano").value));
+cursando.sort((a,b) => new Date(b.querySelector(".termino").value) - new Date(a.querySelector(".termino").value));
 
-    doc.setFontSize(12);
-    doc.text(`Curso: ${nomeCurso}`, 10, y);
-    doc.text(`Instituição: ${instituicao}`, 10, y+10);
-    doc.text(`Status: ${status}`, 10, y+20);
-    if (status === "concluido" && ano) doc.text(`Ano de conclusão: ${ano}`, 10, y+30);
-    if (status === "cursando" && termino) doc.text(`Previsão de término: ${termino}`, 10, y+30);
-    y += 40;
-  });
+doc.setFontSize(14);
+doc.text("Cursos Concluídos:", 10, y);
+y += 10;
+concluidos.forEach(c => {
+  if (y > 270) { doc.addPage(); y = 20; }
+  const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
+  const instituicao = c.querySelector("input[placeholder='Instituição']").value;
+  const ano = c.querySelector(".ano").value;
 
-  // Idiomas
-  doc.setFontSize(14);
-  doc.text("Idiomas:", 10, y);
-  y += 10;
-  const idiomas = document.querySelectorAll("#idiomas div");
-  idiomas.forEach(i => {
-    const idiomaSelect = i.querySelector(".idioma").value;
-    const nivel = i.querySelector(".nivel").value;
-    const outro = i.querySelector(".idiomaOutro").value;
+  doc.setFontSize(12);
+  doc.text(`Curso: ${nomeCurso}`, 10, y);
+  doc.text(`Instituição: ${instituicao}`, 10, y+10);
+  doc.text(`Ano de conclusão: ${ano}`, 10, y+20);
+  y += 40;
+});
 
-    let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
+doc.setFontSize(14);
+doc.text("Cursos em andamento:", 10, y);
+y += 10;
+cursando.forEach(c => {
+  if (y > 270) { doc.addPage(); y = 20; }
+  const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
+  const instituicao = c.querySelector("input[placeholder='Instituição']").value;
+  const termino = c.querySelector(".termino").value;
 
-    doc.setFontSize(12);
-    doc.text(`Idioma: ${idiomaFinal} - Nível: ${nivel}`, 10, y);
-    y += 15;
-  });
+  doc.setFontSize(12);
+  doc.text(`Curso: ${nomeCurso}`, 10, y);
+  doc.text(`Instituição: ${instituicao}`, 10, y+10);
+  doc.text(`Previsão de término: ${termino}`, 10, y+20);
+  y += 40;
+});
 
-  // Finalizar PDF
-  doc.save("curriculo.pdf");
-}
+// Idiomas
+doc.setFontSize(14);
+doc.text("Idiomas:", 10, y);
+y += 10;
+const idiomas = document.querySelectorAll("#idiomas div");
+idiomas.forEach(i => {
+  if (y > 270) { doc.addPage(); y = 20; }
+  const idiomaSelect = i.querySelector(".idioma").value;
+  const nivel = i.querySelector(".nivel").value;
+  const outro = i.querySelector(".idiomaOutro").value;
+
+  let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
+
+  doc.setFontSize(12);
+  doc.text(`Idioma: ${idiomaFinal} - Nível: ${nivel}`, 10, y);
+  y += 15;
+});
+
+// Finalizar PDF
+doc.save("curriculo.pdf");
+
 
 
 
