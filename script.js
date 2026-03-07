@@ -357,25 +357,29 @@ concluidos.forEach(c => {
   });
 
   // Idiomas
-  doc.setFontSize(14);
-  doc.text("Idiomas:", 10, y);
-  y += 10;
-  const idiomas = document.querySelectorAll("#idiomas div");
-  idiomas.forEach(i => {
-    if (y > 270) { doc.addPage(); y = 20; }
-    const idiomaSelect = i.querySelector(".idioma").value;
-    const nivel = i.querySelector(".nivel").value;
-    const outro = i.querySelector(".idiomaOutro").value;
+doc.setFontSize(14);
+doc.text("Idiomas:", 10, y);
+y += 10;
 
-    let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
+const idiomas = document.querySelectorAll("#idiomas div");
+idiomas.forEach(i => {
+  if (y > 270) { doc.addPage(); y = 20; }
 
-    doc.setFontSize(12);
-    doc.text(`Idioma: ${idiomaFinal} - Nível: ${nivel}`, 10, y);
-    y += 15;
-  });
+  const idiomaSelect = i.querySelector(".idioma").value;
+  const nivel = i.querySelector(".nivel").value;
+  const outro = i.querySelector(".idiomaOutro").value;
+
+  let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
+
+  doc.setFontSize(12);
+  doc.text(`Idioma: ${idiomaFinal} - Nível: ${nivel}`, 10, y);
+  y += 8; // espaçamento reduzido entre idiomas
+});
+
 
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
