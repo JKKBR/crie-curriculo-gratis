@@ -300,41 +300,45 @@ y += 10;
   doc.setFontSize(14);
   doc.text("Habilidades Técnicas:", 10, y);
   y += 10;
-  const habilidades = document.querySelectorAll("#habilidades input");
-  habilidades.forEach(h => {
-    if (y > 270) { doc.addPage(); y = 20; }
-    doc.setFontSize(12);
-    doc.text(`- ${h.value}`, 10, y);
-    y += 10;
-  });
+const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(h => h.value);
+let col = 0;
+habilidades.forEach(h => {
+  if (y > 270) { doc.addPage(); y = 20; col = 0; }
+  doc.text(h, 10 + col*50, y); // espaçamento horizontal
+  col++;
+  if (col === 4) { col = 0; y += 10; }
+});
 
-  // Cursos
-  doc.setFontSize(14);
-  doc.text("Cursos:", 10, y);
-  y += 10;
+// Cursos
+doc.setFontSize(14);
+doc.text("Cursos:", 10, y);
+y += 10;
 
-  let cursos = Array.from(document.querySelectorAll("#cursos div"));
-  let concluidos = cursos.filter(c => c.querySelector("select").value === "concluido");
-  let cursando = cursos.filter(c => c.querySelector("select").value === "cursando");
+let cursos = Array.from(document.querySelectorAll("#cursos div"));
+let concluidos = cursos.filter(c => c.querySelector("select").value === "concluido");
+let cursando = cursos.filter(c => c.querySelector("select").value === "cursando");
 
-  concluidos.sort((a,b) => new Date(b.querySelector(".ano").value) - new Date(a.querySelector(".ano").value));
-  cursando.sort((a,b) => new Date(b.querySelector(".termino").value) - new Date(a.querySelector(".termino").value));
+concluidos.sort((a,b) => new Date(b.querySelector(".ano").value) - new Date(a.querySelector(".ano").value));
+cursando.sort((a,b) => new Date(b.querySelector(".termino").value) - new Date(a.querySelector(".termino").value));
 
-  doc.setFontSize(14);
-  doc.text("Cursos Concluídos:", 10, y);
-  y += 10;
-  concluidos.forEach(c => {
-    if (y > 270) { doc.addPage(); y = 20; }
-    const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
-    const instituicao = c.querySelector("input[placeholder='Instituição']").value;
-    const ano = c.querySelector(".ano").value;
+doc.setFontSize(14);
+doc.text("Cursos Concluídos:", 10, y);
+y += 10;
 
-    doc.setFontSize(12);
-    doc.text(`Curso: ${nomeCurso}`, 10, y);
-    doc.text(`Instituição: ${instituicao}`, 10, y+10);
-    doc.text(`Ano de conclusão: ${ano}`, 10, y+20);
-    y += 40;
-  });
+concluidos.forEach(c => {
+  if (y > 270) { doc.addPage(); y = 20; }
+  const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
+  const instituicao = c.querySelector("input[placeholder='Instituição']").value;
+  const ano = c.querySelector(".ano").value;
+
+  doc.setFontSize(12);
+  doc.text(`Curso: ${nomeCurso}`, 10, y);
+  y += 6;
+  doc.text(`Instituição: ${instituicao}`, 10, y);
+  y += 6;
+  doc.text(`Ano de conclusão: ${ano}`, 10, y);
+  y += 10; // espaço extra entre cursos
+});
 
   doc.setFontSize(14);
   doc.text("Cursos em andamento:", 10, y);
@@ -373,4 +377,5 @@ y += 10;
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
