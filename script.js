@@ -102,7 +102,33 @@ function toggleIdiomaOutro(select) {
   }
 }
 
-// Função principal para gerar o PDF
+// Variáveis de estilo
+let globalFont = "helvetica";
+let globalSize = 12;
+let globalBold = false;
+
+let objetivoFont = "helvetica";
+let objetivoSize = 12;
+let objetivoBold = false;
+
+// Funções para configurar estilo
+function setObjetivoFont(font) {
+  objetivoFont = font;
+}
+function setObjetivoSize(size) {
+  objetivoSize = size;
+}
+function toggleObjetivoBold() {
+  objetivoBold = !objetivoBold;
+}
+function aplicarEstiloGlobal() {
+  globalFont = objetivoFont;
+  globalSize = objetivoSize;
+  globalBold = objetivoBold;
+  alert("Estilo aplicado ao PDF inteiro!");
+}
+
+// Função principal para gerar PDF
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -115,16 +141,23 @@ function gerarPDF() {
   const portfolio = document.getElementById("portfolio").value;
   const objetivo = document.getElementById("objetivo").value;
 
+  // Cabeçalho
   doc.setFontSize(18);
+  doc.setFont(globalFont, globalBold ? "bold" : "normal");
   doc.text("Currículo", 10, 10);
 
-  doc.setFontSize(12);
+  // Dados de contato
+  doc.setFontSize(globalSize);
+  doc.setFont(globalFont, globalBold ? "bold" : "normal");
   doc.text(`Telefone: ${telefone}`, 10, 20);
   doc.text(`Email: ${email}`, 10, 30);
   doc.text(`Localização: ${localizacao}`, 10, 40);
   doc.text(`LinkedIn: ${linkedin}`, 10, 50);
   if (portfolio) doc.text(`Portfólio: ${portfolio}`, 10, 60);
 
+  // Objetivo com estilo próprio
+  doc.setFontSize(objetivoSize);
+  doc.setFont(objetivoFont, objetivoBold ? "bold" : "normal");
   doc.text("Objetivo:", 10, 75);
   doc.text(doc.splitTextToSize(objetivo, 180), 10, 85);
 
@@ -221,4 +254,5 @@ function gerarPDF() {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
