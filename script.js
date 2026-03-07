@@ -173,18 +173,32 @@ function gerarPDF() {
   // Cabeçalho e nome
   const nomeCompleto = document.getElementById("nomeCompleto")?.value || "";
   doc.setFontSize(22);
-  doc.text("Currículo", 105, 20, { align: "center" });
-  if (nomeCompleto) doc.text(nomeCompleto, 105, 30, { align: "center" });
+  if (nomeCompleto) doc.text(nomeCompleto, 105, 20, { align: "center" });
 
   // Dados de contato
-  doc.setFontSize(11);
-  let y = 50;
-  doc.text(`Telefone: ${document.getElementById("telefone").value}`, 10, y);
-  doc.text(`Email: ${document.getElementById("email").value}`, 10, y+10);
-  doc.text(`Localização: ${document.getElementById("localizacao").value}`, 10, y+20);
-  doc.text(`LinkedIn: ${document.getElementById("linkedin").value}`, 10, y+30);
-  const portfolio = document.getElementById("portfolio").value;
-  if (portfolio) doc.text(`Portfólio: ${portfolio}`, 10, y+40);
+doc.setFontSize(14);
+doc.text("Dados de Contato:", 10, y);
+y += 10;
+
+doc.setFontSize(12);
+doc.text(`Telefone: ${document.getElementById("telefone").value}`, 10, y);
+y += 6;
+
+doc.text(`Email: ${document.getElementById("email").value}`, 10, y);
+y += 6;
+
+doc.text(`Localização: ${document.getElementById("localizacao").value}`, 10, y);
+y += 6;
+
+const linkedin = document.getElementById("linkedin").value;
+if (linkedin) doc.text(`LinkedIn: ${linkedin}`, 10, y);
+y += 6;
+
+const portfolio = document.getElementById("portfolio").value;
+if (portfolio) 
+doc.text(`Portfólio: ${portfolio}`, 10, y);
+y += 6;
+
 
   // Objetivo
   y += 60;
@@ -213,17 +227,24 @@ function gerarPDF() {
     const status = exp.querySelector("select").value;
     const descricao = exp.querySelector("textarea").value;
 
-    doc.setFontSize(12);
-    doc.text(`Empresa: ${empresa}`, 10, y);
-    doc.text(`Cargo: ${cargo}`, 10, y+10);
-    doc.text(`Início: ${inicio}`, 10, y+20);
-    if (status === "atual") {
-      doc.text("Emprego Atual", 10, y+30);
-    } else {
-      doc.text(`Fim: ${fim}`, 10, y+30);
-    }
-    doc.text(doc.splitTextToSize(descricao, 180), 10, y+40);
-    y += 60;
+doc.setFontSize(12);
+
+// Primeiro o cargo
+doc.text(`Cargo: ${cargo}`, 10, y);
+y += 6;
+
+// Depois a empresa
+doc.text(`Empresa: ${empresa}`, 10, y);
+
+// Na mesma linha, a data
+doc.text(`Data: ${inicio} até ${status === "atual" ? "o momento" : fim}`, 100, y);
+y += 10;
+
+// Descrição
+doc.text("Descrição:", 10, y);
+y += 6;
+doc.text(doc.splitTextToSize(descricao, 180), 10, y);
+y += descricao.length * 6 + 10;
   });
 
   // Formações
@@ -246,13 +267,33 @@ function gerarPDF() {
     const ano = f.querySelector(".ano").value;
     const termino = f.querySelector(".termino").value;
 
-    doc.setFontSize(12);
-    doc.text(`Curso: ${curso}`, 10, y);
-    doc.text(`Instituição: ${instituicao}`, 10, y+10);
-    doc.text(`Status: ${status}`, 10, y+20);
-    if (status === "concluido" && ano) doc.text(`Ano de conclusão: ${ano}`, 10, y+30);
-    if (status === "cursando" && termino) doc.text(`Previsão de término: ${termino}`, 10, y+30);
-    y += 40;
+doc.setFontSize(12);
+
+// Curso
+doc.text(`Curso: ${curso}`, 10, y);
+y += 6;
+
+// Instituição
+doc.text(`Instituição: ${instituicao}`, 10, y);
+y += 6;
+
+// Status
+doc.text(`Status: ${status}`, 10, y);
+y += 6;
+
+// Ano ou previsão de término
+if (status === "concluido" && ano) {
+  doc.text(`Ano de conclusão: ${ano}`, 10, y);
+  y += 6;
+}
+if (status === "cursando" && termino) {
+  doc.text(`Previsão de término: ${termino}`, 10, y);
+  y += 6;
+}
+
+// Espaço extra entre blocos
+y += 10;
+
   });
 
   // Habilidades
@@ -332,3 +373,4 @@ function gerarPDF() {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
