@@ -103,29 +103,36 @@ function toggleIdiomaOutro(select) {
 }
 
 // Variáveis de estilo
-let globalFont = "helvetica";
+let objetivoFont = "Helvetica";
+let objetivoSize = "14px";
+let objetivoBold = false;
+
+let globalFont = "Helvetica";
 let globalSize = 12;
 let globalBold = false;
 
-let objetivoFont = "helvetica";
-let objetivoSize = 12;
-let objetivoBold = false;
-
-// Funções para configurar estilo
 function setObjetivoFont(font) {
   objetivoFont = font;
+  document.getElementById("objetivo").style.fontFamily = font; // muda na hora
 }
+
 function setObjetivoSize(size) {
   objetivoSize = size;
+  document.getElementById("objetivo").style.fontSize = size; // muda na hora
 }
+
 function toggleObjetivoBold() {
   objetivoBold = !objetivoBold;
+  document.getElementById("objetivo").style.fontWeight = objetivoBold ? "bold" : "normal"; // muda na hora
 }
-function aplicarEstiloGlobal() {
-  globalFont = objetivoFont;
-  globalSize = objetivoSize;
-  globalBold = objetivoBold;
-  alert("Estilo aplicado ao PDF inteiro!");
+
+function aplicarEstiloGlobal(valor) {
+  if (valor === "global") {
+    globalFont = objetivoFont;
+    globalSize = parseInt(objetivoSize); // converte "14px" para número
+    globalBold = objetivoBold;
+    alert("Estilo aplicado ao PDF inteiro!");
+  }
 }
 
 // Função principal para gerar PDF
@@ -254,5 +261,6 @@ function gerarPDF() {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
