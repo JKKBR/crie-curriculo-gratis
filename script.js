@@ -55,7 +55,7 @@ function addIdioma() {
   document.getElementById("idiomas").appendChild(div);
 }
 
-// Sua função gerarPDF já está aqui
+// Função principal para gerar o PDF
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
