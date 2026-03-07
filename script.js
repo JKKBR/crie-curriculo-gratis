@@ -441,10 +441,8 @@ function gerarPDF() {
       }
     }
 
-    // Finalizar PDF
+   // Finalizar PDF
     doc.save("curriculo.pdf");
-  }
-
   }
 
   // Foto opcional
@@ -459,6 +457,8 @@ function gerarPDF() {
   } else {
     finalizarPDF();
   }
+}
+
 
 
 
