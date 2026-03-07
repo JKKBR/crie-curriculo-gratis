@@ -170,18 +170,6 @@ function togglePalavrasChaves() {
   bloco.style.display = checkbox.checked ? "block" : "none";
 }
 
-async function gerarWord() {
-  const { Document, Packer, Paragraph, TextRun } = window.docx;
-
-  // Coleta dados básicos
-  const nome = document.getElementById("nomeCompleto").value;
-  const telefone = document.getElementById("telefone").value;
-  const email = document.getElementById("email").value;
-  const localizacao = document.getElementById("localizacao").value;
-  const linkedin = document.getElementById("linkedin").value;
-  const portfolio = document.getElementById("portfolio").value;
-  const objetivo = document.getElementById("objetivo").value;
-
   // Palavras-chave (se ativadas)
   let palavrasChaves = "";
   if (document.getElementById("ativarPalavrasChaves").checked) {
@@ -226,46 +214,8 @@ async function gerarWord() {
     const outro = div.querySelector(".idiomaOutro").value;
     return `${idioma === "outro" ? outro : idioma} - ${nivel}`;
   });
-
-  // Cria documento Word
-  const doc = new Document({
-    sections: [{
-      children: [
-        new Paragraph({ children: [new TextRun({ text: nome, bold: true, size: 28 })] }),
-        new Paragraph({ text: `Telefone: ${telefone}` }),
-        new Paragraph({ text: `E-mail: ${email}` }),
-        new Paragraph({ text: `Localização: ${localizacao}` }),
-        new Paragraph({ text: `LinkedIn: ${linkedin}` }),
-        new Paragraph({ text: `Portfólio: ${portfolio}` }),
-        new Paragraph({ text: "" }),
-        new Paragraph({ children: [new TextRun({ text: "Objetivo", bold: true, size: 24 })] }),
-        new Paragraph({ text: objetivo }),
-        new Paragraph({ text: "" }),
-        new Paragraph({ children: [new TextRun({ text: "Experiência Profissional", bold: true, size: 24 })] }),
-        ...experiencias.map(exp => new Paragraph({ text: exp })),
-        new Paragraph({ text: "" }),
-        new Paragraph({ children: [new TextRun({ text: "Formação Acadêmica", bold: true, size: 24 })] }),
-        ...formacoes.map(form => new Paragraph({ text: form })),
-        new Paragraph({ text: "" }),
-        new Paragraph({ children: [new TextRun({ text: "Habilidades Técnicas", bold: true, size: 24 })] }),
-        ...habilidades.map(hab => new Paragraph({ text: hab })),
-        new Paragraph({ text: "" }),
-        new Paragraph({ children: [new TextRun({ text: "Cursos", bold: true, size: 24 })] }),
-        ...cursos.map(cur => new Paragraph({ text: cur })),
-        new Paragraph({ text: "" }),
-        new Paragraph({ children: [new TextRun({ text: "Idiomas", bold: true, size: 24 })] }),
-        ...idiomas.map(idi => new Paragraph({ text: idi })),
-        new Paragraph({ text: "" }),
-        palavrasChaves ? new Paragraph({ text: `Palavras-chave (ocultas): ${palavrasChaves}`, size: 8 }) : null
-      ].filter(Boolean),
-    }],
-  });
-
-  // Salva arquivo
-  const blob = await Packer.toBlob(doc);
-  saveAs(blob, "curriculo.docx");
+ 
 }
-
 function atualizarPreview() {
   let html = "";
 
@@ -554,6 +504,7 @@ if (ativarPalavrasChaves) {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
