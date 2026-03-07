@@ -180,83 +180,67 @@ function gerarPDF() {
   // Dados de contato
   doc.setFontSize(14);
   doc.text("Dados de Contato:", 10, y);
-  y += 10;
+  y += 8;
 
   doc.setFontSize(12);
   doc.text(`Telefone: ${document.getElementById("telefone").value}`, 10, y);
   y += 6;
-
   doc.text(`Email: ${document.getElementById("email").value}`, 10, y);
   y += 6;
-
   doc.text(`Localização: ${document.getElementById("localizacao").value}`, 10, y);
   y += 6;
 
   const linkedin = document.getElementById("linkedin").value;
-  if (linkedin) {
-    doc.text(`LinkedIn: ${linkedin}`, 10, y);
-    y += 6;
-  }
+  if (linkedin) { doc.text(`LinkedIn: ${linkedin}`, 10, y); y += 6; }
 
   const portfolio = document.getElementById("portfolio").value;
-  if (portfolio) {
-    doc.text(`Portfólio: ${portfolio}`, 10, y);
-    y += 6;
-  }
-
-
+  if (portfolio) { doc.text(`Portfólio: ${portfolio}`, 10, y); y += 6; }
 
   // Objetivo
-  y += 60;
+  y += 10;
   doc.setFontSize(14);
   doc.text("Objetivo:", 10, y);
-  y += 10;
+  y += 8;
   doc.setFontSize(12);
   const objetivo = document.getElementById("objetivo").value;
   const objetivoTexto = doc.splitTextToSize(objetivo, 180);
   doc.text(objetivoTexto, 10, y);
-  y += objetivoTexto.length * 6;
+  y += objetivoTexto.length * 5 + 8;
 
-
-   // Experiências
+  // Experiências
   let experiencias = Array.from(document.querySelectorAll("#experiencias div"));
   experiencias.sort((a,b) => new Date(b.querySelector(".inicio").value) - new Date(a.querySelector(".inicio").value));
   doc.setFontSize(14);
   doc.text("Experiência Profissional:", 10, y);
-  y += 10;
+  y += 8;
+
   experiencias.forEach(exp => {
     if (y > 270) { doc.addPage(); y = 20; }
     const empresa = exp.querySelector("input[placeholder='Empresa']").value;
     const cargo = exp.querySelector("input[placeholder='Cargo']").value;
-        const inicio = exp.querySelector(".inicio").value;
+    const inicio = exp.querySelector(".inicio").value;
     const fim = exp.querySelector(".fim").value;
     const status = exp.querySelector("select").value;
     const descricao = exp.querySelector("textarea").value;
 
-doc.setFontSize(12);
+    doc.setFontSize(12);
+    doc.text(`Cargo: ${cargo}`, 10, y);
+    y += 6;
+    doc.text(`Empresa: ${empresa}`, 10, y);
+    doc.text(`Data: ${inicio} até ${status === "atual" ? "o momento" : fim}`, 100, y);
+    y += 8;
 
-// Primeiro o cargo
-doc.text(`Cargo: ${cargo}`, 10, y);
-y += 6;
-
-// Depois a empresa
-doc.text(`Empresa: ${empresa}`, 10, y);
-
-// Na mesma linha, a data
-doc.text(`Data: ${inicio} até ${status === "atual" ? "o momento" : fim}`, 100, y);
-y += 10;
-
-// Descrição
-doc.text("Descrição:", 10, y);
-y += 6;
-doc.text(doc.splitTextToSize(descricao, 180), 10, y);
-y += descricao.length * 6 + 10;
+    doc.text("Descrição:", 10, y);
+    y += 6;
+    const descricaoTexto = doc.splitTextToSize(descricao, 180);
+    doc.text(descricaoTexto, 10, y);
+    y += descricaoTexto.length * 5 + 8;
   });
 
-  // Formações
+  // Formação Acadêmica
   doc.setFontSize(14);
   doc.text("Formação Acadêmica:", 10, y);
-  y += 10;
+  y += 8;
 
   let formacoes = Array.from(document.querySelectorAll("#formacoes div"));
   formacoes.sort((a,b) => {
@@ -265,82 +249,75 @@ y += descricao.length * 6 + 10;
     return new Date(anoB) - new Date(anoA);
   });
 
-formacoes.forEach(f => {
-  if (y > 270) { doc.addPage(); y = 20; }
-  const curso = f.querySelector("input[placeholder='Curso']").value;
-  const instituicao = f.querySelector("input[placeholder='Instituição']").value;
-  const status = f.querySelector("select").value;
-  const ano = f.querySelector(".ano").value;
-  const termino = f.querySelector(".termino").value;
+  formacoes.forEach(f => {
+    if (y > 270) { doc.addPage(); y = 20; }
+    const curso = f.querySelector("input[placeholder='Curso']").value;
+    const instituicao = f.querySelector("input[placeholder='Instituição']").value;
+    const status = f.querySelector("select").value;
+    const ano = f.querySelector(".ano").value;
+    const termino = f.querySelector(".termino").value;
 
-  doc.setFontSize(12);
+    doc.setFontSize(12);
+    doc.text(`Curso: ${curso}`, 10, y);
+    doc.text(`Instituição: ${instituicao}`, 100, y);
+    y += 6;
 
-  // Linha 1: Curso e Instituição
-  doc.text(`Curso: ${curso}`, 10, y);
-  doc.text(`Instituição: ${instituicao}`, 100, y);
-  y += 6;
+    let anoOuPrevisao = "";
+    if (status === "concluido" && ano) anoOuPrevisao = `Ano: ${ano}`;
+    if (status === "cursando" && termino) anoOuPrevisao = `Previsão: ${termino}`;
 
-  // Linha 2: Status e Ano/Previsão
-  let anoOuPrevisao = "";
-  if (status === "concluido" && ano) {
-    anoOuPrevisao = `Ano de conclusão: ${ano}`;
-  }
-  if (status === "cursando" && termino) {
-    anoOuPrevisao = `Previsão de término: ${termino}`;
-  }
-
-  doc.text(`Status: ${status}`, 10, y);
-  doc.text(anoOuPrevisao, 100, y);
-  y += 10; // espaço extra entre blocos
-});
+    doc.text(`Status: ${status}`, 10, y);
+    doc.text(anoOuPrevisao, 100, y);
+    y += 8;
+  });
 
   // Habilidades
   doc.setFontSize(14);
   doc.text("Habilidades Técnicas:", 10, y);
-  y += 10;
-const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(h => h.value);
-let col = 0;
-habilidades.forEach(h => {
-  if (y > 270) { doc.addPage(); y = 20; col = 0; }
-  doc.text(h, 10 + col*50, y); // espaçamento horizontal
-  col++;
-  if (col === 4) { col = 0; y += 10; }
-});
+  y += 8;
+  const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(h => h.value);
+  let col = 0;
+  habilidades.forEach(h => {
+    if (y > 270) { doc.addPage(); y = 20; col = 0; }
+    doc.text(h, 10 + col*50, y);
+    col++;
+    if (col === 4) { col = 0; y += 6; }
+  });
+  y += 8;
 
-// Cursos
-doc.setFontSize(14);
-doc.text("Cursos:", 10, y);
-y += 10;
+  // Cursos
+  doc.setFontSize(14);
+  doc.text("Cursos:", 10, y);
+  y += 8;
 
-let cursos = Array.from(document.querySelectorAll("#cursos div"));
-let concluidos = cursos.filter(c => c.querySelector("select").value === "concluido");
-let cursando = cursos.filter(c => c.querySelector("select").value === "cursando");
+  let cursos = Array.from(document.querySelectorAll("#cursos div"));
+  let concluidos = cursos.filter(c => c.querySelector("select").value === "concluido");
+  let cursando = cursos.filter(c => c.querySelector("select").value === "cursando");
 
-concluidos.sort((a,b) => new Date(b.querySelector(".ano").value) - new Date(a.querySelector(".ano").value));
-cursando.sort((a,b) => new Date(b.querySelector(".termino").value) - new Date(a.querySelector(".termino").value));
+  concluidos.sort((a,b) => new Date(b.querySelector(".ano").value) - new Date(a.querySelector(".ano").value));
+  cursando.sort((a,b) => new Date(b.querySelector(".termino").value) - new Date(a.querySelector(".termino").value));
 
-doc.setFontSize(14);
-doc.text("Cursos Concluídos:", 10, y);
-y += 10;
+  doc.setFontSize(14);
+  doc.text("Cursos Concluídos:", 10, y);
+  y += 8;
 
-concluidos.forEach(c => {
-  if (y > 270) { doc.addPage(); y = 20; }
-  const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
-  const instituicao = c.querySelector("input[placeholder='Instituição']").value;
-  const ano = c.querySelector(".ano").value;
+  concluidos.forEach(c => {
+    if (y > 270) { doc.addPage(); y = 20; }
+    const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
+    const instituicao = c.querySelector("input[placeholder='Instituição']").value;
+    const ano = c.querySelector(".ano").value;
 
-  doc.setFontSize(12);
-  doc.text(`Curso: ${nomeCurso}`, 10, y);
-  y += 6;
-  doc.text(`Instituição: ${instituicao}`, 10, y);
-  y += 6;
-  doc.text(`Ano de conclusão: ${ano}`, 10, y);
-  y += 10; // espaço extra entre cursos
-});
+    doc.setFontSize(12);
+    doc.text(`Curso: ${nomeCurso}`, 10, y);
+    doc.text(`Instituição: ${instituicao}`, 100, y);
+    y += 6;
+    doc.text(`Ano: ${ano}`, 10, y);
+    y += 8;
+  });
 
   doc.setFontSize(14);
   doc.text("Cursos em andamento:", 10, y);
-  y += 10;
+  y += 8;
   cursando.forEach(c => {
     if (y > 270) { doc.addPage(); y = 20; }
     const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
@@ -349,38 +326,30 @@ concluidos.forEach(c => {
 
     doc.setFontSize(12);
     doc.text(`Curso: ${nomeCurso}`, 10, y);
-    doc.text(`Instituição: ${instituicao}`, 10, y+10);
-    doc.text(`Previsão de término: ${termino}`, 10, y+20);
-    y += 40;
+    doc.text(`Instituição: ${instituicao}`, 100, y);
+    y += 6;
+    doc.text(`Previsão: ${termino}`, 10, y);
+    y += 8;
   });
 
   // Idiomas
-doc.setFontSize(14);
-doc.text("Idiomas:", 10, y);
-y += 10;
+  doc.setFontSize(14);
+  doc.text("Idiomas:", 10, y);
+  y += 8;
 
-const idiomas = document.querySelectorAll("#idiomas div");
-idiomas.forEach(i => {
-  if (y > 270) { doc.addPage(); y = 20; }
+  const idiomas = document.querySelectorAll("#idiomas div");
+  idiomas.forEach(i => {
+    if (y > 270) { doc.addPage(); y = 20; }
+    const idiomaSelect = i.querySelector(".idioma").value;
+    const nivel = i.querySelector(".nivel").value;
+    const outro = i.querySelector(".idiomaOutro").value;
+    let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
 
-  const idiomaSelect = i.querySelector(".idioma").value;
-  const nivel = i.querySelector(".nivel").value;
-  const outro = i.querySelector(".idiomaOutro").value;
-
-  let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
-
-  doc.setFontSize(12);
-  doc.text(`Idioma: ${idiomaFinal} - Nível: ${nivel}`, 10, y);
-  y += 8; // espaçamento reduzido entre idiomas
-});
-
+    doc.setFontSize(12);
+    doc.text(`Idioma: ${idiomaFinal} - Nível: ${nivel}`, 10, y);
+    y += 6;
+  });
 
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
-
-
-
-
-
-
