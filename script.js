@@ -265,42 +265,34 @@ y += descricao.length * 6 + 10;
     return new Date(anoB) - new Date(anoA);
   });
 
-  formacoes.forEach(f => {
-    if (y > 270) { doc.addPage(); y = 20; }
-    const curso = f.querySelector("input[placeholder='Curso']").value;
-    const instituicao = f.querySelector("input[placeholder='Instituição']").value;
-    const status = f.querySelector("select").value;
-    const ano = f.querySelector(".ano").value;
-    const termino = f.querySelector(".termino").value;
+formacoes.forEach(f => {
+  if (y > 270) { doc.addPage(); y = 20; }
+  const curso = f.querySelector("input[placeholder='Curso']").value;
+  const instituicao = f.querySelector("input[placeholder='Instituição']").value;
+  const status = f.querySelector("select").value;
+  const ano = f.querySelector(".ano").value;
+  const termino = f.querySelector(".termino").value;
 
-doc.setFontSize(12);
+  doc.setFontSize(12);
 
-// Curso
-doc.text(`Curso: ${curso}`, 10, y);
-y += 6;
-
-// Instituição
-doc.text(`Instituição: ${instituicao}`, 10, y);
-y += 6;
-
-// Status
-doc.text(`Status: ${status}`, 10, y);
-y += 6;
-
-// Ano ou previsão de término
-if (status === "concluido" && ano) {
-  doc.text(`Ano de conclusão: ${ano}`, 10, y);
+  // Linha 1: Curso e Instituição
+  doc.text(`Curso: ${curso}`, 10, y);
+  doc.text(`Instituição: ${instituicao}`, 100, y);
   y += 6;
-}
-if (status === "cursando" && termino) {
-  doc.text(`Previsão de término: ${termino}`, 10, y);
-  y += 6;
-}
 
-// Espaço extra entre blocos
-y += 10;
+  // Linha 2: Status e Ano/Previsão
+  let anoOuPrevisao = "";
+  if (status === "concluido" && ano) {
+    anoOuPrevisao = `Ano de conclusão: ${ano}`;
+  }
+  if (status === "cursando" && termino) {
+    anoOuPrevisao = `Previsão de término: ${termino}`;
+  }
 
-  });
+  doc.text(`Status: ${status}`, 10, y);
+  doc.text(anoOuPrevisao, 100, y);
+  y += 10; // espaço extra entre blocos
+});
 
   // Habilidades
   doc.setFontSize(14);
@@ -386,6 +378,7 @@ idiomas.forEach(i => {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
