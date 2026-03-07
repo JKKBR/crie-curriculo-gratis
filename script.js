@@ -56,18 +56,6 @@ function gerarPDF() {
 
  } 
 
-// Funções para adicionar blocos dinâmicos
-function addExperiencia() {
-  const div = document.createElement("div");
-  div.innerHTML = `
-    <input type="text" placeholder="Empresa"><br>
-    <input type="text" placeholder="Cargo"><br>
-    <input type="text" placeholder="Período"><br>
-    <textarea placeholder="Descrição"></textarea><br><br>
-  `;
-  document.getElementById("experiencias").appendChild(div);
-}
-
 function addFormacao() {
   const div = document.createElement("div");
   div.innerHTML = `
@@ -366,6 +354,7 @@ idiomas.forEach(i => {
 
 // Finalizar PDF
 doc.save("curriculo.pdf");
+
 
 
 
