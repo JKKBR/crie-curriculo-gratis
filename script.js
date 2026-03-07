@@ -164,6 +164,11 @@ function aplicarEstiloGlobal(valor) {
     alert("Estilo aplicado ao PDF inteiro!");
   }
 }
+function togglePalavrasChaves() {
+  const checkbox = document.getElementById("ativarPalavrasChaves");
+  const bloco = document.getElementById("blocoPalavrasChaves");
+  bloco.style.display = checkbox.checked ? "block" : "none";
+}
 
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
@@ -382,6 +387,7 @@ if (ativarPalavrasChaves) {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
