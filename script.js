@@ -165,10 +165,10 @@ function aplicarEstiloGlobal(valor) {
   }
 }
 
-// Função principal para gerar PDF
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
+
   // variável de controle vertical
   let y = 30;
 
@@ -178,28 +178,32 @@ function gerarPDF() {
   if (nomeCompleto) doc.text(nomeCompleto, 105, 20, { align: "center" });
 
   // Dados de contato
-doc.setFontSize(14);
-doc.text("Dados de Contato:", 10, y);
-y += 10;
+  doc.setFontSize(14);
+  doc.text("Dados de Contato:", 10, y);
+  y += 10;
 
-doc.setFontSize(12);
-doc.text(`Telefone: ${document.getElementById("telefone").value}`, 10, y);
-y += 6;
+  doc.setFontSize(12);
+  doc.text(`Telefone: ${document.getElementById("telefone").value}`, 10, y);
+  y += 6;
 
-doc.text(`Email: ${document.getElementById("email").value}`, 10, y);
-y += 6;
+  doc.text(`Email: ${document.getElementById("email").value}`, 10, y);
+  y += 6;
 
-doc.text(`Localização: ${document.getElementById("localizacao").value}`, 10, y);
-y += 6;
+  doc.text(`Localização: ${document.getElementById("localizacao").value}`, 10, y);
+  y += 6;
 
-const linkedin = document.getElementById("linkedin").value;
-if (linkedin) doc.text(`LinkedIn: ${linkedin}`, 10, y);
-y += 6;
+  const linkedin = document.getElementById("linkedin").value;
+  if (linkedin) {
+    doc.text(`LinkedIn: ${linkedin}`, 10, y);
+    y += 6;
+  }
 
-const portfolio = document.getElementById("portfolio").value;
-if (portfolio) 
-doc.text(`Portfólio: ${portfolio}`, 10, y);
-y += 6;
+  const portfolio = document.getElementById("portfolio").value;
+  if (portfolio) {
+    doc.text(`Portfólio: ${portfolio}`, 10, y);
+    y += 6;
+  }
+
 
 
   // Objetivo
@@ -382,6 +386,7 @@ idiomas.forEach(i => {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
