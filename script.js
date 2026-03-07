@@ -180,7 +180,7 @@ function gerarPDF() {
     y += 10;
   });
 
- // Cursos
+  // Cursos
   doc.setFontSize(14);
   doc.text("Cursos:", 10, y);
   y += 10;
@@ -221,3 +221,4 @@ function gerarPDF() {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
