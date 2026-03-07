@@ -127,6 +127,7 @@ function addIdioma() {
   atualizarPreview();
 }
 
+// Função para adicionar idiomas
 function toggleIdiomaOutro(select) {
   const outroInput = select.parentNode.querySelector(".idiomaOutro");
   outroInput.style.display = select.value === "outro" ? "block" : "none";
@@ -171,28 +172,50 @@ function togglePalavrasChaves() {
   bloco.style.display = checkbox.checked ? "block" : "none";
 }
 
+// Função de estimativa de páginas
+function atualizarEstimativa() {
+  const texto = document.getElementById("previewCurriculo").innerText;
+  const caracteresPorPagina = 1800; // aproximação
+  const paginas = Math.max(1, Math.ceil(texto.length / caracteresPorPagina));
+  document.getElementById("contadorPaginas").innerText = `Estimativa: ${paginas} página(s) A4`;
+}
+
 // Função de pré-visualização
 function atualizarPreview() {
   let html = "";
 
-  // Nome
+  // Nome + Foto
   const nome = document.getElementById("nomeCompleto").value;
-  if (nome) html += `<h2 style="text-align:center; font-size:22px;">${nome}</h2>`;
+  const fotoInput = document.getElementById("fotoCandidato");
+  let fotoHTML = "";
+
+  if (fotoInput && fotoInput.files && fotoInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      fotoHTML = `<img src="${e.target.result}" alt="Foto do candidato">`;
+      document.querySelector(".preview-header").innerHTML =
+        `${fotoHTML}<h3>${nome}</h3>`;
+    };
+    reader.readAsDataURL(fotoInput.files[0]);
+  } else {
+    document.querySelector(".preview-header").innerHTML =
+      `<h3>${nome}</h3>`;
+  }
 
   // Contato
-const telefone = document.getElementById("telefone").value;
-const email = document.getElementById("email").value;
-const localizacao = document.getElementById("localizacao").value;
-const linkedin = document.getElementById("linkedin").value;
-const portfolio = document.getElementById("portfolio").value;
+  const telefone = document.getElementById("telefone").value;
+  const email = document.getElementById("email").value;
+  const localizacao = document.getElementById("localizacao").value;
+  const linkedin = document.getElementById("linkedin").value;
+  const portfolio = document.getElementById("portfolio").value;
 
-html += `<div style="text-align:center; font-size:12px; line-height:1.4;">`;
-if (telefone) html += `<p>Telefone: ${telefone}</p>`;
-if (email) html += `<p>E-mail: ${email}</p>`;
-if (localizacao) html += `<p>Localização: ${localizacao}</p>`;
-if (linkedin) html += `<p>LinkedIn: ${linkedin}</p>`;
-if (portfolio) html += `<p>Portfólio: ${portfolio}</p>`;
-html += `</div>`;
+  html += `<div style="text-align:center; font-size:12px; line-height:1.4;">`;
+  if (telefone) html += `<p>Telefone: ${telefone}</p>`;
+  if (email) html += `<p>E-mail: ${email}</p>`;
+  if (localizacao) html += `<p>Localização: ${localizacao}</p>`;
+  if (linkedin) html += `<p>LinkedIn: ${linkedin}</p>`;
+  if (portfolio) html += `<p>Portfólio: ${portfolio}</p>`;
+  html += `</div>`;
 
   // Objetivo
   const objetivo = document.getElementById("objetivo").value;
@@ -249,12 +272,11 @@ html += `</div>`;
   if (idiomas) html += `<h2 style="font-size:14px;">Idiomas</h2>${idiomas}`;
 
   document.getElementById("previewCurriculo").innerHTML = html;
-atualizarEstimativa();
+  atualizarEstimativa();
 }
 
-
 // Eventos para atualizar preview em tempo real nos campos básicos
-["nomeCompleto","telefone","email","localizacao","linkedin","portfolio","objetivo"].forEach(id => {
+["nomeCompleto","telefone","email","localizacao","linkedin","portfolio","objetivo","fotoCandidato"].forEach(id => {
   document.getElementById(id).addEventListener("input", atualizarPreview);
 });
 
@@ -420,6 +442,7 @@ function gerarPDF() {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
