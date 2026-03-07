@@ -59,7 +59,7 @@
   <div id="idiomas"></div>
   <button type="button" onclick="addIdioma()">+ Adicionar Idioma</button><br><br>
 
-  <h2>Palavras-Chaves</h2>
+<h2>Palavras-Chaves</h2>
 <p>
 Descrição ao ativar esta opção:<br>
 Essa funcionalidade insere palavras‑chave estratégicas no seu currículo para que, em análises feitas por sistemas de IA, 
@@ -70,9 +70,14 @@ isso pode ser interpretado como tentativa de manipulação e considerado má fé
 </p>
 
 <label>
-  <input type="checkbox" id="ativarPalavrasChaves">
+  <input type="checkbox" id="ativarPalavrasChaves" onchange="togglePalavrasChaves()"> 
   Ativar Palavras-Chaves
 </label>
+
+<!-- Bloco oculto para escrever palavras-chave -->
+<div id="blocoPalavrasChaves" style="display:none; margin-top:10px;">
+  <textarea id="textoPalavrasChaves" placeholder="Digite aqui suas palavras-chave..." rows="4" style="width:100%;"></textarea>
+</div>
 
   <button type="button" onclick="gerarPDF()">Gerar PDF</button>
   <span id="contadorPaginas">Estimativa: 1 página A4</span>
@@ -80,4 +85,5 @@ isso pode ser interpretado como tentativa de manipulação e considerado má fé
   <script src="script.js"></script>
 </body>
 </html>
+
 
