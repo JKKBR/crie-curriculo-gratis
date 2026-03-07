@@ -51,10 +51,6 @@ button:hover {
   color: #555;
 }
 
-div {
-  margin-bottom: 20px;
-}
-
 .container {
   max-width: 800px;
   margin: auto;
@@ -62,16 +58,80 @@ div {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-
 }
 
-@media (max-width: 600px) {
-  body {
-    padding: 10px;
+/* Layout para formulário + preview lado a lado */
+.layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.formulario {
+  flex: 2;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.preview {
+  flex: 1;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.preview h2 {
+  font-size: 14px;
+  margin-top: 15px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 3px;
+}
+
+.preview p {
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 4px 0;
+}
+
+.preview h3 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+/* Foco nos campos */
+input:focus, textarea:focus, select:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 5px rgba(52,152,219,0.5);
+}
+
+input, textarea, select, button {
+  transition: all 0.3s ease;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
   }
 
-  .container {
-    padding: 15px;
+  .formulario, .preview {
+    max-width: 100%;
+  }
+
+  button {
+    width: 100%;
+    margin-top: 10px;
   }
 
   h1 {
@@ -81,35 +141,4 @@ div {
   h2 {
     font-size: 18px;
   }
-
-  button {
-    width: 100%;
-    margin-top: 10px;
-  }
 }
-.preview h2 {
-  font-size: 14px;
-  margin-top: 15px;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 3px;
-}
-.preview p {
-  font-size: 12px;
-  line-height: 1.4;
-  margin: 4px 0;
-}
-.preview h3 {
-  text-align: center;
-  font-size: 22px;
-  margin-bottom: 10px;
-}
-}
-input:focus, textarea:focus, select:focus {
-  border-color: #3498db;
-  outline: none;
-  box-shadow: 0 0 5px rgba(52,152,219,0.5);
-}
-input, textarea, select, button {
-  transition: all 0.3s ease;
-}
-
