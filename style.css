@@ -87,20 +87,22 @@ div {
     margin-top: 10px;
   }
 }
-.preview {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 8px;
-  margin-top: 20px;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-}
-.preview h3 {
-  margin: 0 0 10px;
-  color: #2c3e50;
+.preview h2 {
+  font-size: 14px;
+  margin-top: 15px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 3px;
 }
 .preview p {
-  margin: 6px 0;
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 4px 0;
+}
+.preview h3 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 10px;
+}
 }
 input:focus, textarea:focus, select:focus {
   border-color: #3498db;
@@ -110,3 +112,4 @@ input:focus, textarea:focus, select:focus {
 input, textarea, select, button {
   transition: all 0.3s ease;
 }
+
