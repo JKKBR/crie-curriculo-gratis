@@ -169,6 +169,8 @@ function aplicarEstiloGlobal(valor) {
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
+  // variável de controle vertical
+  let y = 30;
 
   // Cabeçalho e nome
   const nomeCompleto = document.getElementById("nomeCompleto")?.value || "";
@@ -380,6 +382,7 @@ idiomas.forEach(i => {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
