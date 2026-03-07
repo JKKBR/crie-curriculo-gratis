@@ -259,10 +259,17 @@ html += `</div>`;
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  
+  let y = 30; // posição inicial
 
-  // variável de controle vertical
-  let y = 30;
+  // Função auxiliar para escrever texto com quebra automática
+  function escreverTexto(texto, x, largura) {
+    const linhas = doc.splitTextToSize(texto, largura);
+    linhas.forEach(linha => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      doc.text(linha, x, y);
+      y += 6;
+    });
+  }
 
   // Cabeçalho e nome
   const nomeCompleto = document.getElementById("nomeCompleto")?.value || "";
@@ -271,53 +278,39 @@ function gerarPDF() {
 
   // Dados de contato
   doc.setFontSize(14);
-  doc.text("Dados de Contato:", 10, y);
-  y += 8;
-
+  doc.text("Dados de Contato:", 10, y); y += 8;
   doc.setFontSize(12);
-  doc.text(`Telefone: ${document.getElementById("telefone").value}`, 10, y);
-  y += 6;
-  doc.text(`Email: ${document.getElementById("email").value}`, 10, y);
-  y += 6;
-  doc.text(`Localização: ${document.getElementById("localizacao").value}`, 10, y);
-  y += 6;
-
+  escreverTexto(`Telefone: ${document.getElementById("telefone").value}`, 10, 180);
+  escreverTexto(`Email: ${document.getElementById("email").value}`, 10, 180);
+  escreverTexto(`Localização: ${document.getElementById("localizacao").value}`, 10, 180);
   const linkedin = document.getElementById("linkedin").value;
-  if (linkedin) { doc.text(`LinkedIn: ${linkedin}`, 10, y); y += 6; }
-
+  if (linkedin) escreverTexto(`LinkedIn: ${linkedin}`, 10, 180);
   const portfolio = document.getElementById("portfolio").value;
-  if (portfolio) { doc.text(`Portfólio: ${portfolio}`, 10, y); y += 6; }
+  if (portfolio) escreverTexto(`Portfólio: ${portfolio}`, 10, 180);
 
   // Objetivo
   y += 10;
   doc.setFontSize(14);
-  doc.text("Objetivo:", 10, y);
-  y += 8;
+  doc.text("Objetivo:", 10, y); y += 8;
   doc.setFontSize(12);
   const objetivo = document.getElementById("objetivo").value;
-  const objetivoTexto = doc.splitTextToSize(objetivo, 180);
-  doc.text(objetivoTexto, 10, y);
-  y += objetivoTexto.length * 5 + 8;
+  escreverTexto(objetivo, 10, 180);
+  y += 8;
 
   // Experiências
   let experiencias = Array.from(document.querySelectorAll("#experiencias div"));
-experiencias.sort((a, b) => {
-  const statusA = a.querySelector("select").value;
-  const statusB = b.querySelector("select").value;
-
-  // Emprego atual sempre primeiro
-  if (statusA === "atual" && statusB !== "atual") return -1;
-  if (statusB === "atual" && statusA !== "atual") return 1;
-
-  // Se ambos forem atuais ou ambos antigos, ordenar pela data de início (mais recente primeiro)
-  const inicioA = new Date(a.querySelector(".inicio").value);
-  const inicioB = new Date(b.querySelector(".inicio").value);
-  return inicioB - inicioA;
-});
+  experiencias.sort((a, b) => {
+    const statusA = a.querySelector("select").value;
+    const statusB = b.querySelector("select").value;
+    if (statusA === "atual" && statusB !== "atual") return -1;
+    if (statusB === "atual" && statusA !== "atual") return 1;
+    const inicioA = new Date(a.querySelector(".inicio").value);
+    const inicioB = new Date(b.querySelector(".inicio").value);
+    return inicioB - inicioA;
+  });
 
   doc.setFontSize(14);
-  doc.text("Experiência Profissional:", 10, y);
-  y += 8;
+  doc.text("Experiência Profissional:", 10, y); y += 8;
 
   experiencias.forEach(exp => {
     if (y > 270) { doc.addPage(); y = 20; }
@@ -329,24 +322,17 @@ experiencias.sort((a, b) => {
     const descricao = exp.querySelector("textarea").value;
 
     doc.setFontSize(12);
-    doc.text(`Cargo: ${cargo}`, 10, y);
-    y += 6;
-    doc.text(`Empresa: ${empresa}`, 10, y);
-    doc.text(`Data: ${inicio} até ${status === "atual" ? "o momento" : fim}`, 100, y);
+    escreverTexto(`Cargo: ${cargo}`, 10, 180);
+    escreverTexto(`Empresa: ${empresa}`, 10, 180);
+    escreverTexto(`Data: ${inicio} até ${status === "atual" ? "o momento" : fim}`, 10, 180);
+    escreverTexto("Descrição:", 10, 180);
+    escreverTexto(descricao, 10, 180);
     y += 8;
-
-    doc.text("Descrição:", 10, y);
-    y += 6;
-    const descricaoTexto = doc.splitTextToSize(descricao, 180);
-    doc.text(descricaoTexto, 10, y);
-    y += descricaoTexto.length * 5 + 8;
   });
 
   // Formação Acadêmica
   doc.setFontSize(14);
-  doc.text("Formação Acadêmica:", 10, y);
-  y += 8;
-
+  doc.text("Formação Acadêmica:", 10, y); y += 8;
   let formacoes = Array.from(document.querySelectorAll("#formacoes div"));
   formacoes.sort((a,b) => {
     const anoA = a.querySelector(".ano").value || a.querySelector(".termino").value;
@@ -363,89 +349,48 @@ experiencias.sort((a, b) => {
     const termino = f.querySelector(".termino").value;
 
     doc.setFontSize(12);
-    doc.text(`Curso: ${curso}`, 10, y);
-    doc.text(`Instituição: ${instituicao}`, 100, y);
-    y += 6;
-
+    escreverTexto(`Curso: ${curso}`, 10, 180);
+    escreverTexto(`Instituição: ${instituicao}`, 10, 180);
     let anoOuPrevisao = "";
     if (status === "concluido" && ano) anoOuPrevisao = `Ano: ${ano}`;
     if (status === "cursando" && termino) anoOuPrevisao = `Previsão: ${termino}`;
-
-    doc.text(`Status: ${status}`, 10, y);
-    doc.text(anoOuPrevisao, 100, y);
+    escreverTexto(`Status: ${status} ${anoOuPrevisao}`, 10, 180);
     y += 8;
   });
 
   // Habilidades
   doc.setFontSize(14);
-  doc.text("Habilidades Técnicas:", 10, y);
-  y += 8;
+  doc.text("Habilidades Técnicas:", 10, y); y += 8;
   const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(h => h.value);
-  let col = 0;
   habilidades.forEach(h => {
-    if (y > 270) { doc.addPage(); y = 20; col = 0; }
-    doc.text(h, 10 + col*50, y);
-    col++;
-    if (col === 4) { col = 0; y += 6; }
+    if (y > 270) { doc.addPage(); y = 20; }
+    escreverTexto(h, 10, 180);
   });
   y += 8;
 
   // Cursos
   doc.setFontSize(14);
-  doc.text("Cursos:", 10, y);
-  y += 8;
-
+  doc.text("Cursos:", 10, y); y += 8;
   let cursos = Array.from(document.querySelectorAll("#cursos div"));
-  let concluidos = cursos.filter(c => c.querySelector("select").value === "concluido");
-  let cursando = cursos.filter(c => c.querySelector("select").value === "cursando");
-
-  concluidos.sort((a,b) => new Date(b.querySelector(".ano").value) - new Date(a.querySelector(".ano").value));
-  cursando.sort((a,b) => new Date(b.querySelector(".termino").value) - new Date(a.querySelector(".termino").value));
-
-  doc.setFontSize(14);
-  doc.text("Cursos Concluídos:", 10, y);
-  y += 8;
-
-  concluidos.forEach(c => {
+  cursos.forEach(c => {
     if (y > 270) { doc.addPage(); y = 20; }
     const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
     const instituicao = c.querySelector("input[placeholder='Instituição']").value;
     const ano = c.querySelector(".ano").value;
+    const termino = c.querySelector(".termino").value;
+    const status = c.querySelector("select").value;
 
     doc.setFontSize(12);
-    doc.text(`Curso: ${nomeCurso}`, 10, y);
-    doc.text(`Instituição: ${instituicao}`, 100, y);
-    y += 6;
-    doc.text(`Ano: ${ano}`, 10, y);
+    escreverTexto(`Curso: ${nomeCurso}`, 10, 180);
+    escreverTexto(`Instituição: ${instituicao}`, 10, 180);
+    if (status === "concluido") escreverTexto(`Ano: ${ano}`, 10, 180);
+    if (status === "cursando") escreverTexto(`Previsão: ${termino}`, 10, 180);
     y += 8;
   });
 
- // Cursos em andamento (só aparece se houver algum)
-if (cursando.length > 0) {
-  doc.setFontSize(14);
-  doc.text("Cursos em andamento:", 10, y);
-  y += 8;
-
-  cursando.forEach(c => {
-    if (y > 270) { doc.addPage(); y = 20; }
-    const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
-    const instituicao = c.querySelector("input[placeholder='Instituição']").value;
-    const termino = c.querySelector(".termino").value;
-
-    doc.setFontSize(12);
-    doc.text(`Curso: ${nomeCurso}`, 10, y);
-    doc.text(`Instituição: ${instituicao}`, 100, y);
-    y += 6;
-    doc.text(`Previsão: ${termino}`, 10, y);
-    y += 8; // espaço extra entre cursos
-  });
-}
-
   // Idiomas
   doc.setFontSize(14);
-  doc.text("Idiomas:", 10, y);
-  y += 8;
-
+  doc.text("Idiomas:", 10, y); y += 8;
   const idiomas = document.querySelectorAll("#idiomas div");
   idiomas.forEach(i => {
     if (y > 270) { doc.addPage(); y = 20; }
@@ -453,27 +398,27 @@ if (cursando.length > 0) {
     const nivel = i.querySelector(".nivel").value;
     const outro = i.querySelector(".idiomaOutro").value;
     let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
-
     doc.setFontSize(12);
-    doc.text(`Idioma: ${idiomaFinal} - Nível: ${nivel}`, 10, y);
+    escreverTexto(`Idioma: ${idiomaFinal} - Nível: ${nivel}`, 10, 180);
     y += 6;
   });
 
-// Palavras-Chaves ocultas
-const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
-if (ativarPalavrasChaves) {
-  const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value;
-  if (textoPalavrasChaves.trim() !== "") {
-    doc.setTextColor(255, 255, 255); // branco = invisível no PDF
-    doc.setFontSize(6);
-    doc.text(`Palavras-chave: ${textoPalavrasChaves}`, 10, y);
-    doc.setTextColor(0, 0, 0); // volta ao preto normal
+  // Palavras-Chaves ocultas
+  const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
+  if (ativarPalavrasChaves) {
+    const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value;
+    if (textoPalavrasChaves.trim() !== "") {
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(6);
+      escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180);
+      doc.setTextColor(0, 0, 0);
+    }
   }
-}
 
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
