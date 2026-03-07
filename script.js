@@ -179,12 +179,19 @@ function atualizarPreview() {
   if (nome) html += `<h2 style="text-align:center; font-size:22px;">${nome}</h2>`;
 
   // Contato
-  const telefone = document.getElementById("telefone").value;
-  const email = document.getElementById("email").value;
-  const localizacao = document.getElementById("localizacao").value;
-  const linkedin = document.getElementById("linkedin").value;
-  const portfolio = document.getElementById("portfolio").value;
-  html += `<p style="font-size:12px;">${telefone} | ${email} | ${localizacao} | ${linkedin} | ${portfolio}</p>`;
+const telefone = document.getElementById("telefone").value;
+const email = document.getElementById("email").value;
+const localizacao = document.getElementById("localizacao").value;
+const linkedin = document.getElementById("linkedin").value;
+const portfolio = document.getElementById("portfolio").value;
+
+html += `<div style="text-align:center; font-size:12px; line-height:1.4;">`;
+if (telefone) html += `<p>Telefone: ${telefone}</p>`;
+if (email) html += `<p>E-mail: ${email}</p>`;
+if (localizacao) html += `<p>Localização: ${localizacao}</p>`;
+if (linkedin) html += `<p>LinkedIn: ${linkedin}</p>`;
+if (portfolio) html += `<p>Portfólio: ${portfolio}</p>`;
+html += `</div>`;
 
   // Objetivo
   const objetivo = document.getElementById("objetivo").value;
@@ -467,6 +474,7 @@ if (ativarPalavrasChaves) {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
