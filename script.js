@@ -71,6 +71,7 @@ function addHabilidade() {
   const div = document.createElement("div");
   div.innerHTML = `<input type="text" placeholder="Habilidade"><br>`;
   document.getElementById("habilidades").appendChild(div);
+  atualizarPreview();
 }
 
 function addCurso() {
@@ -87,6 +88,7 @@ function addCurso() {
     <input type="text" class="termino" placeholder="Data prevista (dia/mês/ano)" style="display:none;"><br><br>
   `;
   document.getElementById("cursos").appendChild(div);
+  atualizarPreview();
 }
 
 function toggleCursoStatus(select) {
@@ -121,15 +123,12 @@ function addIdioma() {
     <input type="text" class="idiomaOutro" placeholder="Informe o idioma" style="display:none;"><br><br>
   `;
   document.getElementById("idiomas").appendChild(div);
+  atualizarPreview();
 }
 
 function toggleIdiomaOutro(select) {
   const outroInput = select.parentNode.querySelector(".idiomaOutro");
-  if (select.value === "outro") {
-    outroInput.style.display = "block";
-  } else {
-    outroInput.style.display = "none";
-  }
+  outroInput.style.display = select.value === "outro" ? "block" : "none";
 }
 
 // Variáveis de estilo
@@ -164,112 +163,18 @@ function aplicarEstiloGlobal(valor) {
     alert("Estilo aplicado ao PDF inteiro!");
   }
 }
+
 function togglePalavrasChaves() {
   const checkbox = document.getElementById("ativarPalavrasChaves");
   const bloco = document.getElementById("blocoPalavrasChaves");
   bloco.style.display = checkbox.checked ? "block" : "none";
 }
 
-async function gerarWord() {
-  const { Document, Packer, Paragraph, TextRun } = window.docx;
-
-  // Coleta dados básicos
-  const nome = document.getElementById("nomeCompleto").value;
-  const telefone = document.getElementById("telefone").value;
-  const email = document.getElementById("email").value;
-  const localizacao = document.getElementById("localizacao").value;
-  const linkedin = document.getElementById("linkedin").value;
-  const portfolio = document.getElementById("portfolio").value;
-  const objetivo = document.getElementById("objetivo").value;
-
-  // Palavras-chave (se ativadas)
-  let palavrasChaves = "";
-  if (document.getElementById("ativarPalavrasChaves").checked) {
-    palavrasChaves = document.getElementById("textoPalavrasChaves").value;
-  }
-
-  // Experiências
-  const experiencias = Array.from(document.querySelectorAll("#experiencias div")).map(div => {
-    const empresa = div.querySelector("input[placeholder='Empresa']").value;
-    const cargo = div.querySelector("input[placeholder='Cargo']").value;
-    const inicio = div.querySelector(".inicio").value;
-    const fim = div.querySelector(".fim").value;
-    const descricao = div.querySelector("textarea").value;
-    return `${empresa} - ${cargo} (${inicio} - ${fim})\n${descricao}`;
-  });
-
-  // Formações
-  const formacoes = Array.from(document.querySelectorAll("#formacoes div")).map(div => {
-    const curso = div.querySelector("input[placeholder='Curso']").value;
-    const instituicao = div.querySelector("input[placeholder='Instituição']").value;
-    const ano = div.querySelector(".ano").value;
-    const termino = div.querySelector(".termino").value;
-    return `${curso} - ${instituicao} (${ano || termino})`;
-  });
-
-  // Habilidades
-  const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(input => input.value);
-
-  // Cursos
-  const cursos = Array.from(document.querySelectorAll("#cursos div")).map(div => {
-    const nomeCurso = div.querySelector("input[placeholder='Nome do Curso']").value;
-    const instituicao = div.querySelector("input[placeholder='Instituição']").value;
-    const ano = div.querySelector(".ano").value;
-    const termino = div.querySelector(".termino").value;
-    return `${nomeCurso} - ${instituicao} (${ano || termino})`;
-  });
-
-  // Idiomas
-  const idiomas = Array.from(document.querySelectorAll("#idiomas div")).map(div => {
-    const idioma = div.querySelector(".idioma").value;
-    const nivel = div.querySelector(".nivel").value;
-    const outro = div.querySelector(".idiomaOutro").value;
-    return `${idioma === "outro" ? outro : idioma} - ${nivel}`;
-  });
-
-  // Cria documento Word
-  const doc = new Document({
-    sections: [{
-      children: [
-        new Paragraph({ children: [new TextRun({ text: nome, bold: true, size: 28 })] }),
-        new Paragraph({ text: `Telefone: ${telefone}` }),
-        new Paragraph({ text: `E-mail: ${email}` }),
-        new Paragraph({ text: `Localização: ${localizacao}` }),
-        new Paragraph({ text: `LinkedIn: ${linkedin}` }),
-        new Paragraph({ text: `Portfólio: ${portfolio}` }),
-        new Paragraph({ text: "" }),
-        new Paragraph({ children: [new TextRun({ text: "Objetivo", bold: true, size: 24 })] }),
-        new Paragraph({ text: objetivo }),
-        new Paragraph({ text: "" }),
-        new Paragraph({ children: [new TextRun({ text: "Experiência Profissional", bold: true, size: 24 })] }),
-        ...experiencias.map(exp => new Paragraph({ text: exp })),
-        new Paragraph({ text: "" }),
-        new Paragraph({ children: [new TextRun({ text: "Formação Acadêmica", bold: true, size: 24 })] }),
-        ...formacoes.map(form => new Paragraph({ text: form })),
-        new Paragraph({ text: "" }),
-        new Paragraph({ children: [new TextRun({ text: "Habilidades Técnicas", bold: true, size: 24 })] }),
-        ...habilidades.map(hab => new Paragraph({ text: hab })),
-        new Paragraph({ text: "" }),
-        new Paragraph({ children: [new TextRun({ text: "Cursos", bold: true, size: 24 })] }),
-        ...cursos.map(cur => new Paragraph({ text: cur })),
-        new Paragraph({ text: "" }),
-        new Paragraph({ children: [new TextRun({ text: "Idiomas", bold: true, size: 24 })] }),
-        ...idiomas.map(idi => new Paragraph({ text: idi })),
-        new Paragraph({ text: "" }),
-        palavrasChaves ? new Paragraph({ text: `Palavras-chave (ocultas): ${palavrasChaves}`, size: 8 }) : null
-      ].filter(Boolean),
-    }],
-  });
-
-  // Salva arquivo
-  const blob = await Packer.toBlob(doc);
-  saveAs(blob, "curriculo.docx");
-}
-
 
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
+  
 
   // variável de controle vertical
   let y = 30;
@@ -484,3 +389,4 @@ if (ativarPalavrasChaves) {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
