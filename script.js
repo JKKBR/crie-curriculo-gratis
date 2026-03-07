@@ -298,7 +298,7 @@ function gerarPDF() {
   // Função que escreve todo o conteúdo do currículo
   function finalizarPDF() {
     // Cabeçalho e nome
-    const nomeCompleto = document.getElementById("nomeCompleto")?.value || "";
+    const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
     doc.setFontSize(22);
     if (nomeCompleto) doc.text(nomeCompleto, 105, 20, { align: "center" });
 
@@ -458,6 +458,7 @@ function gerarPDF() {
     finalizarPDF();
   }
 }
+
 
 
 
