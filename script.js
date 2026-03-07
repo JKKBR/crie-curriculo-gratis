@@ -367,18 +367,22 @@ if (cursando.length > 0) {
     y += 6;
   });
 
-  // Palavras-Chaves ocultas
+// Palavras-Chaves ocultas
 const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
 if (ativarPalavrasChaves) {
-  doc.setTextColor(255, 255, 255); // branco = invisível no PDF
-  doc.setFontSize(10);
-  doc.text("Palavras-chave: JavaScript, Node.js, React, SQL, Python, Scrum, Gestão de Projetos", 10, y);
-  doc.setTextColor(0, 0, 0); // volta ao preto normal
+  const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value;
+  if (textoPalavrasChaves.trim() !== "") {
+    doc.setTextColor(255, 255, 255); // branco = invisível no PDF
+    doc.setFontSize(6);
+    doc.text(`Palavras-chave: ${textoPalavrasChaves}`, 10, y);
+    doc.setTextColor(0, 0, 0); // volta ao preto normal
+  }
 }
 
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
