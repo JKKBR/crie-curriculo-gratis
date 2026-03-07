@@ -1,3 +1,61 @@
+// Funções para adicionar blocos dinâmicos
+function addExperiencia() {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <input type="text" placeholder="Empresa"><br>
+    <input type="text" placeholder="Cargo"><br>
+    <input type="text" placeholder="Período"><br>
+    <textarea placeholder="Descrição"></textarea><br><br>
+  `;
+  document.getElementById("experiencias").appendChild(div);
+}
+
+function addFormacao() {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <input type="text" placeholder="Curso"><br>
+    <input type="text" placeholder="Instituição"><br>
+    <select onchange="toggleFormacaoAno(this)">
+      <option value="concluido">Concluído</option>
+      <option value="cursando">Cursando</option>
+    </select><br>
+    <input type="text" class="ano" placeholder="Ano de conclusão" style="display:none;">
+    <input type="text" class="termino" placeholder="Previsão de término" style="display:none;"><br><br>
+  `;
+  document.getElementById("formacoes").appendChild(div);
+}
+
+function toggleFormacaoAno(select) {
+  const ano = select.parentNode.querySelector(".ano");
+  const termino = select.parentNode.querySelector(".termino");
+  if (select.value === "concluido") {
+    ano.style.display = "block";
+    termino.style.display = "none";
+  } else {
+    ano.style.display = "none";
+    termino.style.display = "block";
+  }
+}
+
+function addHabilidade() {
+  const div = document.createElement("div");
+  div.innerHTML = `<input type="text" placeholder="Habilidade"><br>`;
+  document.getElementById("habilidades").appendChild(div);
+}
+
+function addCurso() {
+  const div = document.createElement("div");
+  div.innerHTML = `<input type="text" placeholder="Curso"><br>`;
+  document.getElementById("cursos").appendChild(div);
+}
+
+function addIdioma() {
+  const div = document.createElement("div");
+  div.innerHTML = `<input type="text" placeholder="Idioma"><br>`;
+  document.getElementById("idiomas").appendChild(div);
+}
+
+// Sua função gerarPDF já está aqui
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
