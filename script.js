@@ -446,18 +446,21 @@ function gerarPDF() {
   }
 
   // Foto opcional
-  const fotoInput = document.getElementById("fotoCandidato");
-  if (fotoInput.files && fotoInput.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      doc.addImage(e.target.result, "JPEG", 10, 10, 30, 40); // posição e tamanho da foto
-      finalizarPDF();
-    };
-    reader.readAsDataURL(fotoInput.files[0]);
-  } else {
+const fotoInput = document.getElementById("fotoCandidato");
+if (fotoInput.files && fotoInput.files[0]) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const tipoImagem = fotoInput.files[0].type.includes("png") ? "PNG" : "JPEG";
+    doc.addImage(e.target.result, tipoImagem, 10, 10, 30, 40);
+    y = 60; // evita sobreposição com nome/contato
     finalizarPDF();
-  }
+  };
+  reader.readAsDataURL(fotoInput.files[0]);
+} else {
+  finalizarPDF();
 }
+}
+
 
 
 
