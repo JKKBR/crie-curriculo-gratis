@@ -176,7 +176,7 @@ function atualizarPreview() {
 
   // Nome
   const nome = document.getElementById("nomeCompleto").value;
-  if (nome) html += `<h3>${nome}</h3>`;
+  if (nome) html += `<h2 style="text-align:center; font-size:22px;">${nome}</h2>`;
 
   // Contato
   const telefone = document.getElementById("telefone").value;
@@ -184,11 +184,14 @@ function atualizarPreview() {
   const localizacao = document.getElementById("localizacao").value;
   const linkedin = document.getElementById("linkedin").value;
   const portfolio = document.getElementById("portfolio").value;
-  html += `<p>${telefone} | ${email} | ${localizacao} | ${linkedin} | ${portfolio}</p>`;
+  html += `<p style="font-size:12px;">${telefone} | ${email} | ${localizacao} | ${linkedin} | ${portfolio}</p>`;
 
   // Objetivo
   const objetivo = document.getElementById("objetivo").value;
-  if (objetivo) html += `<p><strong>Objetivo:</strong> ${objetivo}</p>`;
+  if (objetivo) {
+    html += `<h2 style="font-size:14px;">Objetivo</h2>`;
+    html += `<p style="font-size:12px; line-height:1.4;">${objetivo}</p>`;
+  }
 
   // Experiências
   const experiencias = Array.from(document.querySelectorAll("#experiencias div")).map(div => {
@@ -197,9 +200,9 @@ function atualizarPreview() {
     const inicio = div.querySelector(".inicio")?.value || "";
     const fim = div.querySelector(".fim")?.value || "";
     const descricao = div.querySelector("textarea")?.value || "";
-    return `<p><strong>${cargo}</strong> - ${empresa} (${inicio} - ${fim})<br>${descricao}</p>`;
+    return `<p style="font-size:12px;"><strong>${cargo}</strong> - ${empresa} (${inicio} - ${fim})<br>${descricao}</p>`;
   }).join("");
-  if (experiencias) html += `<h4>Experiência Profissional</h4>${experiencias}`;
+  if (experiencias) html += `<h2 style="font-size:14px;">Experiência Profissional</h2>${experiencias}`;
 
   // Formação
   const formacoes = Array.from(document.querySelectorAll("#formacoes div")).map(div => {
@@ -207,13 +210,16 @@ function atualizarPreview() {
     const instituicao = div.querySelector("input[placeholder='Instituição']")?.value || "";
     const ano = div.querySelector(".ano")?.value || "";
     const termino = div.querySelector(".termino")?.value || "";
-    return `<p>${curso} - ${instituicao} (${ano || termino})</p>`;
+    return `<p style="font-size:12px;">${curso} - ${instituicao} (${ano || termino})</p>`;
   }).join("");
-  if (formacoes) html += `<h4>Formação Acadêmica</h4>${formacoes}`;
+  if (formacoes) html += `<h2 style="font-size:14px;">Formação Acadêmica</h2>${formacoes}`;
 
   // Habilidades
   const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(i => i.value).filter(Boolean);
-  if (habilidades.length) html += `<h4>Habilidades Técnicas</h4><p>${habilidades.join(", ")}</p>`;
+  if (habilidades.length) {
+    html += `<h2 style="font-size:14px;">Habilidades Técnicas</h2>`;
+    html += `<p style="font-size:12px;">${habilidades.join(", ")}</p>`;
+  }
 
   // Cursos
   const cursos = Array.from(document.querySelectorAll("#cursos div")).map(div => {
@@ -221,18 +227,18 @@ function atualizarPreview() {
     const instituicao = div.querySelector("input[placeholder='Instituição']")?.value || "";
     const ano = div.querySelector(".ano")?.value || "";
     const termino = div.querySelector(".termino")?.value || "";
-    return `<p>${nomeCurso} - ${instituicao} (${ano || termino})</p>`;
+    return `<p style="font-size:12px;">${nomeCurso} - ${instituicao} (${ano || termino})</p>`;
   }).join("");
-  if (cursos) html += `<h4>Cursos</h4>${cursos}`;
+  if (cursos) html += `<h2 style="font-size:14px;">Cursos</h2>${cursos}`;
 
   // Idiomas
   const idiomas = Array.from(document.querySelectorAll("#idiomas div")).map(div => {
     const idioma = div.querySelector(".idioma")?.value || "";
     const nivel = div.querySelector(".nivel")?.value || "";
     const outro = div.querySelector(".idiomaOutro")?.value || "";
-    return `<p>${idioma === "outro" ? outro : idioma} - ${nivel}</p>`;
+    return `<p style="font-size:12px;">${idioma === "outro" ? outro : idioma} - ${nivel}</p>`;
   }).join("");
-  if (idiomas) html += `<h4>Idiomas</h4>${idiomas}`;
+  if (idiomas) html += `<h2 style="font-size:14px;">Idiomas</h2>${idiomas}`;
 
   document.getElementById("previewCurriculo").innerHTML = html;
 }
@@ -461,5 +467,6 @@ if (ativarPalavrasChaves) {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
