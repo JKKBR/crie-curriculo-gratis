@@ -315,9 +315,12 @@ function gerarPDF() {
     y += 8;
   });
 
+ // Cursos em andamento (só aparece se houver algum)
+if (cursando.length > 0) {
   doc.setFontSize(14);
   doc.text("Cursos em andamento:", 10, y);
   y += 8;
+
   cursando.forEach(c => {
     if (y > 270) { doc.addPage(); y = 20; }
     const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
@@ -329,8 +332,9 @@ function gerarPDF() {
     doc.text(`Instituição: ${instituicao}`, 100, y);
     y += 6;
     doc.text(`Previsão: ${termino}`, 10, y);
-    y += 8;
+    y += 8; // espaço extra entre cursos
   });
+}
 
   // Idiomas
   doc.setFontSize(14);
@@ -353,4 +357,5 @@ function gerarPDF() {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
