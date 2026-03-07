@@ -170,6 +170,18 @@ function togglePalavrasChaves() {
   bloco.style.display = checkbox.checked ? "block" : "none";
 }
 
+async function gerarWord() {
+  const { Document, Packer, Paragraph, TextRun } = window.docx;
+
+  // Coleta dados básicos
+  const nome = document.getElementById("nomeCompleto").value;
+  const telefone = document.getElementById("telefone").value;
+  const email = document.getElementById("email").value;
+  const localizacao = document.getElementById("localizacao").value;
+  const linkedin = document.getElementById("linkedin").value;
+  const portfolio = document.getElementById("portfolio").value;
+  const objetivo = document.getElementById("objetivo").value;
+
   // Palavras-chave (se ativadas)
   let palavrasChaves = "";
   if (document.getElementById("ativarPalavrasChaves").checked) {
@@ -504,6 +516,7 @@ if (ativarPalavrasChaves) {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
