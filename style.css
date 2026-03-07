@@ -3,22 +3,35 @@ body {
   background-color: #f5f7fa;
   color: #333;
   margin: 0;
-  padding: 0;
+  padding: 20px;
   display: flex;
   justify-content: center; /* centraliza horizontalmente */
 }
 
-.container {
+.layout {
+  display: flex;
+  gap: 20px;
+  max-width: 1200px;
   width: 100%;
-  max-width: 900px; /* largura máxima */
-  margin: 20px auto;
+}
+
+.formulario {
+  flex: 2;
   background: white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column; /* mantém formulário e preview embaixo */
-  align-items: center; /* centraliza conteúdo dentro */
+}
+
+.preview {
+  flex: 1;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 h1 {
@@ -65,16 +78,6 @@ button:hover {
   margin-top: 10px;
   font-style: italic;
   color: #555;
-}
-
-.preview {
-  width: 100%;
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-  margin-top: 20px;
 }
 
 .preview h2 {
@@ -125,9 +128,12 @@ input, textarea, select, button {
 
 /* Responsividade */
 @media (max-width: 768px) {
-  .container {
-    padding: 15px;
-    max-width: 95%;
+  .layout {
+    flex-direction: column;
+  }
+
+  .formulario, .preview {
+    max-width: 100%;
   }
 
   h1 {
