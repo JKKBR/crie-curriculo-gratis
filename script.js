@@ -171,7 +171,7 @@ function togglePalavrasChaves() {
 }
 
 async function gerarWord() {
-  const { Document, Packer, Paragraph, TextRun } = docx;
+  const { Document, Packer, Paragraph, TextRun } = window.docx;
 
   // Coleta dados básicos
   const nome = document.getElementById("nomeCompleto").value;
@@ -484,6 +484,7 @@ if (ativarPalavrasChaves) {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
