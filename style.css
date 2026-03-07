@@ -96,6 +96,23 @@ button:hover {
   margin-bottom: 10px;
 }
 
+/* Cabeçalho da pré-visualização com foto + nome */
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  justify-content: center; /* centraliza o bloco no meio */
+}
+
+.preview-header img {
+  width: 100px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
 input:focus, textarea:focus, select:focus {
   border-color: #3498db;
   outline: none;
