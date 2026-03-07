@@ -209,7 +209,20 @@ function gerarPDF() {
 
   // Experiências
   let experiencias = Array.from(document.querySelectorAll("#experiencias div"));
-  experiencias.sort((a,b) => new Date(b.querySelector(".inicio").value) - new Date(a.querySelector(".inicio").value));
+experiencias.sort((a, b) => {
+  const statusA = a.querySelector("select").value;
+  const statusB = b.querySelector("select").value;
+
+  // Emprego atual sempre primeiro
+  if (statusA === "atual" && statusB !== "atual") return -1;
+  if (statusB === "atual" && statusA !== "atual") return 1;
+
+  // Se ambos forem atuais ou ambos antigos, ordenar pela data de início (mais recente primeiro)
+  const inicioA = new Date(a.querySelector(".inicio").value);
+  const inicioB = new Date(b.querySelector(".inicio").value);
+  return inicioB - inicioA;
+});
+
   doc.setFontSize(14);
   doc.text("Experiência Profissional:", 10, y);
   y += 8;
@@ -357,5 +370,6 @@ if (cursando.length > 0) {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
