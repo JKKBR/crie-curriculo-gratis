@@ -300,7 +300,8 @@ function gerarPDF() {
     // Cabeçalho e nome
     const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
     doc.setFontSize(22);
-    if (nomeCompleto) doc.text(nomeCompleto, 105, 20, { align: "center" });
+    if (nomeCompleto) doc.text(nomeCompleto, 105, 60, { align: "center" }); 
+    y = 70; // garante que os contatos comecem abaixo do nome
 
     // Dados de contato
     doc.setFontSize(14);
@@ -460,6 +461,7 @@ if (fotoInput.files && fotoInput.files[0]) {
   finalizarPDF();
 }
 }
+
 
 
 
