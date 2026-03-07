@@ -1,3 +1,61 @@
+// Ajusta textarea do objetivo dinamicamente
+document.getElementById("objetivo").addEventListener("input", function() {
+  this.style.height = "auto";
+  this.style.height = (this.scrollHeight) + "px";
+});
+
+// Função para calcular páginas estimadas
+function atualizarPaginas() {
+  const totalBlocos = document.querySelectorAll("#experiencias div, #formacoes div, #habilidades div, #cursos div, #idiomas div").length;
+  const linhasEstimadas = totalBlocos * 8 + 30; // estimativa simples
+  const paginas = Math.ceil(linhasEstimadas / 40); // 40 linhas por página
+  document.getElementById("contadorPaginas").innerText = `Estimativa: ${paginas} páginas A4`;
+}
+
+// Exemplo: adicionar contador no HTML
+// <span id="contadorPaginas">Estimativa: 1 página A4</span>
+
+// Função para adicionar experiência
+function addExperiencia() {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <input type="text" placeholder="Empresa"><br>
+    <input type="text" placeholder="Cargo"><br>
+    <label>Início:</label><input type="month" class="inicio"><br>
+    <label>Fim:</label><input type="month" class="fim"><br>
+    <select onchange="toggleEmpregoAtual(this)">
+      <option value="">Selecione</option>
+      <option value="atual">Emprego Atual</option>
+      <option value="antigo">Emprego Antigo</option>
+    </select><br>
+    <textarea placeholder="Descrição" rows="5"></textarea><br><br>
+  `;
+  document.getElementById("experiencias").appendChild(div);
+  atualizarPaginas();
+}
+
+function toggleEmpregoAtual(select) {
+  const fim = select.parentNode.querySelector(".fim");
+  if (select.value === "atual") {
+    fim.style.display = "none";
+  } else {
+    fim.style.display = "block";
+  }
+}
+
+// Função principal para gerar PDF
+function gerarPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Nome completo centralizado
+  const nomeCompleto = document.getElementById("nomeCompleto")?.value || "";
+  doc.setFontSize(22);
+  doc.text("Currículo", 105, 20, { align: "center" });
+  if (nomeCompleto) doc.text(nomeCompleto, 105, 30, { align: "center" });
+
+ } 
+
 // Funções para adicionar blocos dinâmicos
 function addExperiencia() {
   const div = document.createElement("div");
@@ -261,6 +319,7 @@ function gerarPDF() {
   // Finalizar PDF
   doc.save("curriculo.pdf");
 }
+
 
 
 
