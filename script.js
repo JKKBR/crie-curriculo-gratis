@@ -295,153 +295,166 @@ function gerarPDF() {
     });
   }
 
-  // Cabeçalho e nome
-  const nomeCompleto = document.getElementById("nomeCompleto")?.value || "";
-  doc.setFontSize(22);
-  if (nomeCompleto) doc.text(nomeCompleto, 105, 20, { align: "center" });
+  // Função que escreve todo o conteúdo do currículo
+  function finalizarPDF() {
+    // Cabeçalho e nome
+    const nomeCompleto = document.getElementById("nomeCompleto")?.value || "";
+    doc.setFontSize(22);
+    if (nomeCompleto) doc.text(nomeCompleto, 105, 20, { align: "center" });
 
-  // Dados de contato
-  doc.setFontSize(14);
-  doc.text("Dados de Contato:", 10, y); y += 8;
-  doc.setFontSize(12);
-  escreverTexto(`Telefone: ${document.getElementById("telefone").value}`, 10, 180);
-  escreverTexto(`Email: ${document.getElementById("email").value}`, 10, 180);
-  escreverTexto(`Localização: ${document.getElementById("localizacao").value}`, 10, 180);
-  const linkedin = document.getElementById("linkedin").value;
-  if (linkedin) escreverTexto(`LinkedIn: ${linkedin}`, 10, 180);
-  const portfolio = document.getElementById("portfolio").value;
-  if (portfolio) escreverTexto(`Portfólio: ${portfolio}`, 10, 180);
-
-  // Objetivo
-  y += 10;
-  doc.setFontSize(14);
-  doc.text("Objetivo:", 10, y); y += 8;
-  doc.setFontSize(12);
-  const objetivo = document.getElementById("objetivo").value;
-  escreverTexto(objetivo, 10, 180);
-  y += 8;
-
-  // Experiências
-  let experiencias = Array.from(document.querySelectorAll("#experiencias div"));
-  experiencias.sort((a, b) => {
-    const statusA = a.querySelector("select").value;
-    const statusB = b.querySelector("select").value;
-    if (statusA === "atual" && statusB !== "atual") return -1;
-    if (statusB === "atual" && statusA !== "atual") return 1;
-    const inicioA = new Date(a.querySelector(".inicio").value);
-    const inicioB = new Date(b.querySelector(".inicio").value);
-    return inicioB - inicioA;
-  });
-
-  doc.setFontSize(14);
-  doc.text("Experiência Profissional:", 10, y); y += 8;
-
-  experiencias.forEach(exp => {
-    if (y > 270) { doc.addPage(); y = 20; }
-    const empresa = exp.querySelector("input[placeholder='Empresa']").value;
-    const cargo = exp.querySelector("input[placeholder='Cargo']").value;
-    const inicio = exp.querySelector(".inicio").value;
-    const fim = exp.querySelector(".fim").value;
-    const status = exp.querySelector("select").value;
-    const descricao = exp.querySelector("textarea").value;
-
+    // Dados de contato
+    doc.setFontSize(14);
+    doc.text("Dados de Contato:", 10, y); y += 8;
     doc.setFontSize(12);
-    escreverTexto(`Cargo: ${cargo}`, 10, 180);
-    escreverTexto(`Empresa: ${empresa}`, 10, 180);
-    escreverTexto(`Data: ${inicio} até ${status === "atual" ? "o momento" : fim}`, 10, 180);
-    escreverTexto("Descrição:", 10, 180);
-    escreverTexto(descricao, 10, 180);
+    escreverTexto(`Telefone: ${document.getElementById("telefone").value}`, 10, 180);
+    escreverTexto(`Email: ${document.getElementById("email").value}`, 10, 180);
+    escreverTexto(`Localização: ${document.getElementById("localizacao").value}`, 10, 180);
+    const linkedin = document.getElementById("linkedin").value;
+    if (linkedin) escreverTexto(`LinkedIn: ${linkedin}`, 10, 180);
+    const portfolio = document.getElementById("portfolio").value;
+    if (portfolio) escreverTexto(`Portfólio: ${portfolio}`, 10, 180);
+
+    // Objetivo
+    y += 10;
+    doc.setFontSize(14);
+    doc.text("Objetivo:", 10, y); y += 8;
+    doc.setFontSize(12);
+    const objetivo = document.getElementById("objetivo").value;
+    escreverTexto(objetivo, 10, 180);
     y += 8;
-  });
 
-  // Formação Acadêmica
-  doc.setFontSize(14);
-  doc.text("Formação Acadêmica:", 10, y); y += 8;
-  let formacoes = Array.from(document.querySelectorAll("#formacoes div"));
-  formacoes.sort((a,b) => {
-    const anoA = a.querySelector(".ano").value || a.querySelector(".termino").value;
-    const anoB = b.querySelector(".ano").value || b.querySelector(".termino").value;
-    return new Date(anoB) - new Date(anoA);
-  });
+    // Experiências
+    let experiencias = Array.from(document.querySelectorAll("#experiencias div"));
+    experiencias.sort((a, b) => {
+      const statusA = a.querySelector("select").value;
+      const statusB = b.querySelector("select").value;
+      if (statusA === "atual" && statusB !== "atual") return -1;
+      if (statusB === "atual" && statusA !== "atual") return 1;
+      const inicioA = new Date(a.querySelector(".inicio").value);
+      const inicioB = new Date(b.querySelector(".inicio").value);
+      return inicioB - inicioA;
+    });
 
-  formacoes.forEach(f => {
-    if (y > 270) { doc.addPage(); y = 20; }
-    const curso = f.querySelector("input[placeholder='Curso']").value;
-    const instituicao = f.querySelector("input[placeholder='Instituição']").value;
-    const status = f.querySelector("select").value;
-    const ano = f.querySelector(".ano").value;
-    const termino = f.querySelector(".termino").value;
+    doc.setFontSize(14);
+    doc.text("Experiência Profissional:", 10, y); y += 8;
 
-    doc.setFontSize(12);
-    escreverTexto(`Curso: ${curso}`, 10, 180);
-    escreverTexto(`Instituição: ${instituicao}`, 10, 180);
-    let anoOuPrevisao = "";
-    if (status === "concluido" && ano) anoOuPrevisao = `Ano: ${ano}`;
-    if (status === "cursando" && termino) anoOuPrevisao = `Previsão: ${termino}`;
-    escreverTexto(`Status: ${status} ${anoOuPrevisao}`, 10, 180);
+    experiencias.forEach(exp => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      const empresa = exp.querySelector("input[placeholder='Empresa']").value;
+      const cargo = exp.querySelector("input[placeholder='Cargo']").value;
+      const inicio = exp.querySelector(".inicio").value;
+      const fim = exp.querySelector(".fim").value;
+      const status = exp.querySelector("select").value;
+      const descricao = exp.querySelector("textarea").value;
+
+      doc.setFontSize(12);
+      escreverTexto(`Cargo: ${cargo}`, 10, 180);
+      escreverTexto(`Empresa: ${empresa}`, 10, 180);
+      escreverTexto(`Data: ${inicio} até ${status === "atual" ? "o momento" : fim}`, 10, 180);
+      escreverTexto("Descrição:", 10, 180);
+      escreverTexto(descricao, 10, 180);
+      y += 8;
+    });
+
+    // Formação Acadêmica
+    doc.setFontSize(14);
+    doc.text("Formação Acadêmica:", 10, y); y += 8;
+    let formacoes = Array.from(document.querySelectorAll("#formacoes div"));
+    formacoes.sort((a,b) => {
+      const anoA = a.querySelector(".ano").value || a.querySelector(".termino").value;
+      const anoB = b.querySelector(".ano").value || b.querySelector(".termino").value;
+      return new Date(anoB) - new Date(anoA);
+    });
+
+    formacoes.forEach(f => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      const curso = f.querySelector("input[placeholder='Curso']").value;
+      const instituicao = f.querySelector("input[placeholder='Instituição']").value;
+      const status = f.querySelector("select").value;
+      const ano = f.querySelector(".ano").value;
+      const termino = f.querySelector(".termino").value;
+
+      doc.setFontSize(12);
+      escreverTexto(`Curso: ${curso}`, 10, 180);
+      escreverTexto(`Instituição: ${instituicao}`, 10, 180);
+      let anoOuPrevisao = "";
+      if (status === "concluido" && ano) anoOuPrevisao = `Ano: ${ano}`;
+      if (status === "cursando" && termino) anoOuPrevisao = `Previsão: ${termino}`;
+      escreverTexto(`Status: ${status} ${anoOuPrevisao}`, 10, 180);
+      y += 8;
+    });
+
+    // Habilidades
+    doc.setFontSize(14);
+    doc.text("Habilidades Técnicas:", 10, y); y += 8;
+    const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(h => h.value);
+    habilidades.forEach(h => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      escreverTexto(h, 10, 180);
+    });
     y += 8;
-  });
 
-  // Habilidades
-  doc.setFontSize(14);
-  doc.text("Habilidades Técnicas:", 10, y); y += 8;
-  const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(h => h.value);
-  habilidades.forEach(h => {
-    if (y > 270) { doc.addPage(); y = 20; }
-    escreverTexto(h, 10, 180);
-  });
-  y += 8;
+    // Cursos
+    doc.setFontSize(14);
+    doc.text("Cursos:", 10, y); y += 8;
+    let cursos = Array.from(document.querySelectorAll("#cursos div"));
+    cursos.forEach(c => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
+      const instituicao = c.querySelector("input[placeholder='Instituição']").value;
+      const ano = c.querySelector(".ano").value;
+      const termino = c.querySelector(".termino").value;
+      const status = c.querySelector("select").value;
 
-  // Cursos
-  doc.setFontSize(14);
-  doc.text("Cursos:", 10, y); y += 8;
-  let cursos = Array.from(document.querySelectorAll("#cursos div"));
-  cursos.forEach(c => {
-    if (y > 270) { doc.addPage(); y = 20; }
-    const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
-    const instituicao = c.querySelector("input[placeholder='Instituição']").value;
-    const ano = c.querySelector(".ano").value;
-    const termino = c.querySelector(".termino").value;
-    const status = c.querySelector("select").value;
+      doc.setFontSize(12);
+      escreverTexto(`Curso: ${nomeCurso}`, 10, 180);
+      escreverTexto(`Instituição: ${instituicao}`, 10, 180);
+      if (status === "concluido") escreverTexto(`Ano: ${ano}`, 10, 180);
+      if (status === "cursando") escreverTexto(`Previsão: ${termino}`, 10, 180);
+      y += 8;
+    });
 
-    doc.setFontSize(12);
-    escreverTexto(`Curso: ${nomeCurso}`, 10, 180);
-    escreverTexto(`Instituição: ${instituicao}`, 10, 180);
-    if (status === "concluido") escreverTexto(`Ano: ${ano}`, 10, 180);
-    if (status === "cursando") escreverTexto(`Previsão: ${termino}`, 10, 180);
-    y += 8;
-  });
+    // Idiomas
+    doc.setFontSize(14);
+    doc.text("Idiomas:", 10, y); y += 8;
+    const idiomas = document.querySelectorAll("#idiomas div");
+    idiomas.forEach(i => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      const idiomaSelect = i.querySelector(".idioma").value;
+      const nivel = i.querySelector(".nivel").value;
+      const outro = i.querySelector(".idiomaOutro").value;
+      let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
+      doc.setFontSize(12);
+      escreverTexto(`Idioma: ${idiomaFinal} - Nível: ${nivel}`, 10, 180);
+      y += 6;
+    });
 
-  // Idiomas
-  doc.setFontSize(14);
-  doc.text("Idiomas:", 10, y); y += 8;
-  const idiomas = document.querySelectorAll("#idiomas div");
-  idiomas.forEach(i => {
-    if (y > 270) { doc.addPage(); y = 20; }
-    const idiomaSelect = i.querySelector(".idioma").value;
-    const nivel = i.querySelector(".nivel").value;
-    const outro = i.querySelector(".idiomaOutro").value;
-    let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
-    doc.setFontSize(12);
-    escreverTexto(`Idioma: ${idiomaFinal} - Nível: ${nivel}`, 10, 180);
-    y += 6;
-  });
-
-  // Palavras-Chaves ocultas
-  const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
-  if (ativarPalavrasChaves) {
-    const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value;
-    if (textoPalavrasChaves.trim() !== "") {
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(6);
-      escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180);
-      doc.setTextColor(0, 0, 0);
+    // Palavras-Chaves ocultas
+    const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
+    if (ativarPalavrasChaves) {
+      const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value;
+      if (textoPalavrasChaves.trim() !== "") {
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(6);
+        escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180);
+        doc.setTextColor(0, 0, 0);
+      }
     }
+
+    // Finalizar PDF
+    doc.save("curriculo.pdf");
   }
 
-  // Finalizar PDF
-  doc.save("curriculo.pdf");
-}
+  // Foto opcional
+  const fotoInput = document.getElementById("fotoCandidato");
+  if (fotoInput.files && fotoInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      doc.addImage(e.target.result, "JPEG", 10, 10, 30, 40); // posição e tamanho da foto
+      finalizarPDF();
+    };
+    reader.readAsDataURL(fotoInput.files[0]);
+  } else
 
 
 
