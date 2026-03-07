@@ -59,9 +59,25 @@
   <div id="idiomas"></div>
   <button type="button" onclick="addIdioma()">+ Adicionar Idioma</button><br><br>
 
+  <h2>Palavras-Chaves</h2>
+<p>
+Descrição ao ativar esta opção:<br>
+Essa funcionalidade insere palavras‑chave estratégicas no seu currículo para que, em análises feitas por sistemas de IA, 
+o documento seja reconhecido como alinhado às características exigidas para participar do processo seletivo. 
+Essas palavras‑chave não ficam visíveis no PDF, permanecem ocultas.<br><br>
+⚠️ Atenção: Ative essa opção por sua própria conta e risco. Caso o sistema identifique o uso de termos ocultos, 
+isso pode ser interpretado como tentativa de manipulação e considerado má fé.
+</p>
+
+<label>
+  <input type="checkbox" id="ativarPalavrasChaves">
+  Ativar Palavras-Chaves
+</label>
+
   <button type="button" onclick="gerarPDF()">Gerar PDF</button>
   <span id="contadorPaginas">Estimativa: 1 página A4</span>
 
   <script src="script.js"></script>
 </body>
 </html>
+
