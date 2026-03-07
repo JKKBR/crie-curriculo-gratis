@@ -43,10 +43,6 @@ function toggleEmpregoAtual(select) {
   }
 }
 
-// Função principal para gerar PDF
-function gerarPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
 
   // Nome completo centralizado
   const nomeCompleto = document.getElementById("nomeCompleto")?.value || "";
@@ -181,6 +177,11 @@ function aplicarEstiloGlobal(valor) {
   }
 }
 
+// Função principal para gerar PDF
+function gerarPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  
   // Dados de contato
   const telefone = document.getElementById("telefone").value;
   const email = document.getElementById("email").value;
@@ -349,6 +350,9 @@ idiomas.forEach(i => {
 
 // Finalizar PDF
 doc.save("curriculo.pdf");
+  
+}
+
 
 
 
