@@ -17,21 +17,22 @@
   <input type="text" id="portfolio" placeholder="Portfólio (Opcional)"><br><br>
 
   <h2>Objetivo</h2>
-  <textarea id="objetivo" rows="3" cols="50"></textarea><br><br>
+<textarea id="objetivo" rows="3" cols="50"></textarea><br><br>
 
-<button type="button" onclick="setObjetivoFont('times')">Fonte Times</button>
-<button type="button" onclick="setObjetivoFont('helvetica')">Fonte Helvetica</button>
-<button type="button" onclick="setObjetivoFont('courier')">Fonte Courier</button>
+<button type="button" onclick="setObjetivoFont('Times New Roman')">Fonte Times</button>
+<button type="button" onclick="setObjetivoFont('Helvetica')">Fonte Helvetica</button>
+<button type="button" onclick="setObjetivoFont('Courier New')">Fonte Courier</button>
 
-<button type="button" onclick="setObjetivoSize(12)">Tamanho 12</button>
-<button type="button" onclick="setObjetivoSize(14)">Tamanho 14</button>
-<button type="button" onclick="setObjetivoSize(16)">Tamanho 16</button>
+<button type="button" onclick="setObjetivoSize('14px')">Tamanho 14</button>
+<button type="button" onclick="setObjetivoSize('18px')">Tamanho 18</button>
+<button type="button" onclick="setObjetivoSize('22px')">Tamanho 22</button>
 
-<button type="button" onclick="toggleObjetivoBold()">Negrito Objetivo</button>
+<button type="button" onclick="toggleObjetivoBold()">Negrito</button>
 
-<select onchange="aplicarEstiloGlobal()">
+<select onchange="aplicarEstiloGlobal(this.value)">
   <option value="">Aplicar estilo...</option>
-  <option value="global">Aplicar ao PDF inteiro</option>
+  <option value="objetivo">Somente Objetivo</option>
+  <option value="global">PDF inteiro</option>
 </select>
 
   <h2>Experiência Profissional</h2>
@@ -59,4 +60,5 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
