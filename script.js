@@ -445,6 +445,8 @@ function gerarPDF() {
     doc.save("curriculo.pdf");
   }
 
+  }
+
   // Foto opcional
   const fotoInput = document.getElementById("fotoCandidato");
   if (fotoInput.files && fotoInput.files[0]) {
@@ -454,7 +456,11 @@ function gerarPDF() {
       finalizarPDF();
     };
     reader.readAsDataURL(fotoInput.files[0]);
-  } else
+  } else {
+    finalizarPDF();
+  }
+
+
 
 
 
