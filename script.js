@@ -29,7 +29,7 @@ function addExperiencia() {
     <textarea placeholder="Descrição" rows="5"></textarea><br><br>
   `;
   document.getElementById("experiencias").appendChild(div);
-  atualizarPaginas();
+  atualizarPreview();   
 }
 
 function toggleEmpregoAtual(select) {
@@ -245,22 +245,29 @@ function atualizarPreview() {
   }).join("");
   if (formacoes) html += `<h2 style="font-size:14px;">Formação Acadêmica</h2>${formacoes}`;
 
-  // Habilidades
-  const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(i => i.value).filter(Boolean);
-  if (habilidades.length) {
-    html += `<h2 style="font-size:14px;">Habilidades Técnicas</h2>`;
-    html += `<p style="font-size:12px;">${habilidades.join(", ")}</p>`;
-  }
+// Habilidades
+const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
+  .map(i => i.value)
+  .filter(Boolean);
 
-  // Cursos
-  const cursos = Array.from(document.querySelectorAll("#cursos div")).map(div => {
-    const nomeCurso = div.querySelector("input[placeholder='Nome do Curso']")?.value || "";
-    const instituicao = div.querySelector("input[placeholder='Instituição']")?.value || "";
-    const ano = div.querySelector(".ano")?.value || "";
-    const termino = div.querySelector(".termino")?.value || "";
-    return `<p style="font-size:12px;">${nomeCurso} - ${instituicao} (${ano || termino})</p>`;
-  }).join("");
-  if (cursos) html += `<h2 style="font-size:14px;">Cursos</h2>${cursos}`;
+if (habilidades.length) {
+  html += `<h2 style="font-size:14px;">Habilidades Técnicas</h2>`;
+  html += `<p style="font-size:12px;">${habilidades.join(", ")}</p>`;
+}
+
+// Atualiza preview também ao selecionar foto
+document.getElementById("fotoCandidato").addEventListener("change", atualizarPreview);
+
+// Cursos
+const cursos = Array.from(document.querySelectorAll("#cursos div")).map(div => {
+  const nomeCurso = div.querySelector("input[placeholder='Nome do Curso']")?.value || "";
+  const instituicao = div.querySelector("input[placeholder='Instituição']")?.value || "";
+  const ano = div.querySelector(".ano")?.value || "";
+  const termino = div.querySelector(".termino")?.value || "";
+  return `<p style="font-size:12px;">${nomeCurso} - ${instituicao} (${ano || termino})</p>`;
+}).join("");
+
+if (cursos) html += `<h2 style="font-size:14px;">Cursos</h2>${cursos}`;
 
   // Idiomas
   const idiomas = Array.from(document.querySelectorAll("#idiomas div")).map(div => {
@@ -462,6 +469,7 @@ if (fotoInput.files && fotoInput.files[0]) {
   finalizarPDF();
 }
 }
+
 
 
 
