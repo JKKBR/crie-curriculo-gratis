@@ -293,6 +293,7 @@ if (cursos) html += `<h2 style="font-size:14px;">Cursos</h2>${cursos}`;
   document.getElementById(id).addEventListener("input", atualizarPreview);
 });
 
+// Função para gerar PDF
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -304,9 +305,19 @@ function gerarPDF() {
     linhas.forEach(linha => {
       if (y > 270) { doc.addPage(); y = 20; }
       doc.text(linha, x, y);
-      y += 6;
+      y += 8; // ✅ espaçamento padronizado
     });
-    y += 2; // ✅ pequeno espaçamento extra entre blocos
+    y += 4; // espaço extra entre blocos
+  }
+
+  // Função utilitária para formatar datas em DD/MM/AAAA
+  function formatarDataBR(dataStr) {
+    if (!dataStr) return "";
+    const partes = dataStr.split("-");
+    if (partes.length === 3) {
+      return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+    return dataStr;
   }
 
   // Função que escreve todo o conteúdo do currículo
@@ -314,12 +325,12 @@ function gerarPDF() {
     // Cabeçalho e nome
     const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
     doc.setFontSize(22);
-    if (nomeCompleto) doc.text(nomeCompleto, 50, 25); // nome ao lado da foto
-    y = 65; // ✅ mais espaço antes dos contatos
+    if (nomeCompleto) doc.text(nomeCompleto, 50, 25);
+    y = 65; // espaço antes dos contatos
 
     // Dados de contato
     doc.setFontSize(14);
-    doc.text("Dados de Contato:", 10, y); y += 8;
+    doc.text("Dados de Contato:", 10, y); y += 10;
     doc.setFontSize(12);
     escreverTexto(`Telefone: ${document.getElementById("telefone").value}`, 10, 180);
     escreverTexto(`Email: ${document.getElementById("email").value}`, 10, 180);
@@ -332,11 +343,10 @@ function gerarPDF() {
     // Objetivo
     y += 10;
     doc.setFontSize(14);
-    doc.text("Objetivo:", 10, y); y += 8;
+    doc.text("Objetivo:", 10, y); y += 10;
     doc.setFontSize(12);
     const objetivo = document.getElementById("objetivo").value;
     escreverTexto(objetivo, 10, 180);
-    y += 8;
 
     // Experiências
     let experiencias = Array.from(document.querySelectorAll("#experiencias div"));
@@ -351,14 +361,14 @@ function gerarPDF() {
     });
 
     doc.setFontSize(14);
-    doc.text("Experiência Profissional:", 10, y); y += 8;
+    doc.text("Experiência Profissional:", 10, y); y += 10;
 
     experiencias.forEach(exp => {
       if (y > 270) { doc.addPage(); y = 20; }
       const empresa = exp.querySelector("input[placeholder='Empresa']").value;
       const cargo = exp.querySelector("input[placeholder='Cargo']").value;
-      const inicio = exp.querySelector(".inicio").value;
-      const fim = exp.querySelector(".fim").value;
+      const inicio = formatarDataBR(exp.querySelector(".inicio").value);
+      const fim = formatarDataBR(exp.querySelector(".fim").value);
       const status = exp.querySelector("select").value;
       const descricao = exp.querySelector("textarea").value;
 
@@ -368,12 +378,12 @@ function gerarPDF() {
       escreverTexto(`Data: ${inicio} até ${status === "atual" ? "o momento" : fim}`, 10, 180);
       escreverTexto("Descrição:", 10, 180);
       escreverTexto(descricao, 10, 180);
-      y += 8; // ✅ espaçamento extra após cada experiência
+      y += 10;
     });
 
     // Formação Acadêmica
     doc.setFontSize(14);
-    doc.text("Formação Acadêmica:", 10, y); y += 8;
+    doc.text("Formação Acadêmica:", 10, y); y += 10;
     let formacoes = Array.from(document.querySelectorAll("#formacoes div"));
     formacoes.sort((a,b) => {
       const anoA = a.querySelector(".ano").value || a.querySelector(".termino").value;
@@ -386,8 +396,8 @@ function gerarPDF() {
       const curso = f.querySelector("input[placeholder='Curso']").value;
       const instituicao = f.querySelector("input[placeholder='Instituição']").value;
       const status = f.querySelector("select").value;
-      const ano = f.querySelector(".ano").value;
-      const termino = f.querySelector(".termino").value;
+      const ano = formatarDataBR(f.querySelector(".ano").value);
+      const termino = formatarDataBR(f.querySelector(".termino").value);
 
       doc.setFontSize(12);
       escreverTexto(`Curso: ${curso}`, 10, 180);
@@ -396,29 +406,29 @@ function gerarPDF() {
       if (status === "concluido" && ano) anoOuPrevisao = `Ano: ${ano}`;
       if (status === "cursando" && termino) anoOuPrevisao = `Previsão: ${termino}`;
       escreverTexto(`Status: ${status} ${anoOuPrevisao}`, 10, 180);
-      y += 8;
+      y += 10;
     });
 
     // Habilidades
     doc.setFontSize(14);
-    doc.text("Habilidades Técnicas:", 10, y); y += 8;
+    doc.text("Habilidades Técnicas:", 10, y); y += 10;
     const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(h => h.value);
     habilidades.forEach(h => {
       if (y > 270) { doc.addPage(); y = 20; }
       escreverTexto(h, 10, 180);
     });
-    y += 8;
+    y += 10;
 
     // Cursos
     doc.setFontSize(14);
-    doc.text("Cursos:", 10, y); y += 8;
+    doc.text("Cursos:", 10, y); y += 10;
     let cursos = Array.from(document.querySelectorAll("#cursos div"));
     cursos.forEach(c => {
       if (y > 270) { doc.addPage(); y = 20; }
       const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
       const instituicao = c.querySelector("input[placeholder='Instituição']").value;
-      const ano = c.querySelector(".ano").value;
-      const termino = c.querySelector(".termino").value;
+      const ano = formatarDataBR(c.querySelector(".ano").value);
+      const termino = formatarDataBR(c.querySelector(".termino").value);
       const status = c.querySelector("select").value;
 
       doc.setFontSize(12);
@@ -426,12 +436,12 @@ function gerarPDF() {
       escreverTexto(`Instituição: ${instituicao}`, 10, 180);
       if (status === "concluido") escreverTexto(`Ano: ${ano}`, 10, 180);
       if (status === "cursando") escreverTexto(`Previsão: ${termino}`, 10, 180);
-      y += 8;
+      y += 10;
     });
 
     // Idiomas
     doc.setFontSize(14);
-    doc.text("Idiomas:", 10, y); y += 8;
+    doc.text("Idiomas:", 10, y); y += 10;
     const idiomas = document.querySelectorAll("#idiomas div");
     idiomas.forEach(i => {
       if (y > 270) { doc.addPage(); y = 20; }
@@ -441,8 +451,9 @@ function gerarPDF() {
       let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
       doc.setFontSize(12);
       escreverTexto(`Idioma: ${idiomaFinal} - Nível: ${nivel}`, 10, 180);
-      y += 6;
+      y += 10;
     });
+
 
     // Palavras-Chaves ocultas
     const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
@@ -480,6 +491,7 @@ if (fotoInput.files && fotoInput.files[0]) {
 }
 }
   
+
 
 
 
