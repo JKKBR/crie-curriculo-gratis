@@ -12,7 +12,7 @@ function atualizarEstimativa() {
   document.getElementById("contadorPaginas").innerText = `Estimativa: ${paginas} página(s) A4`;
 }
 
-// Funções para adicionar blocos
+// Funções para adicionar blocos com botão de exclusão
 function addExperiencia() {
   const div = document.createElement("div");
   div.innerHTML = `
@@ -25,7 +25,9 @@ function addExperiencia() {
       <option value="atual">Emprego Atual</option>
       <option value="antigo">Emprego Antigo</option>
     </select><br>
-    <textarea placeholder="Descrição" rows="5"></textarea><br><br>
+    <textarea placeholder="Descrição" rows="5"></textarea><br>
+    <button type="button" onclick="this.parentNode.remove(); atualizarPreview();">Excluir</button>
+    <br><br>
   `;
   document.getElementById("experiencias").appendChild(div);
   atualizarPreview();
@@ -45,7 +47,9 @@ function addFormacao() {
       <option value="cursando">Cursando</option>
     </select><br>
     <input type="text" class="ano" placeholder="Ano de conclusão" style="display:none;">
-    <input type="text" class="termino" placeholder="Previsão de término" style="display:none;"><br><br>
+    <input type="text" class="termino" placeholder="Previsão de término" style="display:none;"><br>
+    <button type="button" onclick="this.parentNode.remove(); atualizarPreview();">Excluir</button>
+    <br><br>
   `;
   document.getElementById("formacoes").appendChild(div);
 }
@@ -58,7 +62,11 @@ function toggleFormacaoAno(select) {
 
 function addHabilidade() {
   const div = document.createElement("div");
-  div.innerHTML = `<input type="text" placeholder="Habilidade"><br>`;
+  div.innerHTML = `
+    <input type="text" placeholder="Habilidade">
+    <button type="button" onclick="this.parentNode.remove(); atualizarPreview();">Excluir</button>
+    <br>
+  `;
   document.getElementById("habilidades").appendChild(div);
   atualizarPreview();
 }
@@ -74,7 +82,9 @@ function addCurso() {
       <option value="cursando">Cursando</option>
     </select><br>
     <input type="text" class="ano" placeholder="Ano de conclusão" style="display:none;">
-    <input type="text" class="termino" placeholder="Data prevista (dia/mês/ano)" style="display:none;"><br><br>
+    <input type="text" class="termino" placeholder="Data prevista (dia/mês/ano)" style="display:none;"><br>
+    <button type="button" onclick="this.parentNode.remove(); atualizarPreview();">Excluir</button>
+    <br><br>
   `;
   document.getElementById("cursos").appendChild(div);
   atualizarPreview();
@@ -101,6 +111,7 @@ function addIdioma() {
       <option value="avancado">Avançado</option>
     </select>
     <input type="text" class="idiomaOutro" placeholder="Informe o idioma" style="display:none;">
+    <button type="button" onclick="this.parentNode.remove(); atualizarPreview();">Excluir</button>
   `;
   document.getElementById("idiomas").appendChild(div);
   atualizarPreview();
@@ -110,7 +121,15 @@ function toggleIdiomaOutro(select) {
   outroInput.style.display = select.value === "outro" ? "block" : "none";
 }
 
-// Função de pré-visualização
+// Remover foto
+function removerFoto() {
+  const fotoInput = document.getElementById("fotoCandidato");
+  fotoInput.value = "";
+  document.querySelector(".preview-header").innerHTML = "<h3>" + document.getElementById("nomeCompleto").value + "</h3>";
+  atualizarPreview();
+}
+
+// Função de pré-visualização (mantida igual, mas já atualiza ao excluir)
 function atualizarPreview() {
   let html = "";
 
@@ -169,18 +188,15 @@ function atualizarPreview() {
     html += `<h2>Experiência Profissional</h2>${experiencias}`;
   }
 
-    // Formação Acadêmica
+  // Formação Acadêmica
   const formacoes = Array.from(document.querySelectorAll("#formacoes div")).map(div => {
     const curso = (div.querySelector("input[placeholder='Curso']") || {}).value || "";
     const instituicao = (div.querySelector("input[placeholder='Instituição']") || {}).value || "";
     const ano = div.querySelector(".ano")?.value || "";
     const termino = div.querySelector(".termino")?.value || "";
-
     if (!curso && !instituicao) return "";
-
     return `<li>${curso} - ${instituicao} (${ano || termino || "?"})</li>`;
   }).filter(Boolean).join("");
-
   if (formacoes) {
     html += `<h2>Formação Acadêmica</h2><ul style="font-size:12px; line-height:1.3; margin:3px 0;">${formacoes}</ul>`;
   }
@@ -189,7 +205,6 @@ function atualizarPreview() {
   const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
     .map(i => i.value.trim())
     .filter(Boolean);
-
   if (habilidades.length) {
     html += `<h2>Habilidades Técnicas</h2><ul style="font-size:12px; line-height:1.3; margin:3px 0;">`;
     habilidades.forEach(h => {
@@ -204,12 +219,9 @@ function atualizarPreview() {
     const instituicao = (div.querySelector("input[placeholder='Instituição']") || {}).value || "";
     const ano = div.querySelector(".ano")?.value || "";
     const termino = div.querySelector(".termino")?.value || "";
-
     if (!nomeCurso && !instituicao) return "";
-
     return `<li>${nomeCurso} - ${instituicao} (${ano || termino || "?"})</li>`;
   }).filter(Boolean).join("");
-
   if (cursos) {
     html += `<h2>Cursos</h2><ul style="font-size:12px; line-height:1.3; margin:3px 0;">${cursos}</ul>`;
   }
@@ -219,12 +231,9 @@ function atualizarPreview() {
     const idioma = div.querySelector(".idioma")?.value || "";
     const nivel = div.querySelector(".nivel")?.value || "";
     const outro = div.querySelector(".idiomaOutro")?.value || "";
-
     if (!idioma && !nivel) return "";
-
     return `<li>${idioma === "outro" ? outro : idioma} - ${nivel}</li>`;
   }).filter(Boolean).join("");
-
   if (idiomas) {
     html += `<h2>Idiomas</h2><ul style="font-size:12px; line-height:1.2; margin:2px 0;">${idiomas}</ul>`;
   }
@@ -397,7 +406,7 @@ function gerarPDF() {
       y += 3; // espaçamento reduzido
     });
 
-        // Palavras-Chaves ocultas
+       // Palavras-Chaves ocultas
     const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
     if (ativarPalavrasChaves) {
       const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value;
@@ -434,4 +443,3 @@ function gerarPDF() {
     finalizarPDF();
   }
 }
-
