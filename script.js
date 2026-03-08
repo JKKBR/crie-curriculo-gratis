@@ -300,6 +300,7 @@ function gerarPDF() {
       doc.text(linha, x, y);
       y += 6;
     });
+    y += 2; // ✅ pequeno espaçamento extra entre blocos
   }
 
   // Função que escreve todo o conteúdo do currículo
@@ -308,8 +309,7 @@ function gerarPDF() {
     const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
     doc.setFontSize(22);
     if (nomeCompleto) doc.text(nomeCompleto, 50, 25); // nome ao lado da foto
-    // Sobe o ponto inicial dos contatos para mais abaixo
-    y = 55; // em vez de 40
+    y = 65; // ✅ mais espaço antes dos contatos
 
     // Dados de contato
     doc.setFontSize(14);
@@ -339,8 +339,8 @@ function gerarPDF() {
       const statusB = b.querySelector("select").value;
       if (statusA === "atual" && statusB !== "atual") return -1;
       if (statusB === "atual" && statusA !== "atual") return 1;
-      const inicioA = new Date(a.querySelector(".inicio").value);
-      const inicioB = new Date(b.querySelector(".inicio").value);
+      const inicioA = a.querySelector(".inicio").value ? new Date(a.querySelector(".inicio").value) : new Date(0);
+      const inicioB = b.querySelector(".inicio").value ? new Date(b.querySelector(".inicio").value) : new Date(0);
       return inicioB - inicioA;
     });
 
@@ -362,7 +362,7 @@ function gerarPDF() {
       escreverTexto(`Data: ${inicio} até ${status === "atual" ? "o momento" : fim}`, 10, 180);
       escreverTexto("Descrição:", 10, 180);
       escreverTexto(descricao, 10, 180);
-      y += 8;
+      y += 8; // ✅ espaçamento extra após cada experiência
     });
 
     // Formação Acadêmica
@@ -372,7 +372,7 @@ function gerarPDF() {
     formacoes.sort((a,b) => {
       const anoA = a.querySelector(".ano").value || a.querySelector(".termino").value;
       const anoB = b.querySelector(".ano").value || b.querySelector(".termino").value;
-      return new Date(anoB) - new Date(anoA);
+      return (anoB ? new Date(anoB) : new Date(0)) - (anoA ? new Date(anoA) : new Date(0));
     });
 
     formacoes.forEach(f => {
@@ -450,25 +450,31 @@ function gerarPDF() {
       }
     }
 
-   // Finalizar PDF
+    // Finalizar PDF
     doc.save("curriculo.pdf");
   }
 
-  // Foto opcional
+// Foto opcional
 const fotoInput = document.getElementById("fotoCandidato");
 if (fotoInput.files && fotoInput.files[0]) {
   const reader = new FileReader();
   reader.onload = function(e) {
-    const tipoImagem = fotoInput.files[0].type.includes("png") ? "PNG" : "JPEG";
+    const mimeType = fotoInput.files[0].type.toLowerCase();
+    const tipoImagem = mimeType.includes("png") ? "PNG" : "JPEG";
     doc.addImage(e.target.result, tipoImagem, 10, 10, 30, 40);
-    y = 60; // evita sobreposição com nome/contato
+    y = 65; // ✅ garante espaço entre foto, nome e contatos
     finalizarPDF();
+  };
+  reader.onerror = function() {
+    finalizarPDF(); // ✅ fallback se houver erro na leitura
   };
   reader.readAsDataURL(fotoInput.files[0]);
 } else {
   finalizarPDF();
 }
 }
+  
+
 
 
 
