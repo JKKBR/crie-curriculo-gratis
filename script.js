@@ -20,7 +20,7 @@ function atualizarPreview() {
       `<h3 style="margin:2px 0;">${nome}</h3>`;
   }
 
-  // Contato
+  // Dados de contato (compacto)
   const telefone = document.getElementById("telefone").value;
   const email = document.getElementById("email").value;
   const localizacao = document.getElementById("localizacao").value;
@@ -28,21 +28,21 @@ function atualizarPreview() {
   const portfolio = document.getElementById("portfolio").value;
 
   html += `<div style="text-align:center; font-size:11px; line-height:1.2; margin:2px 0;">`;
-  if (telefone) html += `<p style="margin:2px 0;">Telefone: ${telefone}</p>`;
-  if (email) html += `<p style="margin:2px 0;">E-mail: ${email}</p>`;
-  if (localizacao) html += `<p style="margin:2px 0;">Localização: ${localizacao}</p>`;
-  if (linkedin) html += `<p style="margin:2px 0;">LinkedIn: ${linkedin}</p>`;
-  if (portfolio) html += `<p style="margin:2px 0;">Portfólio: ${portfolio}</p>`;
+  if (telefone) html += `<p style="margin:1px 0;">Telefone: ${telefone}</p>`;
+  if (email) html += `<p style="margin:1px 0;">E-mail: ${email}</p>`;
+  if (localizacao) html += `<p style="margin:1px 0;">Localização: ${localizacao}</p>`;
+  if (linkedin) html += `<p style="margin:1px 0;">LinkedIn: ${linkedin}</p>`;
+  if (portfolio) html += `<p style="margin:1px 0;">Portfólio: ${portfolio}</p>`;
   html += `</div>`;
 
-  // Objetivo
+  // Objetivo (compacto)
   const objetivo = document.getElementById("objetivo").value;
   if (objetivo) {
-    html += `<h2 style="font-size:13px; margin:4px 0;">Objetivo</h2>`;
+    html += `<h2 style="font-size:13px; margin:3px 0;">Objetivo</h2>`;
     html += `<p style="font-size:11px; line-height:1.2; margin:2px 0;">${objetivo}</p>`;
   }
 
-  // Experiências
+  // Experiências (compacto)
   const experiencias = Array.from(document.querySelectorAll("#experiencias div")).map(div => {
     const empresa = (div.querySelector("input[placeholder='Empresa']") || {}).value || "";
     const cargo = (div.querySelector("input[placeholder='Cargo']") || {}).value || "";
@@ -59,10 +59,10 @@ function atualizarPreview() {
   }).filter(Boolean).join("");
 
   if (experiencias) {
-    html += `<h2 style="font-size:13px; margin:4px 0;">Experiência Profissional</h2>${experiencias}`;
+    html += `<h2 style="font-size:13px; margin:3px 0;">Experiência Profissional</h2>${experiencias}`;
   }
 
-  // Formação
+  // Formação (compacto)
   const formacoes = Array.from(document.querySelectorAll("#formacoes div")).map(div => {
     const curso = (div.querySelector("input[placeholder='Curso']") || {}).value || "";
     const instituicao = (div.querySelector("input[placeholder='Instituição']") || {}).value || "";
@@ -75,20 +75,20 @@ function atualizarPreview() {
   }).filter(Boolean).join("");
 
   if (formacoes) {
-    html += `<h2 style="font-size:13px; margin:4px 0;">Formação Acadêmica</h2>${formacoes}`;
+    html += `<h2 style="font-size:13px; margin:3px 0;">Formação Acadêmica</h2>${formacoes}`;
   }
 
-  // Habilidades
+  // Habilidades Técnicas (compacto)
   const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
     .map(i => i.value.trim())
     .filter(Boolean);
 
   if (habilidades.length) {
-    html += `<h2 style="font-size:13px; margin:4px 0;">Habilidades Técnicas</h2>`;
+    html += `<h2 style="font-size:13px; margin:3px 0;">Habilidades Técnicas</h2>`;
     html += `<p style="font-size:11px; line-height:1.2; margin:2px 0;">${habilidades.join(", ")}</p>`;
   }
 
-  // Cursos
+  // Cursos (compacto)
   const cursos = Array.from(document.querySelectorAll("#cursos div")).map(div => {
     const nomeCurso = (div.querySelector("input[placeholder='Nome do Curso']") || {}).value || "";
     const instituicao = (div.querySelector("input[placeholder='Instituição']") || {}).value || "";
@@ -101,10 +101,10 @@ function atualizarPreview() {
   }).filter(Boolean).join("");
 
   if (cursos) {
-    html += `<h2 style="font-size:13px; margin:4px 0;">Cursos</h2>${cursos}`;
+    html += `<h2 style="font-size:13px; margin:3px 0;">Cursos</h2>${cursos}`;
   }
 
-  // Idiomas
+  // Idiomas (compacto)
   const idiomas = Array.from(document.querySelectorAll("#idiomas div")).map(div => {
     const idioma = div.querySelector(".idioma")?.value || "";
     const nivel = div.querySelector(".nivel")?.value || "";
@@ -116,14 +116,13 @@ function atualizarPreview() {
   }).filter(Boolean).join("");
 
   if (idiomas) {
-    html += `<h2 style="font-size:13px; margin:4px 0;">Idiomas</h2>${idiomas}`;
+    html += `<h2 style="font-size:13px; margin:3px 0;">Idiomas</h2>${idiomas}`;
   }
 
   // Atualiza preview e contador
   document.getElementById("previewCurriculo").innerHTML = html;
   atualizarEstimativa();
 }
-
 // Eventos para atualizar preview em tempo real nos campos básicos
 ["nomeCompleto","telefone","email","localizacao","linkedin","portfolio","objetivo"].forEach(id => {
   document.getElementById(id).addEventListener("input", atualizarPreview);
@@ -146,7 +145,7 @@ function gerarPDF() {
       doc.text(linha, x, y);
       y += 5; // ✅ espaçamento reduzido
     });
-    y += 3; // espaço extra menor entre blocos
+    y += 2; // espaço extra menor entre blocos
   }
 
   // Função utilitária para formatar datas em DD/MM/AAAA
@@ -165,11 +164,11 @@ function gerarPDF() {
     const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
     doc.setFontSize(20);
     if (nomeCompleto) doc.text(nomeCompleto, 50, 25);
-    y = 60; // espaço antes dos contatos
+    y = 55; // espaço antes dos contatos
 
-    // Dados de contato
+    // Dados de contato (compacto)
     doc.setFontSize(13);
-    doc.text("Dados de Contato:", 10, y); y += 6;
+    doc.text("Dados de Contato:", 10, y); y += 5;
     doc.setFontSize(11);
     escreverTexto(`Telefone: ${document.getElementById("telefone").value}`, 10, 180);
     escreverTexto(`Email: ${document.getElementById("email").value}`, 10, 180);
@@ -179,15 +178,15 @@ function gerarPDF() {
     const portfolio = document.getElementById("portfolio").value;
     if (portfolio) escreverTexto(`Portfólio: ${portfolio}`, 10, 180);
 
-    // Objetivo
-    y += 6;
+    // Objetivo (compacto)
+    y += 5;
     doc.setFontSize(13);
-    doc.text("Objetivo:", 10, y); y += 6;
+    doc.text("Objetivo:", 10, y); y += 5;
     doc.setFontSize(11);
     const objetivo = document.getElementById("objetivo").value;
     escreverTexto(objetivo, 10, 180);
 
-    // Experiências
+    // Experiências (compacto)
     let experiencias = Array.from(document.querySelectorAll("#experiencias div"));
     experiencias.sort((a, b) => {
       const statusA = a.querySelector("select").value;
@@ -199,9 +198,9 @@ function gerarPDF() {
       return inicioB - inicioA;
     });
 
-    y += 6;
+    y += 5;
     doc.setFontSize(13);
-    doc.text("Experiência Profissional:", 10, y); y += 6;
+    doc.text("Experiência Profissional:", 10, y); y += 5;
 
     experiencias.forEach(exp => {
       if (y > 270) { doc.addPage(); y = 20; }
@@ -218,13 +217,13 @@ function gerarPDF() {
       escreverTexto(`Data: ${inicio} até ${status === "atual" ? "o momento" : fim}`, 10, 180);
       escreverTexto("Descrição:", 10, 180);
       escreverTexto(descricao, 10, 180);
-      y += 6;
+      y += 5;
     });
 
-    // Formação Acadêmica
-    y += 6;
+    // Formação Acadêmica (compacto)
+    y += 5;
     doc.setFontSize(13);
-    doc.text("Formação Acadêmica:", 10, y); y += 6;
+    doc.text("Formação Acadêmica:", 10, y); y += 5;
     let formacoes = Array.from(document.querySelectorAll("#formacoes div"));
     formacoes.sort((a,b) => {
       const anoA = a.querySelector(".ano").value || a.querySelector(".termino").value;
@@ -247,24 +246,24 @@ function gerarPDF() {
       if (status === "concluido" && ano) anoOuPrevisao = `Ano: ${ano}`;
       if (status === "cursando" && termino) anoOuPrevisao = `Previsão: ${termino}`;
       escreverTexto(`Status: ${status} ${anoOuPrevisao}`, 10, 180);
-      y += 6;
+      y += 5;
     });
 
-    // Habilidades
-    y += 6;
+    // Habilidades Técnicas (compacto)
+    y += 5;
     doc.setFontSize(13);
-    doc.text("Habilidades Técnicas:", 10, y); y += 6;
+    doc.text("Habilidades Técnicas:", 10, y); y += 5;
     const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(h => h.value).filter(Boolean);
     habilidades.forEach(h => {
       if (y > 270) { doc.addPage(); y = 20; }
       escreverTexto(h, 10, 180);
     });
-    y += 6;
+    y += 5;
 
-    // Cursos
-    y += 6;
+    // Cursos (compacto)
+    y += 5;
     doc.setFontSize(13);
-    doc.text("Cursos:", 10, y); y += 6;
+    doc.text("Cursos:", 10, y); y += 5;
     let cursos = Array.from(document.querySelectorAll("#cursos div"));
     cursos.forEach(c => {
       if (y > 270) { doc.addPage(); y = 20; }
@@ -279,13 +278,25 @@ function gerarPDF() {
       escreverTexto(`Instituição: ${instituicao}`, 10, 180);
       if (status === "concluido") escreverTexto(`Ano: ${ano}`, 10, 180);
       if (status === "cursando") escreverTexto(`Previsão: ${termino}`, 10, 180);
-      y += 6;
+      y += 5;
     });
 
-        // Idiomas
-    y += 6;
+    // Idiomas (compacto)
+    y += 5;
     doc.setFontSize(13);
-    doc.text("Idiomas:", 10, y); y += 6;
+    doc.text("Idiomas:", 10, y); y += 5;
+    const idiomas = document.querySelectorAll("#idiomas div");
+    idiomas.forEach(i => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      const idiomaSelect = i.querySelector(".idioma").value;
+      const nivel = i.querySelector(".nivel").value;
+      const outro = i.querySelector(".idiomaOutro").value;
+      let idiomaFinal = idiomaSelect === "outro"
+      
+        // Idiomas (compacto)
+    y += 5;
+    doc.setFontSize(13);
+    doc.text("Idiomas:", 10, y); y += 5;
     const idiomas = document.querySelectorAll("#idiomas div");
     idiomas.forEach(i => {
       if (y > 270) { doc.addPage(); y = 20; }
@@ -295,15 +306,14 @@ function gerarPDF() {
       let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
       doc.setFontSize(11);
       escreverTexto(`Idioma: ${idiomaFinal} - Nível: ${nivel}`, 10, 180);
-      y += 6; // ✅ espaçamento reduzido
+      y += 5; // ✅ espaçamento reduzido
     });
 
-    // Palavras-Chaves ocultas
+    // Palavras-Chaves ocultas (ATS)
     const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
     if (ativarPalavrasChaves) {
       const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value;
       if (textoPalavrasChaves.trim() !== "") {
-        // ✅ Inserção invisível para ATS
         doc.setTextColor(255, 255, 255); // branco
         doc.setFontSize(6);
         escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180);
@@ -324,7 +334,7 @@ function gerarPDF() {
       const tipoImagem = mimeType.includes("png") ? "PNG" :
                          (mimeType.includes("jpg") || mimeType.includes("jpeg")) ? "JPEG" : "JPEG";
       doc.addImage(e.target.result, tipoImagem, 10, 10, 30, 40);
-      y = 60; // ✅ garante espaço entre foto, nome e contatos
+      y = 55; // ✅ garante espaço entre foto, nome e contatos
       finalizarPDF();
     };
     reader.onerror = function() {
@@ -349,8 +359,8 @@ function gerarPDF() {
 
 
 
-
   
+
 
 
 
