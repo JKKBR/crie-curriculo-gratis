@@ -42,17 +42,18 @@ h1 {
 
 h2 {
   color: #34495e;
-  margin-top: 30px;
+  margin-top: 25px; /* reduzido */
   border-bottom: 2px solid #3498db;
-  padding-bottom: 5px;
+  padding-bottom: 4px;
   width: 100%;
+  font-size: 16px;
 }
 
 input, textarea, select {
   width: 100%;
   padding: 8px;
   margin-top: 5px;
-  margin-bottom: 15px;
+  margin-bottom: 12px; /* reduzido */
   border: 1px solid #ccc;
   border-radius: 6px;
   box-sizing: border-box;
@@ -82,30 +83,30 @@ button:hover {
 }
 
 .preview h2 {
-  font-size: 14px;
-  margin-top: 15px;
+  font-size: 13px; /* menor */
+  margin-top: 12px; /* reduzido */
   border-bottom: 1px solid #ccc;
-  padding-bottom: 3px;
+  padding-bottom: 2px;
 }
 
 .preview p {
   font-size: 12px;
-  line-height: 1.4;
-  margin: 4px 0;
+  line-height: 1.3; /* reduzido */
+  margin: 3px 0;    /* menos espaço */
 }
 
 .preview h3 {
   text-align: center;
-  font-size: 22px;
-  margin-bottom: 20px; /* mais espaço abaixo do nome */
+  font-size: 20px;   /* levemente menor */
+  margin-bottom: 12px; /* menos espaço abaixo do nome */
 }
 
 /* Cabeçalho da pré-visualização com foto + nome */
 .preview-header {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 15px;
+  gap: 10px;          /* reduzido */
+  margin-bottom: 10px;
   justify-content: center;
 }
 
@@ -133,6 +134,18 @@ input, textarea, select, button {
   font-style: italic;
   font-size: 12px;
   margin-top: 5px;
+}
+
+/* Ajustes específicos para Idiomas */
+#idiomas div {
+  margin-bottom: 6px;   /* espaço entre idiomas */
+}
+
+#idiomas select, 
+#idiomas input {
+  display: inline-block;
+  width: auto;          /* não ocupar 100% */
+  margin-right: 6px;    /* separa os campos */
 }
 
 /* Responsividade */
