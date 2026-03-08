@@ -1,4 +1,124 @@
-// Função de pré-visualização
+// Ajusta textarea do objetivo dinamicamente
+document.getElementById("objetivo").addEventListener("input", function() {
+  this.style.height = "auto";
+  this.style.height = (this.scrollHeight) + "px";
+});
+
+// Função de estimativa de páginas
+function atualizarEstimativa() {
+  const texto = document.getElementById("previewCurriculo").innerText;
+  const caracteresPorPagina = 1800; // aproximação
+  const paginas = Math.max(1, Math.ceil(texto.length / caracteresPorPagina));
+  document.getElementById("contadorPaginas").innerText = `Estimativa: ${paginas} página(s) A4`;
+}
+
+// Função para adicionar experiência
+function addExperiencia() {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <input type="text" placeholder="Empresa"><br>
+    <input type="text" placeholder="Cargo"><br>
+    <label>Início:</label><input type="date" class="inicio"><br>
+    <label>Fim:</label><input type="date" class="fim"><br>
+    <select onchange="toggleEmpregoAtual(this)">
+      <option value="">Selecione</option>
+      <option value="atual">Emprego Atual</option>
+      <option value="antigo">Emprego Antigo</option>
+    </select><br>
+    <textarea placeholder="Descrição" rows="5"></textarea><br><br>
+  `;
+  document.getElementById("experiencias").appendChild(div);
+  atualizarPreview();
+}
+
+function toggleEmpregoAtual(select) {
+  const fim = select.parentNode.querySelector(".fim");
+  fim.style.display = select.value === "atual" ? "none" : "block";
+}
+
+// Função para adicionar formação
+function addFormacao() {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <input type="text" placeholder="Curso"><br>
+    <input type="text" placeholder="Instituição"><br>
+    <select onchange="toggleFormacaoAno(this)">
+      <option value="concluido">Concluído</option>
+      <option value="cursando">Cursando</option>
+    </select><br>
+    <input type="text" class="ano" placeholder="Ano de conclusão" style="display:none;">
+    <input type="text" class="termino" placeholder="Previsão de término" style="display:none;"><br><br>
+  `;
+  document.getElementById("formacoes").appendChild(div);
+}
+
+function toggleFormacaoAno(select) {
+  const ano = select.parentNode.querySelector(".ano");
+  const termino = select.parentNode.querySelector(".termino");
+  ano.style.display = select.value === "concluido" ? "block" : "none";
+  termino.style.display = select.value === "cursando" ? "block" : "none";
+}
+
+// Função para adicionar habilidade
+function addHabilidade() {
+  const div = document.createElement("div");
+  div.innerHTML = `<input type="text" placeholder="Habilidade"><br>`;
+  document.getElementById("habilidades").appendChild(div);
+  atualizarPreview();
+}
+
+// Função para adicionar curso
+function addCurso() {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <input type="text" placeholder="Nome do Curso"><br>
+    <input type="text" placeholder="Instituição"><br>
+    <select onchange="toggleCursoStatus(this)">
+      <option value="">Selecione</option>
+      <option value="concluido">Concluído</option>
+      <option value="cursando">Cursando</option>
+    </select><br>
+    <input type="text" class="ano" placeholder="Ano de conclusão" style="display:none;">
+    <input type="text" class="termino" placeholder="Data prevista (dia/mês/ano)" style="display:none;"><br><br>
+  `;
+  document.getElementById("cursos").appendChild(div);
+  atualizarPreview();
+}
+
+function toggleCursoStatus(select) {
+  const ano = select.parentNode.querySelector(".ano");
+  const termino = select.parentNode.querySelector(".termino");
+  ano.style.display = (select.value === "concluido") ? "block" : "none";
+  termino.style.display = (select.value === "cursando") ? "block" : "none";
+}
+
+// Função para adicionar idioma
+function addIdioma() {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <select onchange="toggleIdiomaOutro(this)" class="idioma">
+      <option value="portugues">Português</option>
+      <option value="espanhol">Espanhol</option>
+      <option value="ingles">Inglês</option>
+      <option value="outro">Outro</option>
+    </select>
+    <select class="nivel">
+      <option value="basico">Básico</option>
+      <option value="intermediario">Intermediário</option>
+      <option value="avancado">Avançado</option>
+    </select>
+    <input type="text" class="idiomaOutro" placeholder="Informe o idioma" style="display:none;"><br><br>
+  `;
+  document.getElementById("idiomas").appendChild(div);
+  atualizarPreview();
+}
+
+function toggleIdiomaOutro(select) {
+  const outroInput = select.parentNode.querySelector(".idiomaOutro");
+  outroInput.style.display = select.value === "outro" ? "block" : "none";
+}
+
+// Função de pré-visualização (já otimizada)
 function atualizarPreview() {
   let html = "";
 
@@ -35,30 +155,14 @@ function atualizarPreview() {
   if (portfolio) html += `<p style="margin:1px 0;">Portfólio: ${portfolio}</p>`;
   html += `</div>`;
 
-  // Objetivo (compacto)
+  // Objetivo
   const objetivo = document.getElementById("objetivo").value;
   if (objetivo) {
     html += `<h2 style="font-size:13px; margin:3px 0;">Objetivo</h2>`;
     html += `<p style="font-size:11px; line-height:1.2; margin:2px 0;">${objetivo}</p>`;
   }
 
-  // Experiências (compacto)
-  const experiencias = Array.from(document.querySelectorAll("#experiencias div")).map(div => {
-    const empresa = (div.querySelector("input[placeholder='Empresa']") || {}).value || "";
-    const cargo = (div.querySelector("input[placeholder='Cargo']") || {}).value || "";
-    const inicio = div.querySelector(".inicio")?.value || "";
-    const fim = div.querySelector(".fim")?.value || "";
-    const descricao = div.querySelector("textarea")?.value || "";
-
-    if (!empresa && !cargo && !descricao) return "";
-
-    return `<p style="font-size:11px; line-height:1.2; margin:2px 0;">
-              <strong>${cargo}</strong> - ${empresa} (${inicio || "?"} - ${fim || "?"})<br>
-              ${descricao}
-            </p>`;
-  }).filter(Boolean).join("");
-
-  if (experiencias) {
+    if (experiencias) {
     html += `<h2 style="font-size:13px; margin:3px 0;">Experiência Profissional</h2>${experiencias}`;
   }
 
@@ -122,14 +226,7 @@ function atualizarPreview() {
   // Atualiza preview e contador
   document.getElementById("previewCurriculo").innerHTML = html;
   atualizarEstimativa();
-
-// Eventos para atualizar preview em tempo real nos campos básicos
-["nomeCompleto","telefone","email","localizacao","linkedin","portfolio","objetivo"].forEach(id => {
-  document.getElementById(id).addEventListener("input", atualizarPreview);
-});
-
-// ✅ Listener da foto separado
-document.getElementById("fotoCandidato").addEventListener("change", atualizarPreview);
+}
 
 // Função para gerar PDF
 function gerarPDF() {
