@@ -255,8 +255,14 @@ if (habilidades.length) {
   html += `<p style="font-size:12px;">${habilidades.join(", ")}</p>`;
 }
 
-// Atualiza preview também ao selecionar foto
+  document.getElementById("previewCurriculo").innerHTML = html;
+  atualizarEstimativa();
+}  
+Listener da foto fora da função
 document.getElementById("fotoCandidato").addEventListener("change", atualizarPreview);
+
+  
+
 
 // Cursos
 const cursos = Array.from(document.querySelectorAll("#cursos div")).map(div => {
@@ -474,6 +480,7 @@ if (fotoInput.files && fotoInput.files[0]) {
 }
 }
   
+
 
 
 
