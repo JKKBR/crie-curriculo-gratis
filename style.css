@@ -75,6 +75,22 @@ button:hover {
   background-color: #2980b9;
 }
 
+/* Botão Remover Foto */
+.btn-remover {
+  background-color: #e74c3c;
+}
+.btn-remover:hover {
+  background-color: #c0392b;
+}
+
+/* Botões de exclusão dinâmicos */
+.btn-excluir {
+  background-color: #e67e22;
+}
+.btn-excluir:hover {
+  background-color: #d35400;
+}
+
 #contadorPaginas {
   display: block;
   margin-top: 10px;
@@ -146,6 +162,24 @@ input, textarea, select, button {
   display: inline-block;
   width: auto;          /* não ocupar 100% */
   margin-right: 6px;    /* separa os campos */
+}
+
+/* Labels invisíveis para acessibilidade */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+/* Preview inicial */
+#previewCurriculo p {
+  color: #777;
+  font-style: italic;
 }
 
 /* Responsividade */
