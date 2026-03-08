@@ -264,6 +264,258 @@ document.getElementById("fotoCandidato").addEventListener("change", atualizarPre
   
 
 
+// Ajusta textarea do objetivo dinamicamente
+document.getElementById("objetivo").addEventListener("input", function() {
+  this.style.height = "auto";
+  this.style.height = (this.scrollHeight) + "px";
+});
+
+// Função de estimativa de páginas
+function atualizarEstimativa() {
+  const texto = document.getElementById("previewCurriculo").innerText;
+  const caracteresPorPagina = 1800; // aproximação
+  const paginas = Math.max(1, Math.ceil(texto.length / caracteresPorPagina));
+  document.getElementById("contadorPaginas").innerText = `Estimativa: ${paginas} página(s) A4`;
+}
+
+// Função para adicionar experiência
+function addExperiencia() {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <input type="text" placeholder="Empresa"><br>
+    <input type="text" placeholder="Cargo"><br>
+    <label>Início:</label><input type="date" class="inicio"><br>
+    <label>Fim:</label><input type="date" class="fim"><br>
+    <select onchange="toggleEmpregoAtual(this)">
+      <option value="">Selecione</option>
+      <option value="atual">Emprego Atual</option>
+      <option value="antigo">Emprego Antigo</option>
+    </select><br>
+    <textarea placeholder="Descrição" rows="5"></textarea><br><br>
+  `;
+  document.getElementById("experiencias").appendChild(div);
+  atualizarPreview();   
+}
+
+function toggleEmpregoAtual(select) {
+  const fim = select.parentNode.querySelector(".fim");
+  fim.style.display = select.value === "atual" ? "none" : "block";
+}
+
+function addFormacao() {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <input type="text" placeholder="Curso"><br>
+    <input type="text" placeholder="Instituição"><br>
+    <select onchange="toggleFormacaoAno(this)">
+      <option value="concluido">Concluído</option>
+      <option value="cursando">Cursando</option>
+    </select><br>
+    <input type="text" class="ano" placeholder="Ano de conclusão" style="display:none;">
+    <input type="text" class="termino" placeholder="Previsão de término" style="display:none;"><br><br>
+  `;
+  document.getElementById("formacoes").appendChild(div);
+}
+
+function toggleFormacaoAno(select) {
+  const ano = select.parentNode.querySelector(".ano");
+  const termino = select.parentNode.querySelector(".termino");
+  if (select.value === "concluido") {
+    ano.style.display = "block";
+    termino.style.display = "none";
+  } else {
+    ano.style.display = "none";
+    termino.style.display = "block";
+  }
+}
+
+function addHabilidade() {
+  const div = document.createElement("div");
+  div.innerHTML = `<input type="text" placeholder="Habilidade"><br>`;
+  document.getElementById("habilidades").appendChild(div);
+  atualizarPreview();
+}
+
+function addCurso() {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <input type="text" placeholder="Nome do Curso"><br>
+    <input type="text" placeholder="Instituição"><br>
+    <select onchange="toggleCursoStatus(this)">
+      <option value="">Selecione</option>
+      <option value="concluido">Concluído</option>
+      <option value="cursando">Cursando</option>
+    </select><br>
+    <input type="text" class="ano" placeholder="Ano de conclusão" style="display:none;">
+    <input type="text" class="termino" placeholder="Data prevista (dia/mês/ano)" style="display:none;"><br><br>
+  `;
+  document.getElementById("cursos").appendChild(div);
+  atualizarPreview();
+}
+
+function toggleCursoStatus(select) {
+  const ano = select.parentNode.querySelector(".ano");
+  const termino = select.parentNode.querySelector(".termino");
+  if (select.value === "concluido") {
+    ano.style.display = "block";
+    termino.style.display = "none";
+  } else if (select.value === "cursando") {
+    ano.style.display = "none";
+    termino.style.display = "block";
+  } else {
+    ano.style.display = "none";
+    termino.style.display = "none";
+  }
+}
+
+function addIdioma() {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <select onchange="toggleIdiomaOutro(this)" class="idioma">
+      <option value="portugues">Português</option>
+      <option value="espanhol">Espanhol</option>
+      <option value="ingles">Inglês</option>
+      <option value="outro">Outro</option>
+    </select>
+    <select class="nivel">
+      <option value="basico">Básico</option>
+      <option value="intermediario">Intermediário</option>
+      <option value="avancado">Avançado</option>
+    </select>
+    <input type="text" class="idiomaOutro" placeholder="Informe o idioma" style="display:none;"><br><br>
+  `;
+  document.getElementById("idiomas").appendChild(div);
+  atualizarPreview();
+}
+
+function toggleIdiomaOutro(select) {
+  const outroInput = select.parentNode.querySelector(".idiomaOutro");
+  outroInput.style.display = select.value === "outro" ? "block" : "none";
+}
+
+// Variáveis de estilo
+let objetivoFont = "Helvetica";
+let objetivoSize = "14px";
+let objetivoBold = false;
+
+let globalFont = "Helvetica";
+let globalSize = 12;
+let globalBold = false;
+
+function setObjetivoFont(font) {
+  objetivoFont = font;
+  document.getElementById("objetivo").style.fontFamily = font;
+}
+
+function setObjetivoSize(size) {
+  objetivoSize = size;
+  document.getElementById("objetivo").style.fontSize = size;
+}
+
+function toggleObjetivoBold() {
+  objetivoBold = !objetivoBold;
+  document.getElementById("objetivo").style.fontWeight = objetivoBold ? "bold" : "normal";
+}
+
+function aplicarEstiloGlobal(valor) {
+  if (valor === "global") {
+    globalFont = objetivoFont;
+    globalSize = parseInt(objetivoSize);
+    globalBold = objetivoBold;
+    alert("Estilo aplicado ao PDF inteiro!");
+  }
+}
+
+function togglePalavrasChaves() {
+  const checkbox = document.getElementById("ativarPalavrasChaves");
+  const bloco = document.getElementById("blocoPalavrasChaves");
+  bloco.style.display = checkbox.checked ? "block" : "none";
+}
+
+// Função de pré-visualização
+function atualizarPreview() {
+  let html = "";
+
+  // Nome + Foto
+  const nome = document.getElementById("nomeCompleto").value;
+  const fotoInput = document.getElementById("fotoCandidato");
+  let fotoHTML = "";
+
+  if (fotoInput && fotoInput.files && fotoInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      fotoHTML = `<img src="${e.target.result}" alt="Foto do candidato">`;
+      document.querySelector(".preview-header").innerHTML =
+        `${fotoHTML}<h3>${nome}</h3>`;
+    };
+    reader.readAsDataURL(fotoInput.files[0]);
+  } else {
+    document.querySelector(".preview-header").innerHTML =
+      `<h3>${nome}</h3>`;
+  }
+
+  // Contato
+  const telefone = document.getElementById("telefone").value;
+  const email = document.getElementById("email").value;
+  const localizacao = document.getElementById("localizacao").value;
+  const linkedin = document.getElementById("linkedin").value;
+  const portfolio = document.getElementById("portfolio").value;
+
+  html += `<div style="text-align:center; font-size:12px; line-height:1.4;">`;
+  if (telefone) html += `<p>Telefone: ${telefone}</p>`;
+  if (email) html += `<p>E-mail: ${email}</p>`;
+  if (localizacao) html += `<p>Localização: ${localizacao}</p>`;
+  if (linkedin) html += `<p>LinkedIn: ${linkedin}</p>`;
+  if (portfolio) html += `<p>Portfólio: ${portfolio}</p>`;
+  html += `</div>`;
+
+  // Objetivo
+  const objetivo = document.getElementById("objetivo").value;
+  if (objetivo) {
+    html += `<h2 style="font-size:14px;">Objetivo</h2>`;
+    html += `<p style="font-size:12px; line-height:1.4;">${objetivo}</p>`;
+  }
+
+  // Experiências
+  const experiencias = Array.from(document.querySelectorAll("#experiencias div")).map(div => {
+    const empresa = div.querySelector("input[placeholder='Empresa']")?.value || "";
+    const cargo = div.querySelector("input[placeholder='Cargo']")?.value || "";
+    const inicio = div.querySelector(".inicio")?.value || "";
+    const fim = div.querySelector(".fim")?.value || "";
+    const descricao = div.querySelector("textarea")?.value || "";
+    return `<p style="font-size:12px;"><strong>${cargo}</strong> - ${empresa} (${inicio} - ${fim})<br>${descricao}</p>`;
+  }).join("");
+  if (experiencias) html += `<h2 style="font-size:14px;">Experiência Profissional</h2>${experiencias}`;
+
+  // Formação
+  const formacoes = Array.from(document.querySelectorAll("#formacoes div")).map(div => {
+    const curso = div.querySelector("input[placeholder='Curso']")?.value || "";
+    const instituicao = div.querySelector("input[placeholder='Instituição']")?.value || "";
+    const ano = div.querySelector(".ano")?.value || "";
+    const termino = div.querySelector(".termino")?.value || "";
+    return `<p style="font-size:12px;">${curso} - ${instituicao} (${ano || termino})</p>`;
+  }).join("");
+  if (formacoes) html += `<h2 style="font-size:14px;">Formação Acadêmica</h2>${formacoes}`;
+
+// Habilidades
+const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
+  .map(i => i.value)
+  .filter(Boolean);
+
+if (habilidades.length) {
+  html += `<h2 style="font-size:14px;">Habilidades Técnicas</h2>`;
+  html += `<p style="font-size:12px;">${habilidades.join(", ")}</p>`;
+}
+
+  document.getElementById("previewCurriculo").innerHTML = html;
+  atualizarEstimativa();
+}  
+Listener da foto fora da função
+document.getElementById("fotoCandidato").addEventListener("change", atualizarPreview);
+
+  
+
+
 // Cursos
 const cursos = Array.from(document.querySelectorAll("#cursos div")).map(div => {
   const nomeCurso = div.querySelector("input[placeholder='Nome do Curso']")?.value || "";
@@ -491,6 +743,7 @@ if (fotoInput.files && fotoInput.files[0]) {
 }
 }
   
+
 
 
 
