@@ -12,6 +12,14 @@ function atualizarEstimativa() {
   document.getElementById("contadorPaginas").innerText = `Estimativa: ${paginas} página(s) A4`;
 }
 
+// Função genérica para confirmar exclusão
+function confirmarExclusao(botao) {
+  if (confirm("Você realmente quer excluir este item?")) {
+    botao.parentNode.remove();
+    atualizarPreview();
+  }
+}
+
 // Funções para adicionar blocos com botão de exclusão
 function addExperiencia() {
   const div = document.createElement("div");
@@ -26,7 +34,7 @@ function addExperiencia() {
       <option value="antigo">Emprego Antigo</option>
     </select><br>
     <textarea placeholder="Descrição" rows="5"></textarea><br>
-    <button type="button" onclick="this.parentNode.remove(); atualizarPreview();">Excluir</button>
+    <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
     <br><br>
   `;
   document.getElementById("experiencias").appendChild(div);
@@ -48,7 +56,7 @@ function addFormacao() {
     </select><br>
     <input type="text" class="ano" placeholder="Ano de conclusão" style="display:none;">
     <input type="text" class="termino" placeholder="Previsão de término" style="display:none;"><br>
-    <button type="button" onclick="this.parentNode.remove(); atualizarPreview();">Excluir</button>
+    <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
     <br><br>
   `;
   document.getElementById("formacoes").appendChild(div);
@@ -64,7 +72,7 @@ function addHabilidade() {
   const div = document.createElement("div");
   div.innerHTML = `
     <input type="text" placeholder="Habilidade">
-    <button type="button" onclick="this.parentNode.remove(); atualizarPreview();">Excluir</button>
+    <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
     <br>
   `;
   document.getElementById("habilidades").appendChild(div);
@@ -83,7 +91,7 @@ function addCurso() {
     </select><br>
     <input type="text" class="ano" placeholder="Ano de conclusão" style="display:none;">
     <input type="text" class="termino" placeholder="Data prevista (dia/mês/ano)" style="display:none;"><br>
-    <button type="button" onclick="this.parentNode.remove(); atualizarPreview();">Excluir</button>
+    <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
     <br><br>
   `;
   document.getElementById("cursos").appendChild(div);
@@ -111,7 +119,7 @@ function addIdioma() {
       <option value="avancado">Avançado</option>
     </select>
     <input type="text" class="idiomaOutro" placeholder="Informe o idioma" style="display:none;">
-    <button type="button" onclick="this.parentNode.remove(); atualizarPreview();">Excluir</button>
+    <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
   `;
   document.getElementById("idiomas").appendChild(div);
   atualizarPreview();
@@ -121,12 +129,14 @@ function toggleIdiomaOutro(select) {
   outroInput.style.display = select.value === "outro" ? "block" : "none";
 }
 
-// Remover foto
+// Remover foto com confirmação
 function removerFoto() {
-  const fotoInput = document.getElementById("fotoCandidato");
-  fotoInput.value = "";
-  document.querySelector(".preview-header").innerHTML = "<h3>" + document.getElementById("nomeCompleto").value + "</h3>";
-  atualizarPreview();
+  if (confirm("Você realmente quer remover a foto?")) {
+    const fotoInput = document.getElementById("fotoCandidato");
+    fotoInput.value = "";
+    document.querySelector(".preview-header").innerHTML = "<h3>" + document.getElementById("nomeCompleto").value + "</h3>";
+    atualizarPreview();
+  }
 }
 
 // Função de pré-visualização (mantida igual, mas já atualiza ao excluir)
@@ -406,7 +416,7 @@ function gerarPDF() {
       y += 3; // espaçamento reduzido
     });
 
-       // Palavras-Chaves ocultas
+        // Palavras-Chaves ocultas
     const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
     if (ativarPalavrasChaves) {
       const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value;
