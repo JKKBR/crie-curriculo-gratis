@@ -45,7 +45,7 @@ h2 {
   margin-top: 30px;
   border-bottom: 2px solid #3498db;
   padding-bottom: 5px;
-  width: 100%; /* títulos ocupam toda a largura */
+  width: 100%;
 }
 
 input, textarea, select {
@@ -67,6 +67,7 @@ button {
   cursor: pointer;
   margin: 5px;
   transition: background-color 0.3s ease;
+  font-weight: bold;
 }
 
 button:hover {
@@ -96,7 +97,7 @@ button:hover {
 .preview h3 {
   text-align: center;
   font-size: 22px;
-  margin-bottom: 10px;
+  margin-bottom: 20px; /* mais espaço abaixo do nome */
 }
 
 /* Cabeçalho da pré-visualização com foto + nome */
@@ -105,7 +106,7 @@ button:hover {
   align-items: center;
   gap: 15px;
   margin-bottom: 15px;
-  justify-content: center; /* centraliza o bloco no meio */
+  justify-content: center;
 }
 
 .preview-header img {
@@ -124,6 +125,14 @@ input:focus, textarea:focus, select:focus {
 
 input, textarea, select, button {
   transition: all 0.3s ease;
+}
+
+/* Aviso Palavras-Chaves */
+.aviso-palavras {
+  color: #a00;
+  font-style: italic;
+  font-size: 12px;
+  margin-top: 5px;
 }
 
 /* Responsividade */
