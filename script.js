@@ -281,10 +281,14 @@ function atualizarPreview() {
 }
 
 // Eventos para atualizar preview em tempo real nos campos básicos
-["nomeCompleto","telefone","email","localizacao","linkedin","portfolio","objetivo","fotoCandidato"].forEach(id => {
+["nomeCompleto","telefone","email","localizacao","linkedin","portfolio","objetivo"].forEach(id => {
   document.getElementById(id).addEventListener("input", atualizarPreview);
 });
 
+// ✅ Listener da foto separado (evento correto é "change")
+document.getElementById("fotoCandidato").addEventListener("change", atualizarPreview);
+
+// Função para gerar PDF
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -296,8 +300,19 @@ function gerarPDF() {
     linhas.forEach(linha => {
       if (y > 270) { doc.addPage(); y = 20; }
       doc.text(linha, x, y);
-      y += 6;
+      y += 8; // ✅ espaçamento padronizado
     });
+    y += 4; // espaço extra entre blocos
+  }
+
+  // Função utilitária para formatar datas em DD/MM/AAAA
+  function formatarDataBR(dataStr) {
+    if (!dataStr) return "";
+    const partes = dataStr.split("-");
+    if (partes.length === 3) {
+      return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+    return dataStr;
   }
 
   // Função que escreve todo o conteúdo do currículo
@@ -305,13 +320,12 @@ function gerarPDF() {
     // Cabeçalho e nome
     const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
     doc.setFontSize(22);
-    if (nomeCompleto) doc.text(nomeCompleto, 50, 25); // nome ao lado da foto
-    // Sobe o ponto inicial dos contatos para mais abaixo
-    y = 55; // em vez de 40
+    if (nomeCompleto) doc.text(nomeCompleto, 50, 25);
+    y = 65; // espaço antes dos contatos
 
     // Dados de contato
     doc.setFontSize(14);
-    doc.text("Dados de Contato:", 10, y); y += 8;
+    doc.text("Dados de Contato:", 10, y); y += 10;
     doc.setFontSize(12);
     escreverTexto(`Telefone: ${document.getElementById("telefone").value}`, 10, 180);
     escreverTexto(`Email: ${document.getElementById("email").value}`, 10, 180);
@@ -324,11 +338,10 @@ function gerarPDF() {
     // Objetivo
     y += 10;
     doc.setFontSize(14);
-    doc.text("Objetivo:", 10, y); y += 8;
+    doc.text("Objetivo:", 10, y); y += 10;
     doc.setFontSize(12);
     const objetivo = document.getElementById("objetivo").value;
     escreverTexto(objetivo, 10, 180);
-    y += 8;
 
     // Experiências
     let experiencias = Array.from(document.querySelectorAll("#experiencias div"));
@@ -337,20 +350,21 @@ function gerarPDF() {
       const statusB = b.querySelector("select").value;
       if (statusA === "atual" && statusB !== "atual") return -1;
       if (statusB === "atual" && statusA !== "atual") return 1;
-      const inicioA = new Date(a.querySelector(".inicio").value);
-      const inicioB = new Date(b.querySelector(".inicio").value);
+      const inicioA = a.querySelector(".inicio").value ? new Date(a.querySelector(".inicio").value) : new Date(0);
+      const inicioB = b.querySelector(".inicio").value ? new Date(b.querySelector(".inicio").value) : new Date(0);
       return inicioB - inicioA;
     });
 
+    y += 10;
     doc.setFontSize(14);
-    doc.text("Experiência Profissional:", 10, y); y += 8;
+    doc.text("Experiência Profissional:", 10, y); y += 10;
 
     experiencias.forEach(exp => {
       if (y > 270) { doc.addPage(); y = 20; }
       const empresa = exp.querySelector("input[placeholder='Empresa']").value;
       const cargo = exp.querySelector("input[placeholder='Cargo']").value;
-      const inicio = exp.querySelector(".inicio").value;
-      const fim = exp.querySelector(".fim").value;
+      const inicio = formatarDataBR(exp.querySelector(".inicio").value);
+      const fim = formatarDataBR(exp.querySelector(".fim").value);
       const status = exp.querySelector("select").value;
       const descricao = exp.querySelector("textarea").value;
 
@@ -360,17 +374,18 @@ function gerarPDF() {
       escreverTexto(`Data: ${inicio} até ${status === "atual" ? "o momento" : fim}`, 10, 180);
       escreverTexto("Descrição:", 10, 180);
       escreverTexto(descricao, 10, 180);
-      y += 8;
+      y += 10;
     });
 
     // Formação Acadêmica
+    y += 10;
     doc.setFontSize(14);
-    doc.text("Formação Acadêmica:", 10, y); y += 8;
+    doc.text("Formação Acadêmica:", 10, y); y += 10;
     let formacoes = Array.from(document.querySelectorAll("#formacoes div"));
     formacoes.sort((a,b) => {
       const anoA = a.querySelector(".ano").value || a.querySelector(".termino").value;
       const anoB = b.querySelector(".ano").value || b.querySelector(".termino").value;
-      return new Date(anoB) - new Date(anoA);
+      return (anoB ? new Date(anoB) : new Date(0)) - (anoA ? new Date(anoA) : new Date(0));
     });
 
     formacoes.forEach(f => {
@@ -378,8 +393,8 @@ function gerarPDF() {
       const curso = f.querySelector("input[placeholder='Curso']").value;
       const instituicao = f.querySelector("input[placeholder='Instituição']").value;
       const status = f.querySelector("select").value;
-      const ano = f.querySelector(".ano").value;
-      const termino = f.querySelector(".termino").value;
+      const ano = formatarDataBR(f.querySelector(".ano").value);
+      const termino = formatarDataBR(f.querySelector(".termino").value);
 
       doc.setFontSize(12);
       escreverTexto(`Curso: ${curso}`, 10, 180);
@@ -388,29 +403,31 @@ function gerarPDF() {
       if (status === "concluido" && ano) anoOuPrevisao = `Ano: ${ano}`;
       if (status === "cursando" && termino) anoOuPrevisao = `Previsão: ${termino}`;
       escreverTexto(`Status: ${status} ${anoOuPrevisao}`, 10, 180);
-      y += 8;
+      y += 10;
     });
 
     // Habilidades
+    y += 10;
     doc.setFontSize(14);
-    doc.text("Habilidades Técnicas:", 10, y); y += 8;
-    const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(h => h.value);
+    doc.text("Habilidades Técnicas:", 10, y); y += 10;
+    const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(h => h.value).filter(Boolean);
     habilidades.forEach(h => {
       if (y > 270) { doc.addPage(); y = 20; }
       escreverTexto(h, 10, 180);
     });
-    y += 8;
+    y += 10;
 
     // Cursos
+    y += 10;
     doc.setFontSize(14);
-    doc.text("Cursos:", 10, y); y += 8;
+    doc.text("Cursos:", 10, y); y += 10;
     let cursos = Array.from(document.querySelectorAll("#cursos div"));
     cursos.forEach(c => {
       if (y > 270) { doc.addPage(); y = 20; }
       const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
       const instituicao = c.querySelector("input[placeholder='Instituição']").value;
-      const ano = c.querySelector(".ano").value;
-      const termino = c.querySelector(".termino").value;
+      const ano = formatarDataBR(c.querySelector(".ano").value);
+      const termino = formatarDataBR(c.querySelector(".termino").value);
       const status = c.querySelector("select").value;
 
       doc.setFontSize(12);
@@ -418,12 +435,13 @@ function gerarPDF() {
       escreverTexto(`Instituição: ${instituicao}`, 10, 180);
       if (status === "concluido") escreverTexto(`Ano: ${ano}`, 10, 180);
       if (status === "cursando") escreverTexto(`Previsão: ${termino}`, 10, 180);
-      y += 8;
+      y += 10;
     });
 
     // Idiomas
+    y += 10;
     doc.setFontSize(14);
-    doc.text("Idiomas:", 10, y); y += 8;
+    doc.text("Idiomas:", 10, y); y += 10;
     const idiomas = document.querySelectorAll("#idiomas div");
     idiomas.forEach(i => {
       if (y > 270) { doc.addPage(); y = 20; }
@@ -433,7 +451,7 @@ function gerarPDF() {
       let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
       doc.setFontSize(12);
       escreverTexto(`Idioma: ${idiomaFinal} - Nível: ${nivel}`, 10, 180);
-      y += 6;
+      y += 10;
     });
 
     // Palavras-Chaves ocultas
@@ -441,33 +459,38 @@ function gerarPDF() {
     if (ativarPalavrasChaves) {
       const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value;
       if (textoPalavrasChaves.trim() !== "") {
-        doc.setTextColor(255, 255, 255);
+        // ✅ Inserção invisível para ATS
+        doc.setTextColor(255, 255, 255); // branco
         doc.setFontSize(6);
         escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180);
-        doc.setTextColor(0, 0, 0);
+        doc.setTextColor(0, 0, 0); // volta ao preto
       }
     }
 
-   // Finalizar PDF
+    // Finalizar PDF
     doc.save("curriculo.pdf");
   }
 
   // Foto opcional
-const fotoInput = document.getElementById("fotoCandidato");
-if (fotoInput.files && fotoInput.files[0]) {
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const tipoImagem = fotoInput.files[0].type.includes("png") ? "PNG" : "JPEG";
-    doc.addImage(e.target.result, tipoImagem, 10, 10, 30, 40);
-    y = 60; // evita sobreposição com nome/contato
+  const fotoInput = document.getElementById("fotoCandidato");
+  if (fotoInput.files && fotoInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const mimeType = fotoInput.files[0].type.toLowerCase();
+      const tipoImagem = mimeType.includes("png") ? "PNG" :
+                         (mimeType.includes("jpg") || mimeType.includes("jpeg")) ? "JPEG" : "JPEG";
+      doc.addImage(e.target.result, tipoImagem, 10, 10, 30, 40);
+      y = 65; // ✅ garante espaço entre foto, nome e contatos
+      finalizarPDF();
+    };
+    reader.onerror = function() {
+      finalizarPDF(); // ✅ fallback se houver erro na leitura
+    };
+    reader.readAsDataURL(fotoInput.files[0]);
+  } else {
     finalizarPDF();
-  };
-  reader.readAsDataURL(fotoInput.files[0]);
-} else {
-  finalizarPDF();
+  }
 }
-}
-
 
 
 
@@ -485,6 +508,7 @@ if (fotoInput.files && fotoInput.files[0]) {
 
 
   
+
 
 
 
