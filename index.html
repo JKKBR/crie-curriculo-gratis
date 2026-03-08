@@ -20,7 +20,7 @@
 
       <h2>Dados de Contato</h2>
       <input type="tel" id="telefone" placeholder="Telefone">
-      <input type="email" id="email" placeholder="Email">
+      <input type="email" id="email" placeholder="E-mail">
       <input type="text" id="localizacao" placeholder="Localização">
       <input type="text" id="linkedin" placeholder="LinkedIn">
       <input type="text" id="portfolio" placeholder="Portfólio (Opcional)">
@@ -65,7 +65,7 @@
       <div id="idiomas"></div>
       <button type="button" onclick="addIdioma()">+ Adicionar Idioma</button>
 
-      <h2>Palavras-Chaves</h2>
+           <h2>Palavras-Chaves</h2>
       <p>
         Essa funcionalidade insere palavras-chave estratégicas no seu currículo para que, em análises feitas por sistemas de IA,
         o documento seja reconhecido como alinhado às características exigidas para participar do processo seletivo.
@@ -74,7 +74,6 @@
       <p class="aviso-palavras">
         Atenção: devido às atualizações recentes em sistemas de Inteligência Artificial, o uso de palavras‑chaves ocultas pode ser interpretado como tentativa de manipulação. Utilize este recurso com cautela.
       </p>
-
       <label>
         <input type="checkbox" id="ativarPalavrasChaves" onchange="togglePalavrasChaves()"> 
         Ativar Palavras-Chaves
@@ -93,4 +92,12 @@
 
     <!-- Pré-visualização -->
     <div class="preview">
-      <h2>Pré‑visual
+      <h2>Pré‑visualização</h2>
+      <div class="preview-header"></div>
+      <div id="previewCurriculo"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
