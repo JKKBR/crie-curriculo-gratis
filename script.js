@@ -541,9 +541,12 @@ if (cursos) html += `<h2 style="font-size:14px;">Cursos</h2>${cursos}`;
 }
 
 // Eventos para atualizar preview em tempo real nos campos básicos
-["nomeCompleto","telefone","email","localizacao","linkedin","portfolio","objetivo","fotoCandidato"].forEach(id => {
+["nomeCompleto","telefone","email","localizacao","linkedin","portfolio","objetivo"].forEach(id => {
   document.getElementById(id).addEventListener("input", atualizarPreview);
 });
+
+// ✅ Listener da foto separado (evento correto é "change")
+document.getElementById("fotoCandidato").addEventListener("change", atualizarPreview);
 
 // Função para gerar PDF
 function gerarPDF() {
@@ -557,9 +560,9 @@ function gerarPDF() {
     linhas.forEach(linha => {
       if (y > 270) { doc.addPage(); y = 20; }
       doc.text(linha, x, y);
-      y += 8; // ✅ espaçamento padronizado
+      y += 10; // ✅ espaçamento padronizado
     });
-    y += 4; // espaço extra entre blocos
+    y += 6; // espaço extra entre blocos
   }
 
   // Função utilitária para formatar datas em DD/MM/AAAA
@@ -706,7 +709,6 @@ function gerarPDF() {
       y += 10;
     });
 
-
     // Palavras-Chaves ocultas
     const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
     if (ativarPalavrasChaves) {
@@ -743,6 +745,7 @@ if (fotoInput.files && fotoInput.files[0]) {
 }
 }
   
+
 
 
 
