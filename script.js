@@ -280,20 +280,8 @@ function gerarPDF() {
       if (status === "cursando") escreverTexto(`Previsão: ${termino}`, 10, 180);
       y += 5;
     });
-
-    // Idiomas (compacto)
-    y += 5;
-    doc.setFontSize(13);
-    doc.text("Idiomas:", 10, y); y += 5;
-    const idiomas = document.querySelectorAll("#idiomas div");
-    idiomas.forEach(i => {
-      if (y > 270) { doc.addPage(); y = 20; }
-      const idiomaSelect = i.querySelector(".idioma").value;
-      const nivel = i.querySelector(".nivel").value;
-      const outro = i.querySelector(".idiomaOutro").value;
-      let idiomaFinal = idiomaSelect === "outro"
-      
-        // Idiomas (compacto)
+ 
+     // Idiomas (compacto)
     y += 5;
     doc.setFontSize(13);
     doc.text("Idiomas:", 10, y); y += 5;
@@ -360,6 +348,7 @@ function gerarPDF() {
 
 
   
+
 
 
 
