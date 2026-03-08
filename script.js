@@ -226,7 +226,7 @@ function atualizarPreview() {
   }).filter(Boolean).join("");
 
   if (idiomas) {
-    html += `<h2>Idiomas</h2><ul style="font-size:12px; line-height:1.3; margin:3px 0;">${idiomas}</ul>`;
+    html += `<h2>Idiomas</h2><ul style="font-size:12px; line-height:1.2; margin:2px 0;">${idiomas}</ul>`;
   }
 
   // Atualiza preview e contador
@@ -242,6 +242,13 @@ function atualizarPreview() {
 // Listener da foto separado
 document.getElementById("fotoCandidato").addEventListener("change", atualizarPreview);
 
+// Função para alternar exibição da caixa de palavras-chave
+function togglePalavrasChaves() {
+  const checkbox = document.getElementById("ativarPalavrasChaves");
+  const bloco = document.getElementById("blocoPalavrasChaves");
+  bloco.style.display = checkbox.checked ? "block" : "none";
+}
+
 // Função para gerar PDF
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
@@ -250,13 +257,14 @@ function gerarPDF() {
 
   // Função auxiliar para escrever texto com quebra automática
   function escreverTexto(texto, x, largura) {
+    if (!texto) return;
     const linhas = doc.splitTextToSize(texto, largura);
     linhas.forEach(linha => {
       if (y > 270) { doc.addPage(); y = 20; }
       doc.text(linha, x, y);
-      y += 4; // espaçamento menor entre linhas
+      y += 4;
     });
-    y += 2; // espaço extra entre blocos
+    y += 2;
   }
 
   // Função utilitária para formatar datas em DD/MM/AAAA
@@ -296,21 +304,10 @@ function gerarPDF() {
     escreverTexto(objetivo, 12, 180);
 
     // Experiências
-    let experiencias = Array.from(document.querySelectorAll("#experiencias div"));
-    experiencias.sort((a, b) => {
-      const statusA = a.querySelector("select").value;
-      const statusB = b.querySelector("select").value;
-      if (statusA === "atual" && statusB !== "atual") return -1;
-      if (statusB === "atual" && statusA !== "atual") return 1;
-      const inicioA = a.querySelector(".inicio").value ? new Date(a.querySelector(".inicio").value) : new Date(0);
-      const inicioB = b.querySelector(".inicio").value ? new Date(b.querySelector(".inicio").value) : new Date(0);
-      return inicioB - inicioA;
-    });
-
     y += 6;
     doc.setFontSize(13);
     doc.text("Experiência Profissional:", 10, y); y += 6;
-
+    let experiencias = Array.from(document.querySelectorAll("#experiencias div"));
     experiencias.forEach(exp => {
       if (y > 270) { doc.addPage(); y = 20; }
       const empresa = exp.querySelector("input[placeholder='Empresa']").value;
@@ -342,17 +339,27 @@ function gerarPDF() {
       y += 4;
     });
 
-    // Habilidades Técnicas
+    // Habilidades Técnicas em 4 colunas
     y += 6;
     doc.setFontSize(13);
     doc.text("Habilidades Técnicas:", 10, y); y += 6;
-    const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(h => h.value).filter(Boolean);
-    habilidades.forEach(h => {
+    const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
+      .map(h => h.value)
+      .filter(Boolean);
+
+    let colunas = 4;
+    let larguraColuna = 45;
+    habilidades.forEach((h, idx) => {
       if (y > 270) { doc.addPage(); y = 20; }
       doc.setFontSize(11);
-      doc.text(`· ${h}`, 12, y);
-      y += 4;
+      let colunaAtual = idx % colunas;
+      let posX = 12 + (colunaAtual * larguraColuna);
+      doc.text(`· ${h}`, posX, y);
+      if (colunaAtual === colunas - 1) {
+        y += 6; // quebra linha após 4 itens
+      }
     });
+    if (habilidades.length % colunas !== 0) y += 6;
 
     // Cursos
     y += 6;
@@ -387,10 +394,10 @@ function gerarPDF() {
       let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
       doc.setFontSize(11);
       doc.text(`· ${idiomaFinal} - ${nivel}`, 12, y);
-      y += 4;
+      y += 3; // espaçamento reduzido
     });
 
-       // Palavras-Chaves ocultas
+        // Palavras-Chaves ocultas
     const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
     if (ativarPalavrasChaves) {
       const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value;
@@ -427,3 +434,4 @@ function gerarPDF() {
     finalizarPDF();
   }
 }
+
