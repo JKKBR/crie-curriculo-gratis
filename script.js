@@ -4,11 +4,10 @@ document.getElementById("objetivo").addEventListener("input", function() {
   this.style.height = (this.scrollHeight) + "px";
 });
 
+// Função de estimativa de páginas (mantida apenas uma versão)
 function atualizarEstimativa() {
-  // Pegamos todo o texto do preview
   const texto = document.getElementById("previewCurriculo").innerText;
-  // Aproximação: cada página A4 comporta ~1800 caracteres
-  const caracteresPorPagina = 1800;
+  const caracteresPorPagina = 1800; // aproximação
   const paginas = Math.max(1, Math.ceil(texto.length / caracteresPorPagina));
   document.getElementById("contadorPaginas").innerText = `Estimativa: ${paginas} página(s) A4`;
 }
@@ -19,8 +18,8 @@ function addExperiencia() {
   div.innerHTML = `
     <input type="text" placeholder="Empresa"><br>
     <input type="text" placeholder="Cargo"><br>
-    <label>Início:</label><input type="month" class="inicio"><br>
-    <label>Fim:</label><input type="month" class="fim"><br>
+    <label>Início:</label><input type="date" class="inicio"><br>
+    <label>Fim:</label><input type="date" class="fim"><br>
     <select onchange="toggleEmpregoAtual(this)">
       <option value="">Selecione</option>
       <option value="atual">Emprego Atual</option>
@@ -29,16 +28,12 @@ function addExperiencia() {
     <textarea placeholder="Descrição" rows="5"></textarea><br><br>
   `;
   document.getElementById("experiencias").appendChild(div);
-  atualizarPaginas();
+  atualizarPreview();   
 }
 
 function toggleEmpregoAtual(select) {
   const fim = select.parentNode.querySelector(".fim");
-  if (select.value === "atual") {
-    fim.style.display = "none";
-  } else {
-    fim.style.display = "block";
-  }
+  fim.style.display = select.value === "atual" ? "none" : "block";
 }
 
 function addFormacao() {
@@ -59,13 +54,8 @@ function addFormacao() {
 function toggleFormacaoAno(select) {
   const ano = select.parentNode.querySelector(".ano");
   const termino = select.parentNode.querySelector(".termino");
-  if (select.value === "concluido") {
-    ano.style.display = "block";
-    termino.style.display = "none";
-  } else {
-    ano.style.display = "none";
-    termino.style.display = "block";
-  }
+  ano.style.display = select.value === "concluido" ? "block" : "none";
+  termino.style.display = select.value === "cursando" ? "block" : "none";
 }
 
 function addHabilidade() {
@@ -89,22 +79,14 @@ function addCurso() {
     <input type="text" class="termino" placeholder="Data prevista (dia/mês/ano)" style="display:none;"><br><br>
   `;
   document.getElementById("cursos").appendChild(div);
-    atualizarPreview();
+  atualizarPreview();
 }
 
 function toggleCursoStatus(select) {
   const ano = select.parentNode.querySelector(".ano");
   const termino = select.parentNode.querySelector(".termino");
-  if (select.value === "concluido") {
-    ano.style.display = "block";
-    termino.style.display = "none";
-  } else if (select.value === "cursando") {
-    ano.style.display = "none";
-    termino.style.display = "block";
-  } else {
-    ano.style.display = "none";
-    termino.style.display = "none";
-  }
+  ano.style.display = (select.value === "concluido") ? "block" : "none";
+  termino.style.display = (select.value === "cursando") ? "block" : "none";
 }
 
 function addIdioma() {
@@ -127,7 +109,6 @@ function addIdioma() {
   atualizarPreview();
 }
 
-// Função para adicionar idiomas
 function toggleIdiomaOutro(select) {
   const outroInput = select.parentNode.querySelector(".idiomaOutro");
   outroInput.style.display = select.value === "outro" ? "block" : "none";
@@ -170,14 +151,6 @@ function togglePalavrasChaves() {
   const checkbox = document.getElementById("ativarPalavrasChaves");
   const bloco = document.getElementById("blocoPalavrasChaves");
   bloco.style.display = checkbox.checked ? "block" : "none";
-}
-
-// Função de estimativa de páginas
-function atualizarEstimativa() {
-  const texto = document.getElementById("previewCurriculo").innerText;
-  const caracteresPorPagina = 1800; // aproximação
-  const paginas = Math.max(1, Math.ceil(texto.length / caracteresPorPagina));
-  document.getElementById("contadorPaginas").innerText = `Estimativa: ${paginas} página(s) A4`;
 }
 
 // Função de pré-visualização
@@ -224,29 +197,48 @@ function atualizarPreview() {
     html += `<p style="font-size:12px; line-height:1.4;">${objetivo}</p>`;
   }
 
-  // Experiências
+   // Experiências
   const experiencias = Array.from(document.querySelectorAll("#experiencias div")).map(div => {
-    const empresa = div.querySelector("input[placeholder='Empresa']")?.value || "";
-    const cargo = div.querySelector("input[placeholder='Cargo']")?.value || "";
+    const empresa = (div.querySelector("input[placeholder='Empresa']") || {}).value || "";
+    const cargo = (div.querySelector("input[placeholder='Cargo']") || {}).value || "";
     const inicio = div.querySelector(".inicio")?.value || "";
     const fim = div.querySelector(".fim")?.value || "";
     const descricao = div.querySelector("textarea")?.value || "";
-    return `<p style="font-size:12px;"><strong>${cargo}</strong> - ${empresa} (${inicio} - ${fim})<br>${descricao}</p>`;
-  }).join("");
-  if (experiencias) html += `<h2 style="font-size:14px;">Experiência Profissional</h2>${experiencias}`;
+
+    // ✅ Se não houver empresa/cargo, não renderiza bloco vazio
+    if (!empresa && !cargo && !descricao) return "";
+
+    return `<p style="font-size:12px;">
+              <strong>${cargo}</strong> - ${empresa} (${inicio || "?"} - ${fim || "?"})<br>
+              ${descricao}
+            </p>`;
+  }).filter(Boolean).join("");
+
+  if (experiencias) {
+    html += `<h2 style="font-size:14px;">Experiência Profissional</h2>${experiencias}`;
+  }
 
   // Formação
   const formacoes = Array.from(document.querySelectorAll("#formacoes div")).map(div => {
-    const curso = div.querySelector("input[placeholder='Curso']")?.value || "";
-    const instituicao = div.querySelector("input[placeholder='Instituição']")?.value || "";
+    const curso = (div.querySelector("input[placeholder='Curso']") || {}).value || "";
+    const instituicao = (div.querySelector("input[placeholder='Instituição']") || {}).value || "";
     const ano = div.querySelector(".ano")?.value || "";
     const termino = div.querySelector(".termino")?.value || "";
-    return `<p style="font-size:12px;">${curso} - ${instituicao} (${ano || termino})</p>`;
-  }).join("");
-  if (formacoes) html += `<h2 style="font-size:14px;">Formação Acadêmica</h2>${formacoes}`;
+
+    if (!curso && !instituicao) return "";
+
+    return `<p style="font-size:12px;">${curso} - ${instituicao} (${ano || termino || "?"})</p>`;
+  }).filter(Boolean).join("");
+
+  if (formacoes) {
+    html += `<h2 style="font-size:14px;">Formação Acadêmica</h2>${formacoes}`;
+  }
 
   // Habilidades
-  const habilidades = Array.from(document.querySelectorAll("#habilidades input")).map(i => i.value).filter(Boolean);
+  const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
+    .map(i => i.value.trim())
+    .filter(Boolean);
+
   if (habilidades.length) {
     html += `<h2 style="font-size:14px;">Habilidades Técnicas</h2>`;
     html += `<p style="font-size:12px;">${habilidades.join(", ")}</p>`;
@@ -254,23 +246,36 @@ function atualizarPreview() {
 
   // Cursos
   const cursos = Array.from(document.querySelectorAll("#cursos div")).map(div => {
-    const nomeCurso = div.querySelector("input[placeholder='Nome do Curso']")?.value || "";
-    const instituicao = div.querySelector("input[placeholder='Instituição']")?.value || "";
+    const nomeCurso = (div.querySelector("input[placeholder='Nome do Curso']") || {}).value || "";
+    const instituicao = (div.querySelector("input[placeholder='Instituição']") || {}).value || "";
     const ano = div.querySelector(".ano")?.value || "";
     const termino = div.querySelector(".termino")?.value || "";
-    return `<p style="font-size:12px;">${nomeCurso} - ${instituicao} (${ano || termino})</p>`;
-  }).join("");
-  if (cursos) html += `<h2 style="font-size:14px;">Cursos</h2>${cursos}`;
+
+    if (!nomeCurso && !instituicao) return "";
+
+    return `<p style="font-size:12px;">${nomeCurso} - ${instituicao} (${ano || termino || "?"})</p>`;
+  }).filter(Boolean).join("");
+
+  if (cursos) {
+    html += `<h2 style="font-size:14px;">Cursos</h2>${cursos}`;
+  }
 
   // Idiomas
   const idiomas = Array.from(document.querySelectorAll("#idiomas div")).map(div => {
     const idioma = div.querySelector(".idioma")?.value || "";
     const nivel = div.querySelector(".nivel")?.value || "";
     const outro = div.querySelector(".idiomaOutro")?.value || "";
-    return `<p style="font-size:12px;">${idioma === "outro" ? outro : idioma} - ${nivel}</p>`;
-  }).join("");
-  if (idiomas) html += `<h2 style="font-size:14px;">Idiomas</h2>${idiomas}`;
 
+    if (!idioma && !nivel) return "";
+
+    return `<p style="font-size:12px;">${idioma === "outro" ? outro : idioma} - ${nivel}</p>`;
+  }).filter(Boolean).join("");
+
+  if (idiomas) {
+    html += `<h2 style="font-size:14px;">Idiomas</h2>${idiomas}`;
+  }
+
+  // ✅ Atualiza preview e contador
   document.getElementById("previewCurriculo").innerHTML = html;
   atualizarEstimativa();
 }
@@ -480,6 +485,7 @@ if (fotoInput.files && fotoInput.files[0]) {
 
 
   
+
 
 
 
