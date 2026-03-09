@@ -560,8 +560,16 @@ function importarTXT(event) {
     const linhas = e.target.result.split("\n");
     let secaoAtual = "";
 
+    // 🔹 Limpa todas as seções antes de recriar
+    document.getElementById("experiencias").innerHTML = "";
+    document.getElementById("formacoes").innerHTML = "";
+    document.getElementById("habilidades").innerHTML = "";
+    document.getElementById("cursos").innerHTML = "";
+    document.getElementById("idiomas").innerHTML = "";
+
     linhas.forEach(linha => {
       if (linha.startsWith("Nome:")) document.getElementById("nomeCompleto").value = linha.replace("Nome:", "").trim();
+      else if (linha.startsWith("Idade:")) document.getElementById("idade").value = linha.replace("Idade:", "").trim();
       else if (linha.startsWith("Telefone:")) document.getElementById("telefone").value = linha.replace("Telefone:", "").trim();
       else if (linha.startsWith("E-mail:")) document.getElementById("email").value = linha.replace("E-mail:", "").trim();
       else if (linha.startsWith("Localização:")) document.getElementById("localizacao").value = linha.replace("Localização:", "").trim();
@@ -588,7 +596,7 @@ function importarTXT(event) {
           div.querySelector("input[placeholder='Curso']").value = partes[0];
           div.querySelector("input[placeholder='Instituição']").value = partes[1]?.split("(")[0].trim() || "";
         }
-        if (secaoAtual === "habilidade") {
+        if (secaoAtual === "habilidade" && linha.trim() !== "-") {
           addHabilidade();
           const div = document.querySelector("#habilidades div:last-child");
           div.querySelector("input").value = linha.replace("-", "").trim();
@@ -597,15 +605,33 @@ function importarTXT(event) {
           addCurso();
           const div = document.querySelector("#cursos div:last-child");
           const partes = linha.replace("-", "").trim().split(" - ");
-          div.querySelector("input[placeholder='Nome do Curso']").value = partes[0];
+          div.querySelector("input[placeholder='Nome do Curso']").value = partes[0] || "";
           div.querySelector("input[placeholder='Instituição']").value = partes[1]?.split("(")[0].trim() || "";
+          const anoTermino = linha.match(/\((.*?)\)/);
+          if (anoTermino) {
+            const valor = anoTermino[1];
+            if (valor.toLowerCase().includes("previsão")) {
+              div.querySelector(".termino").value = valor.replace("Previsão:", "").trim();
+              div.querySelector("select").value = "cursando";
+            } else {
+              div.querySelector(".ano").value = valor;
+              div.querySelector("select").value = "concluido";
+            }
+          }
         }
         if (secaoAtual === "idioma") {
           addIdioma();
           const div = document.querySelector("#idiomas div:last-child");
           const partes = linha.replace("-", "").trim().split("(");
-          div.querySelector(".idiomaOutro").value = partes[0].trim();
-          div.querySelector(".nivel").value = partes[1]?.replace(")", "").trim() || "";
+          const idioma = partes[0].trim();
+          const nivel = partes[1]?.replace(")", "").trim() || "";
+          if (["portugues","ingles","espanhol"].includes(idioma.toLowerCase())) {
+            div.querySelector(".idioma").value = idioma.toLowerCase();
+          } else {
+            div.querySelector(".idioma").value = "outro";
+            div.querySelector(".idiomaOutro").value = idioma;
+          }
+          div.querySelector(".nivel").value = nivel;
         }
       } else if (secaoAtual === "objetivo" && linha.trim() !== "") {
         document.getElementById("objetivo").value += linha + "\n";
@@ -616,6 +642,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
