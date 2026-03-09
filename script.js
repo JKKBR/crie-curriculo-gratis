@@ -161,6 +161,7 @@ function atualizarPreview() {
   }
 
   // Contato
+  const idade = document.getElementById("idade").value.trim();
   const telefone = document.getElementById("telefone").value;
   const email = document.getElementById("email").value;
   const localizacao = document.getElementById("localizacao").value;
@@ -168,6 +169,7 @@ function atualizarPreview() {
   const portfolio = document.getElementById("portfolio").value;
 
   html += `<h2>Dados de Contato</h2><ul style="font-size:12px; line-height:1.3;">`;
+  if (idade) html += `<li>Idade: ${idade}</li>`;
   if (telefone) html += `<li>Telefone: ${telefone}</li>`;
   if (email) html += `<li>E-mail: ${email}</li>`;
   if (localizacao) html += `<li>Localização: ${localizacao}</li>`;
@@ -304,6 +306,7 @@ function finalizarPDF() {
   y = 55;
 
   // Dados de contato (sempre aparece se houver ao menos um campo preenchido)
+  const idade = document.getElementById("idade").value.trim();
   const telefone = document.getElementById("telefone").value.trim();
   const email = document.getElementById("email").value.trim();
   const localizacao = document.getElementById("localizacao").value.trim();
@@ -314,6 +317,7 @@ function finalizarPDF() {
     doc.setFontSize(13);
     doc.text("Dados de Contato:", 10, y); y += 6;
     doc.setFontSize(11);
+    if (idade) doc.text(`· Idade: ${idade}`, 12, y), y+=4;
     if (telefone) doc.text(`· Telefone: ${telefone}`, 12, y), y+=4;
     if (email) doc.text(`· E-mail: ${email}`, 12, y), y+=4;
     if (localizacao) doc.text(`· Localização: ${localizacao}`, 12, y), y+=4;
@@ -476,6 +480,7 @@ function salvarComoTXT() {
 
   let conteudo = "";
   conteudo += `Nome: ${nomeCompleto}\n`;
+  conteudo += `Idade: ${document.getElementById("idade").value}\n`;
   conteudo += `Telefone: ${document.getElementById("telefone").value}\n`;
   conteudo += `E-mail: ${document.getElementById("email").value}\n`;
   conteudo += `Localização: ${document.getElementById("localizacao").value}\n`;
@@ -607,6 +612,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
