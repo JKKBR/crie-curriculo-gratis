@@ -358,7 +358,7 @@ function gerarPDF() {
       y += 4;
     });
 
-    // Habilidades Técnicas em 2 colunas
+  // Habilidades Técnicas em lista única
 y += 6;
 doc.setFontSize(13);
 doc.text("Habilidades Técnicas:", 10, y);
@@ -368,29 +368,18 @@ const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
   .map(h => h.value)
   .filter(Boolean);
 
-let colunas = 2;              // agora são 2 colunas
-let larguraColuna = 90;       // mais espaço por coluna
-let alturaLinha = 6;          // espaçamento vertical
-
-habilidades.forEach((h, idx) => {
+habilidades.forEach(h => {
   if (y > 270) { doc.addPage(); y = 20; }
 
   doc.setFontSize(11);
 
-  let colunaAtual = idx % colunas;
-  let linhaAtual = Math.floor(idx / colunas);
+  // quebra automática de texto para caber na largura da página
+  let textoQuebrado = doc.splitTextToSize(`· ${h}`, 180); 
+  doc.text(textoQuebrado, 12, y);
 
-  let posX = 12 + (colunaAtual * larguraColuna);
-  let posY = y + (linhaAtual * alturaLinha);
-
-  // quebra automática de texto dentro da largura da coluna
-  let textoQuebrado = doc.splitTextToSize(`· ${h}`, larguraColuna - 5);
-  doc.text(textoQuebrado, posX, posY);
+  // avança para a próxima linha depois de cada habilidade
+  y += (textoQuebrado.length * 5); 
 });
-
-// Atualiza y para depois da última linha
-y += Math.ceil(habilidades.length / colunas) * alturaLinha;
-
     // Cursos
     y += 6;
     doc.setFontSize(13);
@@ -464,6 +453,7 @@ y += Math.ceil(habilidades.length / colunas) * alturaLinha;
     finalizarPDF();
   }
 }
+
 
 
 
