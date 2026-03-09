@@ -161,6 +161,7 @@ function atualizarPreview() {
   }
 
   // Contato
+  const idade = document.getElementById("idade").value;
   const telefone = document.getElementById("telefone").value;
   const email = document.getElementById("email").value;
   const localizacao = document.getElementById("localizacao").value;
@@ -168,6 +169,7 @@ function atualizarPreview() {
   const portfolio = document.getElementById("portfolio").value;
 
   html += `<h2>Dados de Contato</h2><ul style="font-size:12px; line-height:1.3;">`;
+  if (idade) html += `<li>Idade: ${idade}</li>`;   // ✅ novo campo
   if (telefone) html += `<li>Telefone: ${telefone}</li>`;
   if (email) html += `<li>E-mail: ${email}</li>`;
   if (localizacao) html += `<li>Localização: ${localizacao}</li>`;
@@ -304,16 +306,18 @@ function finalizarPDF() {
   y = 55;
 
   // Dados de contato (sempre aparece se houver ao menos um campo preenchido)
+  const idade = document.getElementById("idade").value.trim();
   const telefone = document.getElementById("telefone").value.trim();
   const email = document.getElementById("email").value.trim();
   const localizacao = document.getElementById("localizacao").value.trim();
   const linkedin = document.getElementById("linkedin").value.trim();
   const portfolio = document.getElementById("portfolio").value.trim();
 
-  if (telefone || email || localizacao || linkedin || portfolio) {
+  if (idade || telefone || email || localizacao || linkedin || portfolio) {
     doc.setFontSize(13);
     doc.text("Dados de Contato:", 10, y); y += 6;
     doc.setFontSize(11);
+    if (idade) { doc.text(`· Idade: ${idade}`, 12, y); y += 4; }   // ✅ novo campo
     if (telefone) doc.text(`· Telefone: ${telefone}`, 12, y), y+=4;
     if (email) doc.text(`· E-mail: ${email}`, 12, y), y+=4;
     if (localizacao) doc.text(`· Localização: ${localizacao}`, 12, y), y+=4;
@@ -476,6 +480,7 @@ function salvarComoTXT() {
 
   let conteudo = "";
   conteudo += `Nome: ${nomeCompleto}\n`;
+  conteudo += `Idade: ${document.getElementById("idade").value}\n`;   // ✅ novo campo
   conteudo += `Telefone: ${document.getElementById("telefone").value}\n`;
   conteudo += `E-mail: ${document.getElementById("email").value}\n`;
   conteudo += `Localização: ${document.getElementById("localizacao").value}\n`;
@@ -553,6 +558,7 @@ function importarTXT(event) {
 
     linhas.forEach(linha => {
       if (linha.startsWith("Nome:")) document.getElementById("nomeCompleto").value = linha.replace("Nome:", "").trim();
+      else if (linha.startsWith("Idade:")) document.getElementById("idade").value = linha.replace("Idade:", "").trim(); 
       else if (linha.startsWith("Telefone:")) document.getElementById("telefone").value = linha.replace("Telefone:", "").trim();
       else if (linha.startsWith("E-mail:")) document.getElementById("email").value = linha.replace("E-mail:", "").trim();
       else if (linha.startsWith("Localização:")) document.getElementById("localizacao").value = linha.replace("Localização:", "").trim();
@@ -607,3 +613,4 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
