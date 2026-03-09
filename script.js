@@ -225,7 +225,7 @@ function atualizarPreview() {
     html += `</ul>`;
   }
 
-  // Cursos
+// Cursos
   const cursos = Array.from(document.querySelectorAll("#cursos div")).map(div => {
     const nomeCurso = (div.querySelector("input[placeholder='Nome do Curso']") || {}).value || "";
     const instituicao = (div.querySelector("input[placeholder='Instituição']") || {}).value || "";
@@ -270,13 +270,11 @@ function togglePalavrasChaves() {
   bloco.style.display = checkbox.checked ? "block" : "none";
 }
 
-// Função para gerar PDF
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  let y = 30; // posição inicial
+  let y = 30;
 
-  // Função auxiliar para escrever texto com quebra automática
   function escreverTexto(texto, x, largura) {
     if (!texto) return;
     const linhas = doc.splitTextToSize(texto, largura);
@@ -288,24 +286,46 @@ function gerarPDF() {
     y += 2;
   }
 
-  // Função utilitária para formatar datas em DD/MM/AAAA
   function formatarDataBR(dataStr) {
     if (!dataStr) return "";
     const partes = dataStr.split("-");
-    if (partes.length === 3) {
-      return `${partes[2]}/${partes[1]}/${partes[0]}`;
-    }
+    if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
     return dataStr;
   }
 
-function finalizarPDF() {
+  const fotoInput = document.getElementById("fotoCandidato");
+  if (fotoInput.files && fotoInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const mimeType = fotoInput.files[0].type.toLowerCase();
+      const tipoImagem = mimeType.includes("png") ? "PNG" :
+                         (mimeType.includes("jpg") || mimeType.includes("jpeg")) ? "JPEG" : "JPEG";
+      doc.addImage(e.target.result, tipoImagem, 10, 10, 30, 40);
+      y = 55;
+      finalizarPDF(doc, y, escreverTexto, formatarDataBR);
+      doc.save("curriculo.pdf");
+    };
+    reader.onerror = function() {
+      finalizarPDF(doc, y, escreverTexto, formatarDataBR);
+      doc.save("curriculo.pdf");
+    };
+    reader.readAsDataURL(fotoInput.files[0]);
+  } else {
+    finalizarPDF(doc, y, escreverTexto, formatarDataBR);
+    doc.save("curriculo.pdf");
+  }
+}
+
+function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
+  doc.setFont("helvetica", "normal");
+
   // Cabeçalho e nome
   const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
   doc.setFontSize(20);
   if (nomeCompleto) doc.text(nomeCompleto, 50, 25);
   y = 55;
 
-  // Dados de contato (sempre aparece se houver ao menos um campo preenchido)
+  // Dados de contato
   const idade = document.getElementById("idade").value.trim();
   const telefone = document.getElementById("telefone").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -317,13 +337,14 @@ function finalizarPDF() {
     doc.setFontSize(13);
     doc.text("Dados de Contato:", 10, y); y += 6;
     doc.setFontSize(11);
-    if (idade) { doc.text(`· Idade: ${idade}`, 12, y); y += 4; }   // ✅ novo campo
-    if (telefone) doc.text(`· Telefone: ${telefone}`, 12, y), y+=4;
-    if (email) doc.text(`· E-mail: ${email}`, 12, y), y+=4;
-    if (localizacao) doc.text(`· Localização: ${localizacao}`, 12, y), y+=4;
-    if (linkedin) doc.text(`· LinkedIn: ${linkedin}`, 12, y), y+=4;
-    if (portfolio) doc.text(`· Portfólio: ${portfolio}`, 12, y), y+=4;
+    if (idade) { doc.text(`· Idade: ${idade}`, 12, y); y += 4; }
+    if (telefone) { doc.text(`· Telefone: ${telefone}`, 12, y); y += 4; }
+    if (email) { doc.text(`· E-mail: ${email}`, 12, y); y += 4; }
+    if (localizacao) { doc.text(`· Localização: ${localizacao}`, 12, y); y += 4; }
+    if (linkedin) { doc.text(`· LinkedIn: ${linkedin}`, 12, y); y += 4; }
+    if (portfolio) { doc.text(`· Portfólio: ${portfolio}`, 12, y); y += 4; }
   }
+
 
   // Objetivo
   const objetivo = document.getElementById("objetivo").value.trim();
@@ -395,6 +416,86 @@ function finalizarPDF() {
   }
 
   // Cursos
+  let cursos = Array.from(document.querySelectorAll("#cursos div"));
+  if (cursos.some(c => c.querySelector("input[placeholder='Nome do Curso']").value.trim() ||
+                       c.querySelector("input[placeholder='Instituição']").value.trim())) {
+    y += 6;
+    doc.setFontSize(13);
+    doc.text("Cursos:", 10, y); y += 6;
+    cursos.forEach(c => {
+      const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value.trim();
+      const instituicao = c.querySelector("input[placeholder='Instituição']").value.trim();
+      const ano = formatarDataBR(c.querySelector(".ano").value);
+      const termino = formatarDataBR(c.querySelector(".termino").value);
+      const status = c.querySelector("select").value;
+      if (nomeCurso || instituicao) {
+        let textoCurso = `· ${nomeCurso} - ${instituicao}`;
+        if (status === "concluido" && ano) textoCurso += ` (${ano})`;
+        if (status === "cursando" && termino) textoCurso += ` (Previsão: ${termino})`;
+        doc.setFontSize(11);
+        doc.text(textoCurso, 12, y);
+        y += 4;
+      }
+    });
+  }
+
+  // Idiomas
+  let idiomas = Array.from(document.querySelectorAll("#idiomas div"));
+  if (idiomas.some(i => i.querySelector(".idioma").value.trim() ||
+                        i.querySelector(".idiomaOutro").value.trim())) {
+    y += 6;
+    doc.setFontSize(13);
+    doc.text("Idiomas:", 10, y); y += 6;
+    idiomas.forEach(i => {
+      const idiomaSelect = i.querySelector(".idioma").value.trim();
+      const nivel = i.querySelector(".nivel").value.trim();
+      const outro = i.querySelector(".idiomaOutro").value.trim();
+      let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
+      if (idiomaFinal) {
+        doc.setFontSize(11);
+        doc.text(`· ${idiomaFinal} - ${nivel}`, 12, y);
+        y += 4;
+      }
+    });
+  }
+
+  // Palavras-Chaves ocultas
+  const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
+  if (ativarPalavrasChaves) {
+    const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value.trim();
+    if (textoPalavrasChaves) {
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(6);
+      escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180);
+      doc.setTextColor(0, 0, 0);
+    }
+  }
+
+  // Finalizar PDF
+  doc.save("curriculo.pdf");
+}
+
+  // Foto opcional
+  const fotoInput = document.getElementById("fotoCandidato");
+  if (fotoInput.files && fotoInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const mimeType = fotoInput.files[0].type.toLowerCase();
+      const tipoImagem = mimeType.includes("png") ? "PNG" :
+                         (mimeType.includes("jpg") || mimeType.includes("jpeg")) ? "JPEG" : "JPEG";
+      doc.addImage(e.target.result, tipoImagem, 10, 10, 30, 40);
+      y = 55; // garante espaço entre foto, nome e contatos
+      finalizarPDF();
+    };
+    reader.onerror = function() {
+      finalizarPDF(); // fallback se houver erro na leitura
+    };
+    reader.readAsDataURL(fotoInput.files[0]);
+  } else {
+    finalizarPDF();
+  }
+}
+ // Cursos
   let cursos = Array.from(document.querySelectorAll("#cursos div"));
   if (cursos.some(c => c.querySelector("input[placeholder='Nome do Curso']").value.trim() ||
                        c.querySelector("input[placeholder='Instituição']").value.trim())) {
@@ -613,4 +714,5 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
