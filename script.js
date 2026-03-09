@@ -331,15 +331,15 @@ function escreverTexto(texto, x, largura, yInicial, doc) {
 
 // Função que monta o conteúdo do PDF (sem salvar)
 function finalizarPDF(doc, y, formatarDataBR) {
-  // Configurações de estilo escolhidas pelo usuário
+  // 🔹 Configurações de estilo escolhidas pelo usuário
   const fonte = document.getElementById("fontePDF").value || "helvetica";
   const corTitulos = document.getElementById("corTitulos").value || "#000000";
   const tamanhoTitulos = parseInt(document.getElementById("tamanhoTitulos").value) || 13;
 
   doc.setFont(fonte, "normal");
   doc.setFontSize(11);
-  doc.setTextColor(0,0,0); // texto padrão em preto
-  
+  doc.setTextColor(0,0,0);
+
   // Cabeçalho e nome
   const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
   doc.setFontSize(20);
@@ -355,9 +355,13 @@ function finalizarPDF(doc, y, formatarDataBR) {
   const portfolio = document.getElementById("portfolio").value.trim();
 
   if (idade || telefone || email || localizacao || linkedin || portfolio) {
-    doc.setFontSize(13);
+    doc.setFontSize(tamanhoTitulos);
+    const rgb = hexToRgb(corTitulos);
+    doc.setTextColor(rgb.r, rgb.g, rgb.b);
     doc.text("Dados de Contato:", 10, y); y += 6;
+
     doc.setFontSize(11);
+    doc.setTextColor(0,0,0);
     if (idade) { doc.text(`· Idade: ${idade}`, 12, y); y += 4; }
     if (telefone) { doc.text(`· Telefone: ${telefone}`, 12, y); y += 4; }
     if (email) { doc.text(`· E-mail: ${email}`, 12, y); y += 4; }
@@ -371,10 +375,13 @@ function finalizarPDF(doc, y, formatarDataBR) {
   // Objetivo
   const objetivo = document.getElementById("objetivo").value.trim();
   if (objetivo) {
-    doc.setFontSize(13);
-    doc.text("Objetivo:", 10, y); 
-    y += 6;
+    doc.setFontSize(tamanhoTitulos);
+    const rgb = hexToRgb(corTitulos);
+    doc.setTextColor(rgb.r, rgb.g, rgb.b);
+    doc.text("Objetivo:", 10, y); y += 6;
+
     doc.setFontSize(11);
+    doc.setTextColor(0,0,0);
     y = escreverTexto(objetivo, 12, 180, y, doc);
     y += 8;
   }
@@ -384,8 +391,13 @@ function finalizarPDF(doc, y, formatarDataBR) {
   if (experiencias.some(exp => exp.querySelector("input[placeholder='Empresa']").value.trim() ||
                                exp.querySelector("input[placeholder='Cargo']").value.trim() ||
                                exp.querySelector("textarea").value.trim())) {
-    doc.setFontSize(13);
+    doc.setFontSize(tamanhoTitulos);
+    const rgb = hexToRgb(corTitulos);
+    doc.setTextColor(rgb.r, rgb.g, rgb.b);
     doc.text("Experiência Profissional:", 10, y); y += 6;
+
+    doc.setFontSize(11);
+    doc.setTextColor(0,0,0);
     experiencias.forEach(exp => {
       const empresa = exp.querySelector("input[placeholder='Empresa']").value.trim();
       const cargo = exp.querySelector("input[placeholder='Cargo']").value.trim();
@@ -394,7 +406,6 @@ function finalizarPDF(doc, y, formatarDataBR) {
       const status = exp.querySelector("select").value;
       const descricao = exp.querySelector("textarea").value.trim();
       if (empresa || cargo || descricao) {
-        doc.setFontSize(11);
         doc.text(`· ${cargo} - ${empresa} (${inicio} até ${status === "atual" ? "o momento" : fim})`, 12, y);
         y += 4;
         if (descricao) {
@@ -410,15 +421,19 @@ function finalizarPDF(doc, y, formatarDataBR) {
   let formacoes = Array.from(document.querySelectorAll("#formacoes div"));
   if (formacoes.some(f => f.querySelector("input[placeholder='Curso']").value.trim() ||
                           f.querySelector("input[placeholder='Instituição']").value.trim())) {
-    doc.setFontSize(13);
+    doc.setFontSize(tamanhoTitulos);
+    const rgb = hexToRgb(corTitulos);
+    doc.setTextColor(rgb.r, rgb.g, rgb.b);
     doc.text("Formação Acadêmica:", 10, y); y += 6;
+
+    doc.setFontSize(11);
+    doc.setTextColor(0,0,0);
     formacoes.forEach(f => {
       const curso = f.querySelector("input[placeholder='Curso']").value.trim();
       const instituicao = f.querySelector("input[placeholder='Instituição']").value.trim();
       const ano = formatarDataBR(f.querySelector(".ano").value);
       const termino = formatarDataBR(f.querySelector(".termino").value);
       if (curso || instituicao) {
-        doc.setFontSize(11);
         doc.text(`· ${curso} - ${instituicao} (${ano || termino || ""})`, 12, y);
         y += 4;
       }
@@ -431,10 +446,14 @@ function finalizarPDF(doc, y, formatarDataBR) {
                            .map(h => h.value.trim())
                            .filter(Boolean);
   if (habilidades.length > 0) {
-    doc.setFontSize(13);
+    doc.setFontSize(tamanhoTitulos);
+    const rgb = hexToRgb(corTitulos);
+    doc.setTextColor(rgb.r, rgb.g, rgb.b);
     doc.text("Habilidades Técnicas:", 10, y); y += 6;
+
+    doc.setFontSize(11);
+    doc.setTextColor(0,0,0);
     habilidades.forEach(h => {
-      doc.setFontSize(11);
       let textoQuebrado = doc.splitTextToSize(`· ${h}`, 180);
       doc.text(textoQuebrado, 12, y);
       y += (textoQuebrado.length * 5);
@@ -446,8 +465,13 @@ function finalizarPDF(doc, y, formatarDataBR) {
   let cursos = Array.from(document.querySelectorAll("#cursos div"));
   if (cursos.some(c => c.querySelector("input[placeholder='Nome do Curso']").value.trim() ||
                        c.querySelector("input[placeholder='Instituição']").value.trim())) {
-    doc.setFontSize(13);
+    doc.setFontSize(tamanhoTitulos);
+    const rgb = hexToRgb(corTitulos);
+    doc.setTextColor(rgb.r, rgb.g, rgb.b);
     doc.text("Cursos:", 10, y); y += 6;
+
+    doc.setFontSize(11);
+    doc.setTextColor(0,0,0);
     cursos.forEach(c => {
       const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value.trim();
       const instituicao = c.querySelector("input[placeholder='Instituição']").value.trim();
@@ -458,14 +482,12 @@ function finalizarPDF(doc, y, formatarDataBR) {
         let textoCurso = `· ${nomeCurso} - ${instituicao}`;
         if (status === "concluido" && ano) textoCurso += ` (${ano})`;
         if (status === "cursando" && termino) textoCurso += ` (Previsão: ${termino})`;
-        doc.setFontSize(11);
         doc.text(textoCurso, 12, y);
         y += 4;
       }
     });
     y += 8;
   }
-
   // Idiomas
   let idiomas = Array.from(document.querySelectorAll("#idiomas div"));
   if (idiomas.some(i => i.querySelector(".idioma").value.trim() ||
@@ -669,6 +691,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
