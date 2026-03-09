@@ -305,11 +305,12 @@ function gerarPDF() {
 function finalizarPDF() {
   // Cabeçalho e nome
   const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
+  doc.setFont("helvetica", "normal"); // garante suporte a acentos
   doc.setFontSize(20);
-  if (nomeCompleto) doc.text(nomeCompleto, 50, 25);
+  if (nomeCompleto) doc.text(nomeCompleto.normalize("NFC"), 50, 25);
   y = 55;
 
-  // Dados de contato (sempre aparece se houver ao menos um campo preenchido)
+  // Dados de contato
   const idade = document.getElementById("idade").value.trim();
   const telefone = document.getElementById("telefone").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -317,16 +318,16 @@ function finalizarPDF() {
   const linkedin = document.getElementById("linkedin").value.trim();
   const portfolio = document.getElementById("portfolio").value.trim();
 
-  if (telefone || email || localizacao || linkedin || portfolio) {
+  if (telefone || email || localizacao || linkedin || portfolio || idade) {
     doc.setFontSize(13);
     doc.text("Dados de Contato:", 10, y); y += 6;
     doc.setFontSize(11);
-    if (idade) doc.text(`· Idade: ${idade}`, 12, y), y+=4;
-    if (telefone) doc.text(`· Telefone: ${telefone}`, 12, y), y+=4;
-    if (email) doc.text(`· E-mail: ${email}`, 12, y), y+=4;
-    if (localizacao) doc.text(`· Localização: ${localizacao}`, 12, y), y+=4;
-    if (linkedin) doc.text(`· LinkedIn: ${linkedin}`, 12, y), y+=4;
-    if (portfolio) doc.text(`· Portfólio: ${portfolio}`, 12, y), y+=4;
+    if (idade) doc.text(`· Idade: ${idade.normalize("NFC")}`, 12, y), y+=4;
+    if (telefone) doc.text(`· Telefone: ${telefone.normalize("NFC")}`, 12, y), y+=4;
+    if (email) doc.text(`· E-mail: ${email.normalize("NFC")}`, 12, y), y+=4;
+    if (localizacao) doc.text(`· Localização: ${localizacao.normalize("NFC")}`, 12, y), y+=4;
+    if (linkedin) doc.text(`· LinkedIn: ${linkedin.normalize("NFC")}`, 12, y), y+=4;
+    if (portfolio) doc.text(`· Portfólio: ${portfolio.normalize("NFC")}`, 12, y), y+=4;
   }
 
   // Objetivo
@@ -336,7 +337,7 @@ function finalizarPDF() {
     doc.setFontSize(13);
     doc.text("Objetivo:", 10, y); y += 6;
     doc.setFontSize(11);
-    escreverTexto(objetivo, 12, 180);
+    escreverTexto(objetivo.normalize("NFC"), 12, 180);
   }
 
   // Experiências
@@ -356,9 +357,9 @@ function finalizarPDF() {
       const descricao = exp.querySelector("textarea").value.trim();
       if (empresa || cargo || descricao) {
         doc.setFontSize(11);
-        doc.text(`· ${cargo} - ${empresa} (${inicio} até ${status === "atual" ? "o momento" : fim})`, 12, y);
+        doc.text(`· ${cargo.normalize("NFC")} - ${empresa.normalize("NFC")} (${inicio} até ${status === "atual" ? "o momento" : fim})`, 12, y);
         y += 4;
-        escreverTexto(descricao, 14, 170);
+        escreverTexto(descricao.normalize("NFC"), 14, 170);
       }
     });
   }
@@ -377,7 +378,7 @@ function finalizarPDF() {
       const termino = formatarDataBR(f.querySelector(".termino").value);
       if (curso || instituicao) {
         doc.setFontSize(11);
-        doc.text(`· ${curso} - ${instituicao} (${ano || termino || ""})`, 12, y);
+        doc.text(`· ${curso.normalize("NFC")} - ${instituicao.normalize("NFC")} (${ano || termino || ""})`, 12, y);
         y += 4;
       }
     });
@@ -392,9 +393,9 @@ function finalizarPDF() {
     doc.setFontSize(13);
     doc.text("Habilidades Técnicas:", 10, y); y += 6;
     habilidades.forEach(h => {
-      let textoQuebrado = doc.splitTextToSize(`· ${h}`, 180);
-      doc.text(textoQuebrado, 12, y);
-      y += (textoQuebrado.length * 5);
+      doc.setFontSize(10);
+      doc.text(`· ${h.normalize("NFC")}`, 10, y);
+      y += 4;
     });
   }
 
@@ -412,7 +413,7 @@ function finalizarPDF() {
       const termino = formatarDataBR(c.querySelector(".termino").value);
       const status = c.querySelector("select").value;
       if (nomeCurso || instituicao) {
-        let textoCurso = `· ${nomeCurso} - ${instituicao}`;
+        let textoCurso = `· ${nomeCurso.normalize("NFC")} - ${instituicao.normalize("NFC")}`;
         if (status === "concluido" && ano) textoCurso += ` (${ano})`;
         if (status === "cursando" && termino) textoCurso += ` (Previsão: ${termino})`;
         doc.setFontSize(11);
@@ -436,11 +437,12 @@ function finalizarPDF() {
       let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
       if (idiomaFinal) {
         doc.setFontSize(11);
-        doc.text(`· ${idiomaFinal} - ${nivel}`, 12, y);
+        doc.text(`· ${idiomaFinal.normalize("NFC")} - ${nivel.normalize("NFC")}`, 12, y);
         y += 4;
       }
     });
   }
+}
 
   // Palavras-Chaves ocultas
   const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
@@ -642,6 +644,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
