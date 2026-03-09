@@ -452,7 +452,7 @@ function finalizarPDF(doc, y, formatarDataBR) {
     y += 8;
   }
 
-  // Habilidades Técnicas
+   // Habilidades Técnicas
   const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
                            .map(h => h.value.trim())
                            .filter(Boolean);
@@ -499,12 +499,18 @@ function finalizarPDF(doc, y, formatarDataBR) {
     });
     y += 8;
   }
+
   // Idiomas
   let idiomas = Array.from(document.querySelectorAll("#idiomas div"));
   if (idiomas.some(i => i.querySelector(".idioma").value.trim() ||
                         i.querySelector(".idiomaOutro").value.trim())) {
-    doc.setFontSize(13);
+    doc.setFontSize(tamanhoTitulos);
+    const rgb = hexToRgb(corTitulos);
+    doc.setTextColor(rgb.r, rgb.g, rgb.b);
     doc.text("Idiomas:", 10, y); y += 6;
+
+    doc.setFontSize(11);
+    doc.setTextColor(0,0,0);
     idiomas.forEach(i => {
       let idiomaSelect = i.querySelector(".idioma").value.trim();
       let nivel = i.querySelector(".nivel").value.trim();
@@ -522,14 +528,13 @@ function finalizarPDF(doc, y, formatarDataBR) {
       idiomaSelect = idiomaSelect.normalize("NFC");
 
       if (idiomaSelect) {
-        doc.setFontSize(11);
         doc.text(`· ${idiomaSelect} - ${nivel}`, 12, y);
         y += 4;
       }
     });
     y += 8;
   }
-   
+
   // Palavras-Chaves ocultas
   const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
   if (ativarPalavrasChaves) {
@@ -542,7 +547,7 @@ function finalizarPDF(doc, y, formatarDataBR) {
     }
   }
 }
- 
+
 // Função para salvar como TXT
 function salvarComoTXT() {
   const nomeCompleto = document.getElementById("nomeCompleto").value.trim() || "curriculo";
@@ -703,6 +708,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
