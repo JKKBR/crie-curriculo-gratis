@@ -224,7 +224,7 @@ if (habilidades.length > 0) {
   y += 6;
   habilidades.forEach(h => {
     doc.setFontSize(11); // Fonte igual às outras seções
-    doc.text(`· ${h}`, 12, y);
+    doc.text(`· ${h}`, 11, y);
     y += 4; // Espaçamento fixo
   });
 }
@@ -642,6 +642,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
