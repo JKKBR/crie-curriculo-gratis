@@ -303,7 +303,7 @@ function gerarPDF() {
     doc.setFontSize(20);
     if (nomeCompleto) doc.text(nomeCompleto, 50, 25);
     y = 55;
-
+    
     // Dados de contato
     doc.setFontSize(13);
     doc.text("Dados de Contato:", 10, y); y += 6;
@@ -453,6 +453,149 @@ habilidades.forEach(h => {
     finalizarPDF();
   }
 }
+
+function salvarComoTXT() {
+  const nomeCompleto = document.getElementById("nomeCompleto").value.trim() || "curriculo";
+
+  let conteudo = "";
+  conteudo += `Nome: ${nomeCompleto}\n`;
+  conteudo += `Telefone: ${document.getElementById("telefone").value}\n`;
+  conteudo += `E-mail: ${document.getElementById("email").value}\n`;
+  conteudo += `Localização: ${document.getElementById("localizacao").value}\n`;
+  conteudo += `LinkedIn: ${document.getElementById("linkedin").value}\n`;
+  conteudo += `Portfólio: ${document.getElementById("portfolio").value}\n\n`;
+
+  conteudo += `Objetivo:\n${document.getElementById("objetivo").value}\n\n`;
+
+  // Experiências
+  conteudo += "Experiência Profissional:\n";
+  Array.from(document.querySelectorAll("#experiencias div")).forEach(exp => {
+    const empresa = exp.querySelector("input[placeholder='Empresa']").value;
+    const cargo = exp.querySelector("input[placeholder='Cargo']").value;
+    const inicio = exp.querySelector(".inicio").value;
+    const fim = exp.querySelector(".fim").value;
+    const descricao = exp.querySelector("textarea").value;
+    conteudo += `- ${cargo} em ${empresa} (${inicio} - ${fim})\n  ${descricao}\n`;
+  });
+  conteudo += "\n";
+
+  // Formação
+  conteudo += "Formação Acadêmica:\n";
+  Array.from(document.querySelectorAll("#formacoes div")).forEach(f => {
+    const curso = f.querySelector("input[placeholder='Curso']").value;
+    const instituicao = f.querySelector("input[placeholder='Instituição']").value;
+    const ano = f.querySelector(".ano").value;
+    const termino = f.querySelector(".termino").value;
+    conteudo += `- ${curso} - ${instituicao} (${ano || termino})\n`;
+  });
+  conteudo += "\n";
+
+  // Habilidades
+  conteudo += "Habilidades Técnicas:\n";
+  Array.from(document.querySelectorAll("#habilidades input")).forEach(h => {
+    if (h.value.trim()) conteudo += `- ${h.value}\n`;
+  });
+  conteudo += "\n";
+
+  // Cursos
+  conteudo += "Cursos:\n";
+  Array.from(document.querySelectorAll("#cursos div")).forEach(c => {
+    const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
+    const instituicao = c.querySelector("input[placeholder='Instituição']").value;
+    const ano = c.querySelector(".ano").value;
+    const termino = c.querySelector(".termino").value;
+    conteudo += `- ${nomeCurso} - ${instituicao} (${ano || termino})\n`;
+  });
+  conteudo += "\n";
+
+  // Idiomas
+  conteudo += "Idiomas:\n";
+  Array.from(document.querySelectorAll("#idiomas div")).forEach(i => {
+    const idiomaSelect = i.querySelector(".idioma").value;
+    const nivel = i.querySelector(".nivel").value;
+    const outro = i.querySelector(".idiomaOutro").value;
+    let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
+    conteudo += `- ${idiomaFinal} (${nivel})\n`;
+  });
+
+  const blob = new Blob([conteudo], { type: "text/plain" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${nomeCompleto}.txt`;
+  link.click();
+}
+
+function importarTXT(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const linhas = e.target.result.split("\n");
+    let secaoAtual = "";
+
+    linhas.forEach(linha => {
+      if (linha.startsWith("Nome:")) document.getElementById("nomeCompleto").value = linha.replace("Nome:", "").trim();
+      else if (linha.startsWith("Telefone:")) document.getElementById("telefone").value = linha.replace("Telefone:", "").trim();
+      else if (linha.startsWith("E-mail:")) document.getElementById("email").value = linha.replace("E-mail:", "").trim();
+      else if (linha.startsWith("Localização:")) document.getElementById("localizacao").value = linha.replace("Localização:", "").trim();
+      else if (linha.startsWith("LinkedIn:")) document.getElementById("linkedin").value = linha.replace("LinkedIn:", "").trim();
+      else if (linha.startsWith("Portfólio:")) document.getElementById("portfolio").value = linha.replace("Portfólio:", "").trim();
+      else if (linha.startsWith("Objetivo:")) secaoAtual = "objetivo";
+      else if (linha.startsWith("Experiência Profissional:")) secaoAtual = "experiencia";
+      else if (linha.startsWith("Formação Acadêmica:")) secaoAtual = "formacao";
+      else if (linha.startsWith("Habilidades Técnicas:")) secaoAtual = "habilidade";
+      else if (linha.startsWith("Cursos:")) secaoAtual = "curso";
+      else if (linha.startsWith("Idiomas:")) secaoAtual = "idioma";
+      else if (linha.startsWith("-")) {
+        if (secaoAtual === "experiencia") {
+          addExperiencia();
+          const div = document.querySelector("#experiencias div:last-child");
+          const partes = linha.replace("-", "").trim().split(" em ");
+          div.querySelector("input[placeholder='Cargo']").value = partes[0].split("(")[0].trim();
+          div.querySelector("input[placeholder='Empresa']").value = partes[1]?.split("(")[0].trim() || "";
+        }
+        if (secaoAtual === "formacao") {
+          addFormacao();
+          const div = document.querySelector("#formacoes div:last-child");
+          const partes = linha.replace("-", "").trim().split(" - ");
+          div.querySelector("input[placeholder='Curso']").value = partes[0];
+          div.querySelector("input[placeholder='Instituição']").value = partes[1]?.split("(")[0].trim() || "";
+        }
+        if (secaoAtual === "habilidade") {
+          addHabilidade();
+          const div = document.querySelector("#habilidades div:last-child");
+          div.querySelector("input").value = linha.replace("-", "").trim();
+        }
+        if (secaoAtual === "curso") {
+          addCurso();
+          const div = document.querySelector("#cursos div:last-child");
+          const partes = linha.replace("-", "").trim().split(" - ");
+          div.querySelector("input[placeholder='Nome do Curso']").value = partes[0];
+          div.querySelector("input[placeholder='Instituição']").value = partes[1]?.split("(")[0].trim() || "";
+        }
+        if (secaoAtual === "idioma") {
+          addIdioma();
+          const div = document.querySelector("#idiomas div:last-child");
+          const partes = linha.replace("-", "").trim().split("(");
+          div.querySelector(".idiomaOutro").value = partes[0].trim();
+          div.querySelector(".nivel").value = partes[1]?.replace(")", "").trim() || "";
+        }
+      } else if (secaoAtual === "objetivo" && linha.trim() !== "") {
+        document.getElementById("objetivo").value += linha + "\n";
+      }
+    });
+
+    atualizarPreview();
+  };
+  reader.readAsText(file);
+}
+
+
+
+
+
+
 
 
 
