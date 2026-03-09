@@ -30,7 +30,7 @@ Com uma interface simples e intuitiva, você pode criar, visualizar e salvar seu
 ---
 
 ## 📄 Licença
-Este projeto está licenciado sob a **MIT License** — você pode usar, modificar e distribuir livremente, desde que mantenha os créditos originais.
+Este projeto está licenciado sob a **MIT License** você pode usar, modificar e distribuir livremente, desde que mantenha os créditos originais.
 
 ---
 
