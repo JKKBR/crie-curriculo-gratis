@@ -358,27 +358,38 @@ function gerarPDF() {
       y += 4;
     });
 
-    // Habilidades Técnicas em 4 colunas
-    y += 6;
-    doc.setFontSize(13);
-    doc.text("Habilidades Técnicas:", 10, y); y += 6;
-    const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
-      .map(h => h.value)
-      .filter(Boolean);
+    // Habilidades Técnicas em 3 colunas
+y += 6;
+doc.setFontSize(13);
+doc.text("Habilidades Técnicas:", 10, y);
+y += 6;
 
-    let colunas = 4;
-    let larguraColuna = 45;
-    habilidades.forEach((h, idx) => {
-      if (y > 270) { doc.addPage(); y = 20; }
-      doc.setFontSize(11);
-      let colunaAtual = idx % colunas;
-      let posX = 12 + (colunaAtual * larguraColuna);
-      doc.text(`· ${h}`, posX, y);
-      if (colunaAtual === colunas - 1) {
-        y += 6; // quebra linha após 4 itens
-      }
-    });
-    if (habilidades.length % colunas !== 0) y += 6;
+const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
+  .map(h => h.value)
+  .filter(Boolean);
+
+let colunas = 3;              // número de colunas
+let larguraColuna = 60;       // largura de cada coluna
+let alturaLinha = 6;          // espaçamento vertical
+
+habilidades.forEach((h, idx) => {
+  if (y > 270) { doc.addPage(); y = 20; }
+
+  doc.setFontSize(11);
+
+  let colunaAtual = idx % colunas;
+  let linhaAtual = Math.floor(idx / colunas);
+
+  let posX = 12 + (colunaAtual * larguraColuna);
+  let posY = y + (linhaAtual * alturaLinha);
+
+  // quebra automática de texto dentro da largura da coluna
+  let textoQuebrado = doc.splitTextToSize(`· ${h}`, larguraColuna - 5);
+  doc.text(textoQuebrado, posX, posY);
+});
+
+// Atualiza y para depois da última linha
+y += Math.ceil(habilidades.length / colunas) * alturaLinha;
 
     // Cursos
     y += 6;
@@ -453,3 +464,4 @@ function gerarPDF() {
     finalizarPDF();
   }
 }
+
