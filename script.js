@@ -238,17 +238,26 @@ function atualizarPreview() {
     html += `<h2>Cursos</h2><ul style="font-size:12px; line-height:1.3; margin:3px 0;">${cursos}</ul>`;
   }
 
-  // Idiomas
-  const idiomas = Array.from(document.querySelectorAll("#idiomas div")).map(div => {
-    const idioma = div.querySelector(".idioma")?.value || "";
-    const nivel = div.querySelector(".nivel")?.value || "";
-    const outro = div.querySelector(".idiomaOutro")?.value || "";
-    if (!idioma && !nivel) return "";
-    return `<li>${idioma === "outro" ? outro : idioma} - ${nivel}</li>`;
-  }).filter(Boolean).join("");
-  if (idiomas) {
-    html += `<h2>Idiomas</h2><ul style="font-size:12px; line-height:1.2; margin:2px 0;">${idiomas}</ul>`;
-  }
+// Idiomas
+const idiomas = Array.from(document.querySelectorAll("#idiomas div")).map(div => {
+  let idioma = div.querySelector(".idioma")?.value || "";
+  const nivel = div.querySelector(".nivel")?.value || "";
+  const outro = div.querySelector(".idiomaOutro")?.value || "";
+
+  if (!idioma && !nivel) return "";
+
+  // Corrige acentos
+  if (idioma === "portugues") idioma = "Português";
+  else if (idioma === "ingles") idioma = "Inglês";
+  else if (idioma === "espanhol") idioma = "Espanhol";
+  else if (idioma === "outro") idioma = outro;
+
+  return `<li>${idioma} - ${nivel}</li>`;
+}).filter(Boolean).join("");
+
+if (idiomas) {
+  html += `<h2>Idiomas</h2><ul style="font-size:12px; line-height:1.2; margin:2px 0;">${idiomas}</ul>`;
+}
 
   // Atualiza preview e contador
   document.getElementById("previewCurriculo").innerHTML = html;
@@ -520,24 +529,30 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
   }
 
   // Idiomas
-  let idiomas = Array.from(document.querySelectorAll("#idiomas div"));
-  if (idiomas.some(i => i.querySelector(".idioma").value.trim() ||
-                        i.querySelector(".idiomaOutro").value.trim())) {
-    y += 6;
-    doc.setFontSize(13);
-    doc.text("Idiomas:", 10, y); y += 6;
-    idiomas.forEach(i => {
-      const idiomaSelect = i.querySelector(".idioma").value.trim();
-      const nivel = i.querySelector(".nivel").value.trim();
-      const outro = i.querySelector(".idiomaOutro").value.trim();
-      let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
-      if (idiomaFinal) {
-        doc.setFontSize(11);
-        doc.text(`· ${idiomaFinal} - ${nivel}`, 12, y);
-        y += 4;
-      }
-    });
-  }
+let idiomas = Array.from(document.querySelectorAll("#idiomas div"));
+if (idiomas.some(i => i.querySelector(".idioma").value.trim() ||
+                      i.querySelector(".idiomaOutro").value.trim())) {
+  y += 6;
+  doc.setFontSize(13);
+  doc.text("Idiomas:", 10, y); y += 6;
+  idiomas.forEach(i => {
+    let idiomaSelect = i.querySelector(".idioma").value.trim();
+    const nivel = i.querySelector(".nivel").value.trim();
+    const outro = i.querySelector(".idiomaOutro").value.trim();
+
+    // Corrige acentos
+    if (idiomaSelect === "portugues") idiomaSelect = "Português";
+    else if (idiomaSelect === "ingles") idiomaSelect = "Inglês";
+    else if (idiomaSelect === "espanhol") idiomaSelect = "Espanhol";
+    else if (idiomaSelect === "outro") idiomaSelect = outro;
+
+    if (idiomaSelect) {
+      doc.setFontSize(11);
+      doc.text(`· ${idiomaSelect.normalize("NFC")} - ${nivel.normalize("NFC")}`, 12, y);
+      y += 4;
+    }
+  });
+}
 
   // Palavras-Chaves ocultas
   const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
@@ -714,5 +729,6 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
