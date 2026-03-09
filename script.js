@@ -316,21 +316,28 @@ function gerarPDF() {
   }
 }
 
-// 🔹 Função única para escrever texto respeitando Y
+// Função para escrever texto com quebra automática de página
 function escreverTexto(texto, x, largura, yInicial, doc) {
   let linhas = doc.splitTextToSize(texto, largura);
-  doc.text(linhas, x, yInicial);
-  return yInicial + (linhas.length * 5); // devolve nova posição Y
+  linhas.forEach(linha => {
+    if (yInicial > 270) {   // limite da página A4
+      doc.addPage();
+      yInicial = 20;        // reinicia posição Y
+    }
+    doc.text(linha, x, yInicial);
+    yInicial += 5;          // espaçamento entre linhas
+  });
+  return yInicial;
 }
 
-// Função que monta o conteúdo do PDF (sem salvar)
+// Função que monta o conteúdo do PDF
 function finalizarPDF(doc, y, formatarDataBR) {
   doc.setFont("helvetica", "normal");
 
-  // Cabeçalho e nome
+  // Cabeçalho
   const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
   doc.setFontSize(20);
-  if (nomeCompleto) doc.text(nomeCompleto, 50, 25);
+  if (nomeCompleto) y = escreverTexto(nomeCompleto, 50, 150, 25, doc);
   y = 55;
 
   // Dados de contato
@@ -343,15 +350,14 @@ function finalizarPDF(doc, y, formatarDataBR) {
 
   if (idade || telefone || email || localizacao || linkedin || portfolio) {
     doc.setFontSize(13);
-    doc.text("Dados de Contato:", 10, y); y += 6;
+    y = escreverTexto("Dados de Contato:", 10, 180, y, doc);
     doc.setFontSize(11);
-    if (idade) { doc.text(`· Idade: ${idade}`, 12, y); y += 4; }
-    if (telefone) { doc.text(`· Telefone: ${telefone}`, 12, y); y += 4; }
-    if (email) { doc.text(`· E-mail: ${email}`, 12, y); y += 4; }
-    if (localizacao) { doc.text(`· Localização: ${localizacao}`, 12, y); y += 4; }
-    if (linkedin) { doc.text(`· LinkedIn: ${linkedin}`, 12, y); y += 4; }
-    if (portfolio) { doc.text(`· Portfólio: ${portfolio}`, 12, y); y += 4; }
-
+    if (idade) y = escreverTexto(`· Idade: ${idade}`, 12, 170, y, doc);
+    if (telefone) y = escreverTexto(`· Telefone: ${telefone}`, 12, 170, y, doc);
+    if (email) y = escreverTexto(`· E-mail: ${email}`, 12, 170, y, doc);
+    if (localizacao) y = escreverTexto(`· Localização: ${localizacao}`, 12, 170, y, doc);
+    if (linkedin) y = escreverTexto(`· LinkedIn: ${linkedin}`, 12, 170, y, doc);
+    if (portfolio) y = escreverTexto(`· Portfólio: ${portfolio}`, 12, 170, y, doc);
     y += 8;
   }
 
@@ -359,8 +365,7 @@ function finalizarPDF(doc, y, formatarDataBR) {
   const objetivo = document.getElementById("objetivo").value.trim();
   if (objetivo) {
     doc.setFontSize(13);
-    doc.text("Objetivo:", 10, y); 
-    y += 6;
+    y = escreverTexto("Objetivo:", 10, 180, y, doc);
     doc.setFontSize(11);
     y = escreverTexto(objetivo, 12, 180, y, doc);
     y += 8;
@@ -372,7 +377,7 @@ function finalizarPDF(doc, y, formatarDataBR) {
                                exp.querySelector("input[placeholder='Cargo']").value.trim() ||
                                exp.querySelector("textarea").value.trim())) {
     doc.setFontSize(13);
-    doc.text("Experiência Profissional:", 10, y); y += 6;
+    y = escreverTexto("Experiência Profissional:", 10, 180, y, doc);
     experiencias.forEach(exp => {
       const empresa = exp.querySelector("input[placeholder='Empresa']").value.trim();
       const cargo = exp.querySelector("input[placeholder='Cargo']").value.trim();
@@ -380,14 +385,12 @@ function finalizarPDF(doc, y, formatarDataBR) {
       const fim = formatarDataBR(exp.querySelector(".fim").value);
       const status = exp.querySelector("select").value;
       const descricao = exp.querySelector("textarea").value.trim();
+
       if (empresa || cargo || descricao) {
         doc.setFontSize(11);
-        doc.text(`· ${cargo} - ${empresa} (${inicio} até ${status === "atual" ? "o momento" : fim})`, 12, y);
+        y = escreverTexto(`· ${cargo} - ${empresa} (${inicio} até ${status === "atual" ? "o momento" : fim})`, 12, 170, y, doc);
+        if (descricao) y = escreverTexto(descricao, 14, 165, y, doc);
         y += 4;
-        if (descricao) {
-          y = escreverTexto(descricao, 14, 170, y, doc);
-          y += 4;
-        }
       }
     });
     y += 8;
@@ -398,7 +401,7 @@ function finalizarPDF(doc, y, formatarDataBR) {
   if (formacoes.some(f => f.querySelector("input[placeholder='Curso']").value.trim() ||
                           f.querySelector("input[placeholder='Instituição']").value.trim())) {
     doc.setFontSize(13);
-    doc.text("Formação Acadêmica:", 10, y); y += 6;
+    y = escreverTexto("Formação Acadêmica:", 10, 180, y, doc);
     formacoes.forEach(f => {
       const curso = f.querySelector("input[placeholder='Curso']").value.trim();
       const instituicao = f.querySelector("input[placeholder='Instituição']").value.trim();
@@ -406,8 +409,7 @@ function finalizarPDF(doc, y, formatarDataBR) {
       const termino = formatarDataBR(f.querySelector(".termino").value);
       if (curso || instituicao) {
         doc.setFontSize(11);
-        doc.text(`· ${curso} - ${instituicao} (${ano || termino || ""})`, 12, y);
-        y += 4;
+        y = escreverTexto(`· ${curso} - ${instituicao} (${ano || termino || ""})`, 12, 170, y, doc);
       }
     });
     y += 8;
@@ -419,12 +421,10 @@ function finalizarPDF(doc, y, formatarDataBR) {
                            .filter(Boolean);
   if (habilidades.length > 0) {
     doc.setFontSize(13);
-    doc.text("Habilidades Técnicas:", 10, y); y += 6;
+    y = escreverTexto("Habilidades Técnicas:", 10, 180, y, doc);
     habilidades.forEach(h => {
       doc.setFontSize(11);
-      let textoQuebrado = doc.splitTextToSize(`· ${h}`, 180);
-      doc.text(textoQuebrado, 12, y);
-      y += (textoQuebrado.length * 5);
+      y = escreverTexto(`· ${h}`, 12, 170, y, doc);
     });
     y += 8;
   }
@@ -434,7 +434,7 @@ function finalizarPDF(doc, y, formatarDataBR) {
   if (cursos.some(c => c.querySelector("input[placeholder='Nome do Curso']").value.trim() ||
                        c.querySelector("input[placeholder='Instituição']").value.trim())) {
     doc.setFontSize(13);
-    doc.text("Cursos:", 10, y); y += 6;
+    y = escreverTexto("Cursos:", 10, 180, y, doc);
     cursos.forEach(c => {
       const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value.trim();
       const instituicao = c.querySelector("input[placeholder='Instituição']").value.trim();
@@ -446,8 +446,7 @@ function finalizarPDF(doc, y, formatarDataBR) {
         if (status === "concluido" && ano) textoCurso += ` (${ano})`;
         if (status === "cursando" && termino) textoCurso += ` (Previsão: ${termino})`;
         doc.setFontSize(11);
-        doc.text(textoCurso, 12, y);
-        y += 4;
+        y = escreverTexto(textoCurso, 12, 170, y, doc);
       }
     });
     y += 8;
@@ -458,7 +457,7 @@ function finalizarPDF(doc, y, formatarDataBR) {
   if (idiomas.some(i => i.querySelector(".idioma").value.trim() ||
                         i.querySelector(".idiomaOutro").value.trim())) {
     doc.setFontSize(13);
-    doc.text("Idiomas:", 10, y); y += 6;
+    y = escreverTexto("Idiomas:", 10, 180, y, doc);
     idiomas.forEach(i => {
       let idiomaSelect = i.querySelector(".idioma").value.trim();
       let nivel = i.querySelector(".nivel").value.trim();
@@ -477,25 +476,25 @@ function finalizarPDF(doc, y, formatarDataBR) {
 
       if (idiomaSelect) {
         doc.setFontSize(11);
-        doc.text(`· ${idiomaSelect} - ${nivel}`, 12, y);
-        y += 4;
+        y = escreverTexto(`· ${idiomaSelect} - ${nivel}`, 12, 170, y, doc);
       }
     });
     y += 8;
   }
 
-   // Palavras-Chaves ocultas
+  // Palavras-Chaves ocultas
   const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
   if (ativarPalavrasChaves) {
     const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value.trim();
     if (textoPalavrasChaves) {
-      doc.setTextColor(255, 255, 255);
+      doc.setTextColor(255, 255, 255);   // imprime invisível
       doc.setFontSize(6);
-      escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180);
-      doc.setTextColor(0, 0, 0);
+      y = escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180, y, doc);
+      doc.setTextColor(0, 0, 0);         // volta ao normal
     }
   }
 }
+
 // Função para salvar como TXT
 function salvarComoTXT() {
   const nomeCompleto = document.getElementById("nomeCompleto").value.trim() || "curriculo";
@@ -656,6 +655,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
