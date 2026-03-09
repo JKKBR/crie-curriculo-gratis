@@ -77,8 +77,11 @@
         <textarea id="textoPalavrasChaves" placeholder="Digite aqui suas palavras-chave. Exemplo: Trabalho em equipe, Liderança, Python, SQL, Power BI, Inglês fluente..." rows="4" style="width:100%;"></textarea>
       </div>
 
+      <!-- Botões de ação -->
       <div style="margin-top:20px; text-align:center;">
         <button type="button" onclick="gerarPDF()">Gerar PDF</button>
+        <button type="button" onclick="salvarComoTXT()">Salvar como TXT</button>
+        <input type="file" id="importarTXT" accept=".txt" onchange="importarTXT(event)">
         <br>
         <span id="contadorPaginas">Estimativa: 1 página A4</span>
       </div>
@@ -98,4 +101,3 @@
   <script src="script2.js"></script>
 </body>
 </html>
-
