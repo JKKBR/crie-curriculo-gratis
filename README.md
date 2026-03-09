@@ -14,7 +14,7 @@ Com uma interface simples e intuitiva, você pode criar, visualizar e salvar seu
 - **Backup e Importação**: salve seu currículo em formato `.txt` e importe novamente para continuar editando ou atualizar os dados.  
 - **Compatibilidade com IA/ATS**: o conteúdo do currículo é totalmente legível por sistemas de análise automática (como Inteligência Artificial ou ATS), garantindo que suas informações sejam interpretadas corretamente.  
 - **Sem anúncios**: projeto aberto e gratuito, sem propagandas ou distrações.  
-- **Gratuito e acessível**: não exige cadastro, login ou pagamento — é só entrar e usar.  
+- **Gratuito e acessível**: não exige cadastro, login ou pagamento é só entrar e usar.  
 
 ---
 
