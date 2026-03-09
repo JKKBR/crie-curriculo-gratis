@@ -355,16 +355,18 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     if (localizacao) { doc.text(`· Localização: ${localizacao}`, 12, y); y += 4; }
     if (linkedin) { doc.text(`· LinkedIn: ${linkedin}`, 12, y); y += 4; }
     if (portfolio) { doc.text(`· Portfólio: ${portfolio}`, 12, y); y += 4; }
+
+    y += 8; // 🔹 Espaço extra antes do próximo bloco
   }
 
   // Objetivo
   const objetivo = document.getElementById("objetivo").value.trim();
   if (objetivo) {
-    y += 6;
     doc.setFontSize(13);
     doc.text("Objetivo:", 10, y); y += 6;
     doc.setFontSize(11);
     escreverTexto(objetivo, 12, 180);
+    y += 8; // 🔹 Espaço extra
   }
 
   // Experiências
@@ -372,7 +374,6 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
   if (experiencias.some(exp => exp.querySelector("input[placeholder='Empresa']").value.trim() ||
                                exp.querySelector("input[placeholder='Cargo']").value.trim() ||
                                exp.querySelector("textarea").value.trim())) {
-    y += 6;
     doc.setFontSize(13);
     doc.text("Experiência Profissional:", 10, y); y += 6;
     experiencias.forEach(exp => {
@@ -387,15 +388,16 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
         doc.text(`· ${cargo} - ${empresa} (${inicio} até ${status === "atual" ? "o momento" : fim})`, 12, y);
         y += 4;
         escreverTexto(descricao, 14, 170);
+        y += 4; // 🔹 Espaço extra
       }
     });
+    y += 8;
   }
 
   // Formação Acadêmica
   let formacoes = Array.from(document.querySelectorAll("#formacoes div"));
   if (formacoes.some(f => f.querySelector("input[placeholder='Curso']").value.trim() ||
                           f.querySelector("input[placeholder='Instituição']").value.trim())) {
-    y += 6;
     doc.setFontSize(13);
     doc.text("Formação Acadêmica:", 10, y); y += 6;
     formacoes.forEach(f => {
@@ -409,6 +411,7 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
         y += 4;
       }
     });
+    y += 8;
   }
 
   // Habilidades Técnicas
@@ -416,21 +419,21 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
                            .map(h => h.value.trim())
                            .filter(Boolean);
   if (habilidades.length > 0) {
-    y += 6;
     doc.setFontSize(13);
     doc.text("Habilidades Técnicas:", 10, y); y += 6;
     habilidades.forEach(h => {
+      doc.setFontSize(11); // 🔹 força padronização
       let textoQuebrado = doc.splitTextToSize(`· ${h}`, 180);
       doc.text(textoQuebrado, 12, y);
       y += (textoQuebrado.length * 5);
     });
+    y += 8;
   }
 
   // Cursos
   let cursos = Array.from(document.querySelectorAll("#cursos div"));
   if (cursos.some(c => c.querySelector("input[placeholder='Nome do Curso']").value.trim() ||
                        c.querySelector("input[placeholder='Instituição']").value.trim())) {
-    y += 6;
     doc.setFontSize(13);
     doc.text("Cursos:", 10, y); y += 6;
     cursos.forEach(c => {
@@ -448,13 +451,13 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
         y += 4;
       }
     });
+    y += 8;
   }
 
-    // Idiomas
+  // Idiomas
   let idiomas = Array.from(document.querySelectorAll("#idiomas div"));
   if (idiomas.some(i => i.querySelector(".idioma").value.trim() ||
                         i.querySelector(".idiomaOutro").value.trim())) {
-    y += 6;
     doc.setFontSize(13);
     doc.text("Idiomas:", 10, y); y += 6;
     idiomas.forEach(i => {
@@ -462,7 +465,6 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
       const nivel = i.querySelector(".nivel").value.trim();
       const outro = i.querySelector(".idiomaOutro").value.trim();
 
-      // Corrige acentos
       if (idiomaSelect === "portugues") idiomaSelect = "Português";
       else if (idiomaSelect === "ingles") idiomaSelect = "Inglês";
       else if (idiomaSelect === "espanhol") idiomaSelect = "Espanhol";
@@ -474,6 +476,7 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
         y += 4;
       }
     });
+    y += 8;
   }
 
   // Palavras-Chaves ocultas
@@ -649,3 +652,4 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
