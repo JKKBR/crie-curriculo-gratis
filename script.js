@@ -424,7 +424,7 @@ y += Math.ceil(habilidades.length / colunas) * alturaLinha;
       let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
       doc.setFontSize(11);
       doc.text(`· ${idiomaFinal} - ${nivel}`, 12, y);
-      y += 3; // espaçamento reduzido
+      y += 4; // espaçamento reduzido
     });
 
         // Palavras-Chaves ocultas
@@ -464,6 +464,7 @@ y += Math.ceil(habilidades.length / colunas) * alturaLinha;
     finalizarPDF();
   }
 }
+
 
 
 
