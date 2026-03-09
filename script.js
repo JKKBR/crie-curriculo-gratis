@@ -363,10 +363,11 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
   const objetivo = document.getElementById("objetivo").value.trim();
   if (objetivo) {
     doc.setFontSize(13);
-    doc.text("Objetivo:", 10, y); y += 6;
+    doc.text("Objetivo:", 10, y); 
+    y += 6;
     doc.setFontSize(11);
     escreverTexto(objetivo, 12, 180);
-    y += 8; // 🔹 Espaço extra
+    y += 8; // 🔹 Espaço extra antes da próxima seção
   }
 
   // Experiências
@@ -422,7 +423,7 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     doc.setFontSize(13);
     doc.text("Habilidades Técnicas:", 10, y); y += 6;
     habilidades.forEach(h => {
-      doc.setFontSize(11); // 🔹 força padronização
+      doc.setFontSize(11); // 🔹 padroniza fonte
       let textoQuebrado = doc.splitTextToSize(`· ${h}`, 180);
       doc.text(textoQuebrado, 12, y);
       y += (textoQuebrado.length * 5);
@@ -465,14 +466,18 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
       const nivel = i.querySelector(".nivel").value.trim();
       const outro = i.querySelector(".idiomaOutro").value.trim();
 
+      // 🔹 Corrige acentos e capitalização
       if (idiomaSelect === "portugues") idiomaSelect = "Português";
       else if (idiomaSelect === "ingles") idiomaSelect = "Inglês";
       else if (idiomaSelect === "espanhol") idiomaSelect = "Espanhol";
       else if (idiomaSelect === "outro") idiomaSelect = outro;
 
+      idiomaSelect = idiomaSelect.normalize("NFC");
+      const nivelFormatado = nivel.charAt(0).toUpperCase() + nivel.slice(1);
+
       if (idiomaSelect) {
         doc.setFontSize(11);
-        doc.text(`· ${idiomaSelect.normalize("NFC")} - ${nivel.normalize("NFC")}`, 12, y);
+        doc.text(`· ${idiomaSelect} - ${nivelFormatado}`, 12, y);
         y += 4;
       }
     });
@@ -652,4 +657,5 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
