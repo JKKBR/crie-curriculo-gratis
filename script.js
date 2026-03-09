@@ -213,7 +213,7 @@ function atualizarPreview() {
     html += `<h2>Formação Acadêmica</h2><ul style="font-size:12px; line-height:1.3; margin:3px 0;">${formacoes}</ul>`;
   }
 
-  // Habilidades Técnicas
+ // Habilidades Técnicas
 const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
                          .map(h => h.value.trim())
                          .filter(Boolean);
@@ -223,9 +223,9 @@ if (habilidades.length > 0) {
   doc.text("Habilidades Técnicas:", 10, y);
   y += 6;
   habilidades.forEach(h => {
-    doc.setFontSize(11);
+    doc.setFontSize(11); // Fonte igual às outras seções
     doc.text(`· ${h}`, 12, y);
-    y += 4;
+    y += 4; // Espaçamento fixo
   });
 }
 
@@ -642,6 +642,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
