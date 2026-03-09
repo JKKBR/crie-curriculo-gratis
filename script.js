@@ -484,93 +484,7 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
   doc.save("curriculo.pdf");
 }
 
-  // Foto opcional
-  const fotoInput = document.getElementById("fotoCandidato");
-  if (fotoInput.files && fotoInput.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const mimeType = fotoInput.files[0].type.toLowerCase();
-      const tipoImagem = mimeType.includes("png") ? "PNG" :
-                         (mimeType.includes("jpg") || mimeType.includes("jpeg")) ? "JPEG" : "JPEG";
-      doc.addImage(e.target.result, tipoImagem, 10, 10, 30, 40);
-      y = 55; // garante espaço entre foto, nome e contatos
-      finalizarPDF();
-    };
-    reader.onerror = function() {
-      finalizarPDF(); // fallback se houver erro na leitura
-    };
-    reader.readAsDataURL(fotoInput.files[0]);
-  } else {
-    finalizarPDF();
-  }
-}
- // Cursos
-  let cursos = Array.from(document.querySelectorAll("#cursos div"));
-  if (cursos.some(c => c.querySelector("input[placeholder='Nome do Curso']").value.trim() ||
-                       c.querySelector("input[placeholder='Instituição']").value.trim())) {
-    y += 6;
-    doc.setFontSize(13);
-    doc.text("Cursos:", 10, y); y += 6;
-    cursos.forEach(c => {
-      const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value.trim();
-      const instituicao = c.querySelector("input[placeholder='Instituição']").value.trim();
-      const ano = formatarDataBR(c.querySelector(".ano").value);
-      const termino = formatarDataBR(c.querySelector(".termino").value);
-      const status = c.querySelector("select").value;
-      if (nomeCurso || instituicao) {
-        let textoCurso = `· ${nomeCurso} - ${instituicao}`;
-        if (status === "concluido" && ano) textoCurso += ` (${ano})`;
-        if (status === "cursando" && termino) textoCurso += ` (Previsão: ${termino})`;
-        doc.setFontSize(11);
-        doc.text(textoCurso, 12, y);
-        y += 4;
-      }
-    });
-  }
-
-  // Idiomas
-let idiomas = Array.from(document.querySelectorAll("#idiomas div"));
-if (idiomas.some(i => i.querySelector(".idioma").value.trim() ||
-                      i.querySelector(".idiomaOutro").value.trim())) {
-  y += 6;
-  doc.setFontSize(13);
-  doc.text("Idiomas:", 10, y); y += 6;
-  idiomas.forEach(i => {
-    let idiomaSelect = i.querySelector(".idioma").value.trim();
-    const nivel = i.querySelector(".nivel").value.trim();
-    const outro = i.querySelector(".idiomaOutro").value.trim();
-
-    // Corrige acentos
-    if (idiomaSelect === "portugues") idiomaSelect = "Português";
-    else if (idiomaSelect === "ingles") idiomaSelect = "Inglês";
-    else if (idiomaSelect === "espanhol") idiomaSelect = "Espanhol";
-    else if (idiomaSelect === "outro") idiomaSelect = outro;
-
-    if (idiomaSelect) {
-      doc.setFontSize(11);
-      doc.text(`· ${idiomaSelect.normalize("NFC")} - ${nivel.normalize("NFC")}`, 12, y);
-      y += 4;
-    }
-  });
-}
-
-  // Palavras-Chaves ocultas
-  const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
-  if (ativarPalavrasChaves) {
-    const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value.trim();
-    if (textoPalavrasChaves) {
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(6);
-      escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180);
-      doc.setTextColor(0, 0, 0);
-    }
-  }
-
-  // Finalizar PDF
-  doc.save("curriculo.pdf");
-}
-
-  // Foto opcional
+   // Foto opcional
   const fotoInput = document.getElementById("fotoCandidato");
   if (fotoInput.files && fotoInput.files[0]) {
     const reader = new FileReader();
@@ -729,6 +643,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
