@@ -15,12 +15,12 @@ function atualizarEstimativa() {
 // Função genérica para confirmar exclusão
 function confirmarExclusao(botao) {
   if (confirm("Você realmente quer excluir este item?")) {
-    botao.parentNode.remove();
+    botao.closest("div").remove();
     atualizarPreview();
   }
 }
 
-// Funções para adicionar blocos com botão de exclusão
+// Funções para adicionar blocos
 function addExperiencia() {
   const div = document.createElement("div");
   div.innerHTML = `
@@ -139,7 +139,7 @@ function removerFoto() {
   }
 }
 
-// Função de pré-visualização (mantida igual, mas já atualiza ao excluir)
+// Função de pré-visualização
 function atualizarPreview() {
   let html = "";
 
@@ -168,14 +168,16 @@ function atualizarPreview() {
   const linkedin = document.getElementById("linkedin").value;
   const portfolio = document.getElementById("portfolio").value;
 
-  html += `<h2>Dados de Contato</h2><ul style="font-size:12px; line-height:1.3;">`;
-  if (idade) html += `<li>Idade: ${idade}</li>`;   // ✅ novo campo
-  if (telefone) html += `<li>Telefone: ${telefone}</li>`;
-  if (email) html += `<li>E-mail: ${email}</li>`;
-  if (localizacao) html += `<li>Localização: ${localizacao}</li>`;
-  if (linkedin) html += `<li>LinkedIn: ${linkedin}</li>`;
-  if (portfolio) html += `<li>Portfólio: ${portfolio}</li>`;
-  html += `</ul>`;
+  if (idade || telefone || email || localizacao || linkedin || portfolio) {
+    html += `<h2>Dados de Contato</h2><ul style="font-size:12px; line-height:1.3;">`;
+    if (idade) html += `<li>Idade: ${idade}</li>`;
+    if (telefone) html += `<li>Telefone: ${telefone}</li>`;
+    if (email) html += `<li>E-mail: ${email}</li>`;
+    if (localizacao) html += `<li>Localização: ${localizacao}</li>`;
+    if (linkedin) html += `<li>LinkedIn: ${linkedin}</li>`;
+    if (portfolio) html += `<li>Portfólio: ${portfolio}</li>`;
+    html += `</ul>`;
+  }
 
   // Objetivo
   const objetivo = document.getElementById("objetivo").value;
@@ -207,7 +209,7 @@ function atualizarPreview() {
     const ano = div.querySelector(".ano")?.value || "";
     const termino = div.querySelector(".termino")?.value || "";
     if (!curso && !instituicao) return "";
-    return `<li>${curso} - ${instituicao} (${ano || termino || "?"})</li>`;
+    return `<li>${curso} - ${instituicao} (${ano || termino || ""})</li>`;
   }).filter(Boolean).join("");
   if (formacoes) {
     html += `<h2>Formação Acadêmica</h2><ul style="font-size:12px; line-height:1.3; margin:3px 0;">${formacoes}</ul>`;
@@ -225,51 +227,50 @@ function atualizarPreview() {
     html += `</ul>`;
   }
 
-// Cursos
+  // Cursos
   const cursos = Array.from(document.querySelectorAll("#cursos div")).map(div => {
     const nomeCurso = (div.querySelector("input[placeholder='Nome do Curso']") || {}).value || "";
     const instituicao = (div.querySelector("input[placeholder='Instituição']") || {}).value || "";
     const ano = div.querySelector(".ano")?.value || "";
     const termino = div.querySelector(".termino")?.value || "";
     if (!nomeCurso && !instituicao) return "";
-    return `<li>${nomeCurso} - ${instituicao} (${ano || termino || "?"})</li>`;
+    return `<li>${nomeCurso} - ${instituicao} (${ano || termino || ""})</li>`;
   }).filter(Boolean).join("");
   if (cursos) {
     html += `<h2>Cursos</h2><ul style="font-size:12px; line-height:1.3; margin:3px 0;">${cursos}</ul>`;
   }
 
-// Idiomas
-const idiomas = Array.from(document.querySelectorAll("#idiomas div")).map(div => {
-  let idioma = div.querySelector(".idioma")?.value || "";
-  const nivel = div.querySelector(".nivel")?.value || "";
-  const outro = div.querySelector(".idiomaOutro")?.value || "";
+  // Idiomas
+  const idiomas = Array.from(document.querySelectorAll("#idiomas div")).map(div => {
+    let idioma = div.querySelector(".idioma")?.value || "";
+    const nivel = div.querySelector(".nivel")?.value || "";
+    const outro = div.querySelector(".idiomaOutro")?.value || "";
 
-  if (!idioma && !nivel) return "";
+    if (!idioma && !nivel) return "";
 
-  // Corrige acentos
-  if (idioma === "portugues") idioma = "Português";
-  else if (idioma === "ingles") idioma = "Inglês";
-  else if (idioma === "espanhol") idioma = "Espanhol";
-  else if (idioma === "outro") idioma = outro;
+    // Corrige acentos
+    if (idioma === "portugues") idioma = "Português";
+    else if (idioma === "ingles") idioma = "Inglês";
+    else if (idioma === "espanhol") idioma = "Espanhol";
+    else if (idioma === "outro") idioma = outro;
 
-  return `<li>${idioma} - ${nivel}</li>`;
-}).filter(Boolean).join("");
-
-if (idiomas) {
-  html += `<h2>Idiomas</h2><ul style="font-size:12px; line-height:1.2; margin:2px 0;">${idiomas}</ul>`;
-}
+    return `<li>${idioma} - ${nivel}</li>`;
+  }).filter(Boolean).join("");
+  if (idiomas) {
+    html += `<h2>Idiomas</h2><ul style="font-size:12px; line-height:1.2; margin:2px 0;">${idiomas}</ul>`;
+  }
 
   // Atualiza preview e contador
   document.getElementById("previewCurriculo").innerHTML = html;
   atualizarEstimativa();
 }
 
-// Eventos para atualizar preview em tempo real nos campos básicos
+// Eventos para atualizar preview em tempo real
 ["nomeCompleto","telefone","email","localizacao","linkedin","portfolio","objetivo"].forEach(id => {
   document.getElementById(id).addEventListener("input", atualizarPreview);
 });
 
-// Listener da foto separado
+// Listener da foto
 document.getElementById("fotoCandidato").addEventListener("change", atualizarPreview);
 
 // Função para alternar exibição da caixa de palavras-chave
@@ -279,6 +280,7 @@ function togglePalavrasChaves() {
   bloco.style.display = checkbox.checked ? "block" : "none";
 }
 
+// Função para gerar PDF
 function gerarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -325,6 +327,7 @@ function gerarPDF() {
   }
 }
 
+// Função que monta o conteúdo do PDF (sem salvar)
 function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
   doc.setFont("helvetica", "normal");
 
@@ -353,7 +356,6 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     if (linkedin) { doc.text(`· LinkedIn: ${linkedin}`, 12, y); y += 4; }
     if (portfolio) { doc.text(`· Portfólio: ${portfolio}`, 12, y); y += 4; }
   }
-
 
   // Objetivo
   const objetivo = document.getElementById("objetivo").value.trim();
@@ -448,7 +450,7 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     });
   }
 
-  // Idiomas
+    // Idiomas
   let idiomas = Array.from(document.querySelectorAll("#idiomas div"));
   if (idiomas.some(i => i.querySelector(".idioma").value.trim() ||
                         i.querySelector(".idiomaOutro").value.trim())) {
@@ -456,13 +458,19 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     doc.setFontSize(13);
     doc.text("Idiomas:", 10, y); y += 6;
     idiomas.forEach(i => {
-      const idiomaSelect = i.querySelector(".idioma").value.trim();
+      let idiomaSelect = i.querySelector(".idioma").value.trim();
       const nivel = i.querySelector(".nivel").value.trim();
       const outro = i.querySelector(".idiomaOutro").value.trim();
-      let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
-      if (idiomaFinal) {
+
+      // Corrige acentos
+      if (idiomaSelect === "portugues") idiomaSelect = "Português";
+      else if (idiomaSelect === "ingles") idiomaSelect = "Inglês";
+      else if (idiomaSelect === "espanhol") idiomaSelect = "Espanhol";
+      else if (idiomaSelect === "outro") idiomaSelect = outro;
+
+      if (idiomaSelect) {
         doc.setFontSize(11);
-        doc.text(`· ${idiomaFinal} - ${nivel}`, 12, y);
+        doc.text(`· ${idiomaSelect.normalize("NFC")} - ${nivel.normalize("NFC")}`, 12, y);
         y += 4;
       }
     });
@@ -479,38 +487,15 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
       doc.setTextColor(0, 0, 0);
     }
   }
-
-  // Finalizar PDF
-  doc.save("curriculo.pdf");
 }
 
-   // Foto opcional
-  const fotoInput = document.getElementById("fotoCandidato");
-  if (fotoInput.files && fotoInput.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const mimeType = fotoInput.files[0].type.toLowerCase();
-      const tipoImagem = mimeType.includes("png") ? "PNG" :
-                         (mimeType.includes("jpg") || mimeType.includes("jpeg")) ? "JPEG" : "JPEG";
-      doc.addImage(e.target.result, tipoImagem, 10, 10, 30, 40);
-      y = 55; // garante espaço entre foto, nome e contatos
-      finalizarPDF();
-    };
-    reader.onerror = function() {
-      finalizarPDF(); // fallback se houver erro na leitura
-    };
-    reader.readAsDataURL(fotoInput.files[0]);
-  } else {
-    finalizarPDF();
-  }
-}
-
+// Função para salvar como TXT
 function salvarComoTXT() {
   const nomeCompleto = document.getElementById("nomeCompleto").value.trim() || "curriculo";
 
   let conteudo = "";
   conteudo += `Nome: ${nomeCompleto}\n`;
-  conteudo += `Idade: ${document.getElementById("idade").value}\n`;   // ✅ novo campo
+  conteudo += `Idade: ${document.getElementById("idade").value}\n`;
   conteudo += `Telefone: ${document.getElementById("telefone").value}\n`;
   conteudo += `E-mail: ${document.getElementById("email").value}\n`;
   conteudo += `Localização: ${document.getElementById("localizacao").value}\n`;
@@ -563,11 +548,17 @@ function salvarComoTXT() {
   // Idiomas
   conteudo += "Idiomas:\n";
   Array.from(document.querySelectorAll("#idiomas div")).forEach(i => {
-    const idiomaSelect = i.querySelector(".idioma").value;
+    let idiomaSelect = i.querySelector(".idioma").value;
     const nivel = i.querySelector(".nivel").value;
     const outro = i.querySelector(".idiomaOutro").value;
-    let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
-    conteudo += `- ${idiomaFinal} (${nivel})\n`;
+
+    // Corrige acentos
+    if (idiomaSelect === "portugues") idiomaSelect = "Português";
+    else if (idiomaSelect === "ingles") idiomaSelect = "Inglês";
+    else if (idiomaSelect === "espanhol") idiomaSelect = "Espanhol";
+    else if (idiomaSelect === "outro") idiomaSelect = outro;
+
+    conteudo += `- ${idiomaSelect.normalize("NFC")} (${nivel.normalize("NFC")})\n`;
   });
 
   const blob = new Blob([conteudo], { type: "text/plain" });
@@ -577,6 +568,7 @@ function salvarComoTXT() {
   link.click();
 }
 
+// Função para importar TXT
 function importarTXT(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -631,8 +623,22 @@ function importarTXT(event) {
           addIdioma();
           const div = document.querySelector("#idiomas div:last-child");
           const partes = linha.replace("-", "").trim().split("(");
-          div.querySelector(".idiomaOutro").value = partes[0].trim();
-          div.querySelector(".nivel").value = partes[1]?.replace(")", "").trim() || "";
+          const idiomaTxt = partes[0].trim();
+          const nivelTxt = partes[1]?.replace(")", "").trim() || "";
+
+          // Ajusta select conforme idioma
+          if (idiomaTxt.toLowerCase() === "português") {
+            div.querySelector(".idioma").value = "portugues";
+          } else if (idiomaTxt.toLowerCase() === "inglês") {
+            div.querySelector(".idioma").value = "ingles";
+          } else if (idiomaTxt.toLowerCase() === "espanhol") {
+            div.querySelector(".idioma").value = "espanhol";
+          } else {
+            div.querySelector(".idioma").value = "outro";
+            div.querySelector(".idiomaOutro").value = idiomaTxt;
+          }
+
+          div.querySelector(".nivel").value = nivelTxt;
         }
       } else if (secaoAtual === "objetivo" && linha.trim() !== "") {
         document.getElementById("objetivo").value += linha + "\n";
@@ -643,7 +649,3 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
-
-
-
-
