@@ -316,17 +316,30 @@ function gerarPDF() {
   }
 }
 
-// 🔹 Função única para escrever texto respeitando Y
 function escreverTexto(texto, x, largura, yInicial, doc) {
   let linhas = doc.splitTextToSize(texto, largura);
-  doc.text(linhas, x, yInicial);
-  return yInicial + (linhas.length * 5); // devolve nova posição Y
+  linhas.forEach(linha => {
+    if (yInicial > 270) { // limite da página A4
+      doc.addPage();
+      yInicial = 20; // reinicia no topo da nova página
+    }
+    doc.text(linha, x, yInicial);
+    yInicial += 5;
+  });
+  return yInicial;
 }
 
 // Função que monta o conteúdo do PDF (sem salvar)
 function finalizarPDF(doc, y, formatarDataBR) {
-  doc.setFont("helvetica", "normal");
+  // Configurações de estilo escolhidas pelo usuário
+  const fonte = document.getElementById("fontePDF").value || "helvetica";
+  const corTitulos = document.getElementById("corTitulos").value || "#000000";
+  const tamanhoTitulos = parseInt(document.getElementById("tamanhoTitulos").value) || 13;
 
+  doc.setFont(fonte, "normal");
+  doc.setFontSize(11);
+  doc.setTextColor(0,0,0); // texto padrão em preto
+  
   // Cabeçalho e nome
   const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
   doc.setFontSize(20);
@@ -656,6 +669,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
