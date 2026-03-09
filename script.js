@@ -356,10 +356,10 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     if (linkedin) { doc.text(`· LinkedIn: ${linkedin}`, 12, y); y += 4; }
     if (portfolio) { doc.text(`· Portfólio: ${portfolio}`, 12, y); y += 4; }
 
-    y += 8; // 🔹 Espaço extra antes do próximo bloco
+    y += 8; // espaço extra antes do próximo bloco
   }
 
-  // Objetivo (agora só aparece aqui, não mais abaixo do nome)
+  // Objetivo
   const objetivo = document.getElementById("objetivo").value.trim();
   if (objetivo) {
     doc.setFontSize(13);
@@ -367,7 +367,7 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     y += 6;
     doc.setFontSize(11);
     escreverTexto(objetivo, 12, 180);
-    y += 8; // espaço extra antes da próxima seção
+    y += 8;
   }
 
   // Experiências
@@ -423,7 +423,7 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     doc.setFontSize(13);
     doc.text("Habilidades Técnicas:", 10, y); y += 6;
     habilidades.forEach(h => {
-      doc.setFontSize(11); // 🔹 padroniza fonte
+      doc.setFontSize(11);
       let textoQuebrado = doc.splitTextToSize(`· ${h}`, 180);
       doc.text(textoQuebrado, 12, y);
       y += (textoQuebrado.length * 5);
@@ -463,21 +463,25 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     doc.text("Idiomas:", 10, y); y += 6;
     idiomas.forEach(i => {
       let idiomaSelect = i.querySelector(".idioma").value.trim();
-      const nivel = i.querySelector(".nivel").value.trim();
+      let nivel = i.querySelector(".nivel").value.trim();
       const outro = i.querySelector(".idiomaOutro").value.trim();
 
-      // 🔹 Corrige acentos e capitalização
+      // Corrige acentos e capitalização dos idiomas
       if (idiomaSelect === "portugues") idiomaSelect = "Português";
       else if (idiomaSelect === "ingles") idiomaSelect = "Inglês";
       else if (idiomaSelect === "espanhol") idiomaSelect = "Espanhol";
       else if (idiomaSelect === "outro") idiomaSelect = outro;
 
+      // Corrige acentos e capitalização dos níveis
+      if (nivel === "basico") nivel = "Básico";
+      else if (nivel === "intermediario") nivel = "Intermediário";
+      else if (nivel === "avancado") nivel = "Avançado";
+
       idiomaSelect = idiomaSelect.normalize("NFC");
-      const nivelFormatado = nivel.charAt(0).toUpperCase() + nivel.slice(1);
 
       if (idiomaSelect) {
         doc.setFontSize(11);
-        doc.text(`· ${idiomaSelect} - ${nivelFormatado}`, 12, y);
+        doc.text(`· ${idiomaSelect} - ${nivel}`, 12, y);
         y += 4;
       }
     });
@@ -496,7 +500,6 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     }
   }
 }
-
 // Função para salvar como TXT
 function salvarComoTXT() {
   const nomeCompleto = document.getElementById("nomeCompleto").value.trim() || "curriculo";
@@ -657,6 +660,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
