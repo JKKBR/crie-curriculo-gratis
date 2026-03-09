@@ -359,7 +359,7 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     y += 8; // 🔹 Espaço extra antes do próximo bloco
   }
 
-  // Objetivo
+  // Objetivo (agora só aparece aqui, não mais abaixo do nome)
   const objetivo = document.getElementById("objetivo").value.trim();
   if (objetivo) {
     doc.setFontSize(13);
@@ -367,7 +367,7 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     y += 6;
     doc.setFontSize(11);
     escreverTexto(objetivo, 12, 180);
-    y += 8; // 🔹 Espaço extra antes da próxima seção
+    y += 8; // espaço extra antes da próxima seção
   }
 
   // Experiências
@@ -389,7 +389,7 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
         doc.text(`· ${cargo} - ${empresa} (${inicio} até ${status === "atual" ? "o momento" : fim})`, 12, y);
         y += 4;
         escreverTexto(descricao, 14, 170);
-        y += 4; // 🔹 Espaço extra
+        y += 4;
       }
     });
     y += 8;
@@ -657,5 +657,6 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
