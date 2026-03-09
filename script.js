@@ -4,15 +4,15 @@ document.getElementById("objetivo").addEventListener("input", function() {
   this.style.height = (this.scrollHeight) + "px";
 });
 
-// Função de estimativa de páginas
+// Estimativa de páginas
 function atualizarEstimativa() {
   const texto = document.getElementById("previewCurriculo").innerText;
-  const caracteresPorPagina = 1800; 
+  const caracteresPorPagina = 1800;
   const paginas = Math.max(1, Math.ceil(texto.length / caracteresPorPagina));
   document.getElementById("contadorPaginas").innerText = `Estimativa: ${paginas} página(s) A4`;
 }
 
-// Função genérica para confirmar exclusão
+// Confirmar exclusão
 function confirmarExclusao(botao) {
   if (confirm("Você realmente quer excluir este item?")) {
     botao.parentNode.remove();
@@ -20,7 +20,7 @@ function confirmarExclusao(botao) {
   }
 }
 
-// Funções para adicionar blocos com botão de exclusão
+// Funções para adicionar blocos
 function addExperiencia() {
   const div = document.createElement("div");
   div.innerHTML = `
@@ -34,8 +34,7 @@ function addExperiencia() {
       <option value="antigo">Emprego Antigo</option>
     </select><br>
     <textarea placeholder="Descrição" rows="5"></textarea><br>
-    <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
-    <br><br>
+    <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button><br><br>
   `;
   document.getElementById("experiencias").appendChild(div);
   atualizarPreview();
@@ -56,8 +55,7 @@ function addFormacao() {
     </select><br>
     <input type="text" class="ano" placeholder="Ano de conclusão" style="display:none;">
     <input type="text" class="termino" placeholder="Previsão de término" style="display:none;"><br>
-    <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
-    <br><br>
+    <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button><br><br>
   `;
   document.getElementById("formacoes").appendChild(div);
 }
@@ -72,8 +70,7 @@ function addHabilidade() {
   const div = document.createElement("div");
   div.innerHTML = `
     <input type="text" placeholder="Habilidade">
-    <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
-    <br>
+    <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button><br>
   `;
   document.getElementById("habilidades").appendChild(div);
   atualizarPreview();
@@ -91,8 +88,7 @@ function addCurso() {
     </select><br>
     <input type="text" class="ano" placeholder="Ano de conclusão" style="display:none;">
     <input type="text" class="termino" placeholder="Data prevista (dia/mês/ano)" style="display:none;"><br>
-    <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
-    <br><br>
+    <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button><br><br>
   `;
   document.getElementById("cursos").appendChild(div);
   atualizarPreview();
@@ -129,7 +125,7 @@ function toggleIdiomaOutro(select) {
   outroInput.style.display = select.value === "outro" ? "block" : "none";
 }
 
-// Remover foto com confirmação
+// Remover foto
 function removerFoto() {
   if (confirm("Você realmente quer remover a foto?")) {
     const fotoInput = document.getElementById("fotoCandidato");
@@ -139,11 +135,9 @@ function removerFoto() {
   }
 }
 
-// Função de pré-visualização (mantida igual, mas já atualiza ao excluir)
+// Preview (HTML apenas)
 function atualizarPreview() {
   let html = "";
-
-  // Nome + Foto
   const nome = document.getElementById("nomeCompleto").value;
   const fotoInput = document.getElementById("fotoCandidato");
   let fotoHTML = "";
@@ -151,13 +145,11 @@ function atualizarPreview() {
     const reader = new FileReader();
     reader.onload = function(e) {
       fotoHTML = `<img src="${e.target.result}" alt="Foto do candidato">`;
-      document.querySelector(".preview-header").innerHTML =
-        `${fotoHTML}<h3>${nome}</h3>`;
+      document.querySelector(".preview-header").innerHTML = `${fotoHTML}<h3>${nome}</h3>`;
     };
     reader.readAsDataURL(fotoInput.files[0]);
   } else {
-    document.querySelector(".preview-header").innerHTML =
-      `<h3>${nome}</h3>`;
+    document.querySelector(".preview-header").innerHTML = `<h3>${nome}</h3>`;
   }
 
   // Contato
@@ -183,7 +175,7 @@ function atualizarPreview() {
     html += `<h2>Objetivo</h2><p style="font-size:12px; line-height:1.3;">${objetivo}</p>`;
   }
 
-  // Experiências
+    // Experiências
   const experiencias = Array.from(document.querySelectorAll("#experiencias div")).map(div => {
     const empresa = (div.querySelector("input[placeholder='Empresa']") || {}).value || "";
     const cargo = (div.querySelector("input[placeholder='Cargo']") || {}).value || "";
@@ -213,21 +205,14 @@ function atualizarPreview() {
     html += `<h2>Formação Acadêmica</h2><ul style="font-size:12px; line-height:1.3; margin:3px 0;">${formacoes}</ul>`;
   }
 
- // Habilidades Técnicas
-const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
-                         .map(h => h.value.trim())
-                         .filter(Boolean);
-if (habilidades.length > 0) {
-  y += 6;
-  doc.setFontSize(13);
-  doc.text("Habilidades Técnicas:", 10, y);
-  y += 6;
-  habilidades.forEach(h => {
-    doc.setFontSize(11); // Fonte igual às outras seções
-    doc.text(`· ${h}`, 11, y);
-    y += 4; // Espaçamento fixo
-  });
-}
+  // Habilidades Técnicas
+  const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
+                           .map(h => h.value.trim())
+                           .filter(Boolean);
+  if (habilidades.length > 0) {
+    const listaHabilidades = habilidades.map(h => `<li>${h}</li>`).join("");
+    html += `<h2>Habilidades Técnicas</h2><ul style="font-size:12px; line-height:1.3; margin:3px 0;">${listaHabilidades}</ul>`;
+  }
 
   // Cursos
   const cursos = Array.from(document.querySelectorAll("#cursos div")).map(div => {
@@ -259,15 +244,13 @@ if (habilidades.length > 0) {
   atualizarEstimativa();
 }
 
-// Eventos para atualizar preview em tempo real nos campos básicos
+// Eventos para atualizar preview em tempo real
 ["nomeCompleto","telefone","email","localizacao","linkedin","portfolio","objetivo"].forEach(id => {
   document.getElementById(id).addEventListener("input", atualizarPreview);
 });
-
-// Listener da foto separado
 document.getElementById("fotoCandidato").addEventListener("change", atualizarPreview);
 
-// Função para alternar exibição da caixa de palavras-chave
+// Alternar palavras-chave
 function togglePalavrasChaves() {
   const checkbox = document.getElementById("ativarPalavrasChaves");
   const bloco = document.getElementById("blocoPalavrasChaves");
@@ -286,7 +269,7 @@ function gerarPDF() {
     const linhas = doc.splitTextToSize(texto, largura);
     linhas.forEach(linha => {
       if (y > 270) { doc.addPage(); y = 20; }
-      doc.text(linha, x, y);
+      doc.text(linha.normalize("NFC"), x, y);
       y += 4;
     });
     y += 2;
@@ -302,10 +285,36 @@ function gerarPDF() {
     return dataStr;
   }
 
-function finalizarPDF() {
+  // Foto opcional
+  const fotoInput = document.getElementById("fotoCandidato");
+  if (fotoInput.files && fotoInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const mimeType = fotoInput.files[0].type.toLowerCase();
+      const tipoImagem = mimeType.includes("png") ? "PNG" :
+                         (mimeType.includes("jpg") || mimeType.includes("jpeg")) ? "JPEG" : "JPEG";
+      doc.addImage(e.target.result, tipoImagem, 10, 10, 30, 40);
+      y = 55; // espaço após foto
+      finalizarPDF(doc, y, escreverTexto, formatarDataBR);
+      doc.save("curriculo.pdf");
+    };
+    reader.onerror = function() {
+      finalizarPDF(doc, y, escreverTexto, formatarDataBR);
+      doc.save("curriculo.pdf");
+    };
+    reader.readAsDataURL(fotoInput.files[0]);
+  } else {
+    finalizarPDF(doc, y, escreverTexto, formatarDataBR);
+    doc.save("curriculo.pdf");
+  }
+}
+
+// Função que monta o conteúdo do PDF
+function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
+  doc.setFont("helvetica", "normal");
+
   // Cabeçalho e nome
   const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
-  doc.setFont("helvetica", "normal"); // garante suporte a acentos
   doc.setFontSize(20);
   if (nomeCompleto) doc.text(nomeCompleto.normalize("NFC"), 50, 25);
   y = 55;
@@ -393,13 +402,13 @@ function finalizarPDF() {
     doc.setFontSize(13);
     doc.text("Habilidades Técnicas:", 10, y); y += 6;
     habilidades.forEach(h => {
-      doc.setFontSize(10);
-      doc.text(`· ${h.normalize("NFC")}`, 10, y);
+      doc.setFontSize(11);
+      doc.text(`· ${h.normalize("NFC")}`, 12, y);
       y += 4;
     });
   }
 
-  // Cursos
+    // Cursos
   let cursos = Array.from(document.querySelectorAll("#cursos div"));
   if (cursos.some(c => c.querySelector("input[placeholder='Nome do Curso']").value.trim() ||
                        c.querySelector("input[placeholder='Instituição']").value.trim())) {
@@ -442,50 +451,26 @@ function finalizarPDF() {
       }
     });
   }
-}
 
   // Palavras-Chaves ocultas
   const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
   if (ativarPalavrasChaves) {
     const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value.trim();
     if (textoPalavrasChaves) {
-      doc.setTextColor(255, 255, 255);
+      doc.setTextColor(255, 255, 255); // invisível no PDF
       doc.setFontSize(6);
-      escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180);
+      escreverTexto(`Palavras-chave: ${textoPalavrasChaves.normalize("NFC")}`, 10, 180);
       doc.setTextColor(0, 0, 0);
     }
   }
-
-  // Finalizar PDF
-  doc.save("curriculo.pdf");
 }
 
-  // Foto opcional
-  const fotoInput = document.getElementById("fotoCandidato");
-  if (fotoInput.files && fotoInput.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const mimeType = fotoInput.files[0].type.toLowerCase();
-      const tipoImagem = mimeType.includes("png") ? "PNG" :
-                         (mimeType.includes("jpg") || mimeType.includes("jpeg")) ? "JPEG" : "JPEG";
-      doc.addImage(e.target.result, tipoImagem, 10, 10, 30, 40);
-      y = 55; // garante espaço entre foto, nome e contatos
-      finalizarPDF();
-    };
-    reader.onerror = function() {
-      finalizarPDF(); // fallback se houver erro na leitura
-    };
-    reader.readAsDataURL(fotoInput.files[0]);
-  } else {
-    finalizarPDF();
-  }
-}
-
+// Função para salvar como TXT
 function salvarComoTXT() {
   const nomeCompleto = document.getElementById("nomeCompleto").value.trim() || "curriculo";
 
   let conteudo = "";
-  conteudo += `Nome: ${nomeCompleto}\n`;
+  conteudo += `Nome: ${nomeCompleto.normalize("NFC")}\n`;
   conteudo += `Idade: ${document.getElementById("idade").value}\n`;
   conteudo += `Telefone: ${document.getElementById("telefone").value}\n`;
   conteudo += `E-mail: ${document.getElementById("email").value}\n`;
@@ -503,7 +488,7 @@ function salvarComoTXT() {
     const inicio = exp.querySelector(".inicio").value;
     const fim = exp.querySelector(".fim").value;
     const descricao = exp.querySelector("textarea").value;
-    conteudo += `- ${cargo} em ${empresa} (${inicio} - ${fim})\n  ${descricao}\n`;
+    conteudo += `- ${cargo.normalize("NFC")} em ${empresa.normalize("NFC")} (${inicio || "?"} - ${fim || "?"})\n  ${descricao.normalize("NFC")}\n`;
   });
   conteudo += "\n";
 
@@ -514,14 +499,14 @@ function salvarComoTXT() {
     const instituicao = f.querySelector("input[placeholder='Instituição']").value;
     const ano = f.querySelector(".ano").value;
     const termino = f.querySelector(".termino").value;
-    conteudo += `- ${curso} - ${instituicao} (${ano || termino})\n`;
+    conteudo += `- ${curso.normalize("NFC")} - ${instituicao.normalize("NFC")} (${ano || termino || "?"})\n`;
   });
   conteudo += "\n";
 
   // Habilidades
   conteudo += "Habilidades Técnicas:\n";
   Array.from(document.querySelectorAll("#habilidades input")).forEach(h => {
-    if (h.value.trim()) conteudo += `- ${h.value}\n`;
+    if (h.value.trim()) conteudo += `- ${h.value.normalize("NFC")}\n`;
   });
   conteudo += "\n";
 
@@ -532,7 +517,7 @@ function salvarComoTXT() {
     const instituicao = c.querySelector("input[placeholder='Instituição']").value;
     const ano = c.querySelector(".ano").value;
     const termino = c.querySelector(".termino").value;
-    conteudo += `- ${nomeCurso} - ${instituicao} (${ano || termino})\n`;
+    conteudo += `- ${nomeCurso.normalize("NFC")} - ${instituicao.normalize("NFC")} (${ano || termino || "?"})\n`;
   });
   conteudo += "\n";
 
@@ -543,7 +528,7 @@ function salvarComoTXT() {
     const nivel = i.querySelector(".nivel").value;
     const outro = i.querySelector(".idiomaOutro").value;
     let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
-    conteudo += `- ${idiomaFinal} (${nivel})\n`;
+    conteudo += `- ${idiomaFinal.normalize("NFC")} (${nivel.normalize("NFC")})\n`;
   });
 
   const blob = new Blob([conteudo], { type: "text/plain" });
@@ -553,6 +538,7 @@ function salvarComoTXT() {
   link.click();
 }
 
+// Função para importar TXT
 function importarTXT(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -562,7 +548,7 @@ function importarTXT(event) {
     const linhas = e.target.result.split("\n");
     let secaoAtual = "";
 
-    // 🔹 Limpa todas as seções antes de recriar
+    // Limpa todas as seções antes de recriar
     document.getElementById("experiencias").innerHTML = "";
     document.getElementById("formacoes").innerHTML = "";
     document.getElementById("habilidades").innerHTML = "";
@@ -621,44 +607,35 @@ function importarTXT(event) {
             }
           }
         }
-        if (secaoAtual === "idioma") {
+                if (secaoAtual === "idioma") {
           addIdioma();
           const div = document.querySelector("#idiomas div:last-child");
           const partes = linha.replace("-", "").trim().split("(");
           const idioma = partes[0].trim();
           const nivel = partes[1]?.replace(")", "").trim() || "";
-          if (["portugues","ingles","espanhol"].includes(idioma.toLowerCase())) {
-            div.querySelector(".idioma").value = idioma.toLowerCase();
+
+          // Normaliza acentos e trata idiomas conhecidos
+          if (["portugues","inglês","ingles","espanhol"].includes(idioma.toLowerCase())) {
+            // Ajusta para valores esperados no select
+            if (idioma.toLowerCase().includes("port")) div.querySelector(".idioma").value = "portugues";
+            else if (idioma.toLowerCase().includes("ing")) div.querySelector(".idioma").value = "ingles";
+            else if (idioma.toLowerCase().includes("esp")) div.querySelector(".idioma").value = "espanhol";
           } else {
             div.querySelector(".idioma").value = "outro";
-            div.querySelector(".idiomaOutro").value = idioma;
+            div.querySelector(".idiomaOutro").value = idioma.normalize("NFC");
           }
-          div.querySelector(".nivel").value = nivel;
+
+          // Define nível
+          div.querySelector(".nivel").value = nivel.toLowerCase();
         }
       } else if (secaoAtual === "objetivo" && linha.trim() !== "") {
         document.getElementById("objetivo").value += linha + "\n";
       }
     });
 
+    // Atualiza preview após importação
     atualizarPreview();
   };
   reader.readAsText(file);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
