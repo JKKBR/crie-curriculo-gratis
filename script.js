@@ -296,142 +296,159 @@ function gerarPDF() {
     return dataStr;
   }
 
-  // Função que escreve todo o conteúdo do currículo
-  function finalizarPDF() {
-    // Cabeçalho e nome
-    const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
-    doc.setFontSize(20);
-    if (nomeCompleto) doc.text(nomeCompleto, 50, 25);
-    y = 55;
-    
-    // Dados de contato
+function finalizarPDF() {
+  // Cabeçalho e nome
+  const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
+  doc.setFontSize(20);
+  if (nomeCompleto) doc.text(nomeCompleto, 50, 25);
+  y = 55;
+
+  // Dados de contato (sempre aparece se houver ao menos um campo preenchido)
+  const telefone = document.getElementById("telefone").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const localizacao = document.getElementById("localizacao").value.trim();
+  const linkedin = document.getElementById("linkedin").value.trim();
+  const portfolio = document.getElementById("portfolio").value.trim();
+
+  if (telefone || email || localizacao || linkedin || portfolio) {
     doc.setFontSize(13);
     doc.text("Dados de Contato:", 10, y); y += 6;
     doc.setFontSize(11);
-    if (document.getElementById("telefone").value) doc.text(`· Telefone: ${document.getElementById("telefone").value}`, 12, y), y+=4;
-    if (document.getElementById("email").value) doc.text(`· E-mail: ${document.getElementById("email").value}`, 12, y), y+=4;
-    if (document.getElementById("localizacao").value) doc.text(`· Localização: ${document.getElementById("localizacao").value}`, 12, y), y+=4;
-    if (document.getElementById("linkedin").value) doc.text(`· LinkedIn: ${document.getElementById("linkedin").value}`, 12, y), y+=4;
-    if (document.getElementById("portfolio").value) doc.text(`· Portfólio: ${document.getElementById("portfolio").value}`, 12, y), y+=4;
+    if (telefone) doc.text(`· Telefone: ${telefone}`, 12, y), y+=4;
+    if (email) doc.text(`· E-mail: ${email}`, 12, y), y+=4;
+    if (localizacao) doc.text(`· Localização: ${localizacao}`, 12, y), y+=4;
+    if (linkedin) doc.text(`· LinkedIn: ${linkedin}`, 12, y), y+=4;
+    if (portfolio) doc.text(`· Portfólio: ${portfolio}`, 12, y), y+=4;
+  }
 
-    // Objetivo
+  // Objetivo
+  const objetivo = document.getElementById("objetivo").value.trim();
+  if (objetivo) {
     y += 6;
     doc.setFontSize(13);
     doc.text("Objetivo:", 10, y); y += 6;
     doc.setFontSize(11);
-    const objetivo = document.getElementById("objetivo").value;
     escreverTexto(objetivo, 12, 180);
+  }
 
-    // Experiências
+  // Experiências
+  let experiencias = Array.from(document.querySelectorAll("#experiencias div"));
+  if (experiencias.some(exp => exp.querySelector("input[placeholder='Empresa']").value.trim() ||
+                               exp.querySelector("input[placeholder='Cargo']").value.trim() ||
+                               exp.querySelector("textarea").value.trim())) {
     y += 6;
     doc.setFontSize(13);
     doc.text("Experiência Profissional:", 10, y); y += 6;
-    let experiencias = Array.from(document.querySelectorAll("#experiencias div"));
     experiencias.forEach(exp => {
-      if (y > 270) { doc.addPage(); y = 20; }
-      const empresa = exp.querySelector("input[placeholder='Empresa']").value;
-      const cargo = exp.querySelector("input[placeholder='Cargo']").value;
+      const empresa = exp.querySelector("input[placeholder='Empresa']").value.trim();
+      const cargo = exp.querySelector("input[placeholder='Cargo']").value.trim();
       const inicio = formatarDataBR(exp.querySelector(".inicio").value);
       const fim = formatarDataBR(exp.querySelector(".fim").value);
       const status = exp.querySelector("select").value;
-      const descricao = exp.querySelector("textarea").value;
-
-      doc.setFontSize(11);
-      doc.text(`· ${cargo} - ${empresa} (${inicio} até ${status === "atual" ? "o momento" : fim})`, 12, y);
-      y += 4;
-      escreverTexto(descricao, 14, 170);
+      const descricao = exp.querySelector("textarea").value.trim();
+      if (empresa || cargo || descricao) {
+        doc.setFontSize(11);
+        doc.text(`· ${cargo} - ${empresa} (${inicio} até ${status === "atual" ? "o momento" : fim})`, 12, y);
+        y += 4;
+        escreverTexto(descricao, 14, 170);
+      }
     });
+  }
 
-    // Formação Acadêmica
+  // Formação Acadêmica
+  let formacoes = Array.from(document.querySelectorAll("#formacoes div"));
+  if (formacoes.some(f => f.querySelector("input[placeholder='Curso']").value.trim() ||
+                          f.querySelector("input[placeholder='Instituição']").value.trim())) {
     y += 6;
     doc.setFontSize(13);
     doc.text("Formação Acadêmica:", 10, y); y += 6;
-    let formacoes = Array.from(document.querySelectorAll("#formacoes div"));
     formacoes.forEach(f => {
-      if (y > 270) { doc.addPage(); y = 20; }
-      const curso = f.querySelector("input[placeholder='Curso']").value;
-      const instituicao = f.querySelector("input[placeholder='Instituição']").value;
+      const curso = f.querySelector("input[placeholder='Curso']").value.trim();
+      const instituicao = f.querySelector("input[placeholder='Instituição']").value.trim();
       const ano = formatarDataBR(f.querySelector(".ano").value);
       const termino = formatarDataBR(f.querySelector(".termino").value);
-      doc.setFontSize(11);
-      doc.text(`· ${curso} - ${instituicao} (${ano || termino || "?"})`, 12, y);
-      y += 4;
+      if (curso || instituicao) {
+        doc.setFontSize(11);
+        doc.text(`· ${curso} - ${instituicao} (${ano || termino || ""})`, 12, y);
+        y += 4;
+      }
     });
+  }
 
-  // Habilidades Técnicas em lista única
-y += 6;
-doc.setFontSize(13);
-doc.text("Habilidades Técnicas:", 10, y);
-y += 6;
+  // Habilidades Técnicas
+  const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
+                           .map(h => h.value.trim())
+                           .filter(Boolean);
+  if (habilidades.length > 0) {
+    y += 6;
+    doc.setFontSize(13);
+    doc.text("Habilidades Técnicas:", 10, y); y += 6;
+    habilidades.forEach(h => {
+      let textoQuebrado = doc.splitTextToSize(`· ${h}`, 180);
+      doc.text(textoQuebrado, 12, y);
+      y += (textoQuebrado.length * 5);
+    });
+  }
 
-const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
-  .map(h => h.value)
-  .filter(Boolean);
-
-habilidades.forEach(h => {
-  if (y > 270) { doc.addPage(); y = 20; }
-
-  doc.setFontSize(11);
-
-  // quebra automática de texto para caber na largura da página
-  let textoQuebrado = doc.splitTextToSize(`· ${h}`, 180); 
-  doc.text(textoQuebrado, 12, y);
-
-  // avança para a próxima linha depois de cada habilidade
-  y += (textoQuebrado.length * 5); 
-});
-    // Cursos
+  // Cursos
+  let cursos = Array.from(document.querySelectorAll("#cursos div"));
+  if (cursos.some(c => c.querySelector("input[placeholder='Nome do Curso']").value.trim() ||
+                       c.querySelector("input[placeholder='Instituição']").value.trim())) {
     y += 6;
     doc.setFontSize(13);
     doc.text("Cursos:", 10, y); y += 6;
-    let cursos = Array.from(document.querySelectorAll("#cursos div"));
     cursos.forEach(c => {
-      if (y > 270) { doc.addPage(); y = 20; }
-      const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
-      const instituicao = c.querySelector("input[placeholder='Instituição']").value;
+      const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value.trim();
+      const instituicao = c.querySelector("input[placeholder='Instituição']").value.trim();
       const ano = formatarDataBR(c.querySelector(".ano").value);
       const termino = formatarDataBR(c.querySelector(".termino").value);
       const status = c.querySelector("select").value;
-      doc.setFontSize(11);
-      let textoCurso = `· ${nomeCurso} - ${instituicao}`;
-      if (status === "concluido" && ano) textoCurso += ` (${ano})`;
-      if (status === "cursando" && termino) textoCurso += ` (Previsão: ${termino})`;
-      doc.text(textoCurso, 12, y);
-      y += 4;
+      if (nomeCurso || instituicao) {
+        let textoCurso = `· ${nomeCurso} - ${instituicao}`;
+        if (status === "concluido" && ano) textoCurso += ` (${ano})`;
+        if (status === "cursando" && termino) textoCurso += ` (Previsão: ${termino})`;
+        doc.setFontSize(11);
+        doc.text(textoCurso, 12, y);
+        y += 4;
+      }
     });
+  }
 
-    // Idiomas
+  // Idiomas
+  let idiomas = Array.from(document.querySelectorAll("#idiomas div"));
+  if (idiomas.some(i => i.querySelector(".idioma").value.trim() ||
+                        i.querySelector(".idiomaOutro").value.trim())) {
     y += 6;
     doc.setFontSize(13);
     doc.text("Idiomas:", 10, y); y += 6;
-    const idiomas = document.querySelectorAll("#idiomas div");
     idiomas.forEach(i => {
-      if (y > 270) { doc.addPage(); y = 20; }
-      const idiomaSelect = i.querySelector(".idioma").value;
-      const nivel = i.querySelector(".nivel").value;
-      const outro = i.querySelector(".idiomaOutro").value;
+      const idiomaSelect = i.querySelector(".idioma").value.trim();
+      const nivel = i.querySelector(".nivel").value.trim();
+      const outro = i.querySelector(".idiomaOutro").value.trim();
       let idiomaFinal = idiomaSelect === "outro" ? outro : idiomaSelect;
-      doc.setFontSize(11);
-      doc.text(`· ${idiomaFinal} - ${nivel}`, 12, y);
-      y += 4; // espaçamento reduzido
-    });
-
-        // Palavras-Chaves ocultas
-    const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
-    if (ativarPalavrasChaves) {
-      const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value;
-      if (textoPalavrasChaves.trim() !== "") {
-        // Inserção invisível para ATS
-        doc.setTextColor(255, 255, 255); // branco
-        doc.setFontSize(6);
-        escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180);
-        doc.setTextColor(0, 0, 0); // volta ao preto
+      if (idiomaFinal) {
+        doc.setFontSize(11);
+        doc.text(`· ${idiomaFinal} - ${nivel}`, 12, y);
+        y += 4;
       }
-    }
-
-    // Finalizar PDF
-    doc.save("curriculo.pdf");
+    });
   }
+
+  // Palavras-Chaves ocultas
+  const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
+  if (ativarPalavrasChaves) {
+    const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value.trim();
+    if (textoPalavrasChaves) {
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(6);
+      escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180);
+      doc.setTextColor(0, 0, 0);
+    }
+  }
+
+  // Finalizar PDF
+  doc.save("curriculo.pdf");
+}
 
   // Foto opcional
   const fotoInput = document.getElementById("fotoCandidato");
@@ -590,6 +607,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
