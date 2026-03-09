@@ -286,17 +286,6 @@ function gerarPDF() {
   const doc = new jsPDF();
   let y = 30;
 
-  function escreverTexto(texto, x, largura) {
-    if (!texto) return;
-    const linhas = doc.splitTextToSize(texto, largura);
-    linhas.forEach(linha => {
-      if (y > 270) { doc.addPage(); y = 20; }
-      doc.text(linha, x, y);
-      y += 4;
-    });
-    y += 2;
-  }
-
   function formatarDataBR(dataStr) {
     if (!dataStr) return "";
     const partes = dataStr.split("-");
@@ -313,22 +302,29 @@ function gerarPDF() {
                          (mimeType.includes("jpg") || mimeType.includes("jpeg")) ? "JPEG" : "JPEG";
       doc.addImage(e.target.result, tipoImagem, 10, 10, 30, 40);
       y = 55;
-      finalizarPDF(doc, y, escreverTexto, formatarDataBR);
+      finalizarPDF(doc, y, formatarDataBR);
       doc.save("curriculo.pdf");
     };
     reader.onerror = function() {
-      finalizarPDF(doc, y, escreverTexto, formatarDataBR);
+      finalizarPDF(doc, y, formatarDataBR);
       doc.save("curriculo.pdf");
     };
     reader.readAsDataURL(fotoInput.files[0]);
   } else {
-    finalizarPDF(doc, y, escreverTexto, formatarDataBR);
+    finalizarPDF(doc, y, formatarDataBR);
     doc.save("curriculo.pdf");
   }
 }
 
+// 🔹 Função única para escrever texto respeitando Y
+function escreverTexto(texto, x, largura, yInicial, doc) {
+  let linhas = doc.splitTextToSize(texto, largura);
+  doc.text(linhas, x, yInicial);
+  return yInicial + (linhas.length * 5); // devolve nova posição Y
+}
+
 // Função que monta o conteúdo do PDF (sem salvar)
-function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
+function finalizarPDF(doc, y, formatarDataBR) {
   doc.setFont("helvetica", "normal");
 
   // Cabeçalho e nome
@@ -356,7 +352,7 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     if (linkedin) { doc.text(`· LinkedIn: ${linkedin}`, 12, y); y += 4; }
     if (portfolio) { doc.text(`· Portfólio: ${portfolio}`, 12, y); y += 4; }
 
-    y += 8; // espaço extra antes do próximo bloco
+    y += 8;
   }
 
   // Objetivo
@@ -366,7 +362,7 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     doc.text("Objetivo:", 10, y); 
     y += 6;
     doc.setFontSize(11);
-    escreverTexto(objetivo, 12, 180);
+    y = escreverTexto(objetivo, 12, 180, y, doc);
     y += 8;
   }
 
@@ -388,8 +384,10 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
         doc.setFontSize(11);
         doc.text(`· ${cargo} - ${empresa} (${inicio} até ${status === "atual" ? "o momento" : fim})`, 12, y);
         y += 4;
-        escreverTexto(descricao, 14, 170);
-        y += 4;
+        if (descricao) {
+          y = escreverTexto(descricao, 14, 170, y, doc);
+          y += 4;
+        }
       }
     });
     y += 8;
@@ -466,13 +464,11 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
       let nivel = i.querySelector(".nivel").value.trim();
       const outro = i.querySelector(".idiomaOutro").value.trim();
 
-      // Corrige acentos e capitalização dos idiomas
       if (idiomaSelect === "portugues") idiomaSelect = "Português";
       else if (idiomaSelect === "ingles") idiomaSelect = "Inglês";
       else if (idiomaSelect === "espanhol") idiomaSelect = "Espanhol";
       else if (idiomaSelect === "outro") idiomaSelect = outro;
 
-      // Corrige acentos e capitalização dos níveis
       if (nivel === "basico") nivel = "Básico";
       else if (nivel === "intermediario") nivel = "Intermediário";
       else if (nivel === "avancado") nivel = "Avançado";
@@ -488,7 +484,7 @@ function finalizarPDF(doc, y, escreverTexto, formatarDataBR) {
     y += 8;
   }
 
-  // Palavras-Chaves ocultas
+   // Palavras-Chaves ocultas
   const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
   if (ativarPalavrasChaves) {
     const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value.trim();
@@ -660,6 +656,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
