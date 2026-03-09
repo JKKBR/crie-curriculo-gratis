@@ -12,7 +12,7 @@ Com uma interface simples e intuitiva, você pode criar, visualizar e salvar seu
 - **Personalização**: escolha quais informações incluir e organize seu currículo da forma que preferir.  
 - **Exportação**: possibilidade de salvar ou imprimir seu currículo diretamente do navegador.  
 - **Backup e Importação**: agora você pode **salvar seu currículo em formato `.txt`** e depois **importar novamente** para continuar editando ou atualizar os dados.  
-- **Gratuito e acessível**: não exige cadastro, login ou pagamento — é só entrar e usar.  
+- **Gratuito e acessível**: não exige cadastro, login ou pagamento é só entrar e usar.  
 
 ---
 
