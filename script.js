@@ -316,6 +316,7 @@ function gerarPDF() {
   }
 }
 
+// 🔹 Função para escrever texto respeitando Y e paginação
 function escreverTexto(texto, x, largura, yInicial, doc) {
   let linhas = doc.splitTextToSize(texto, largura);
   linhas.forEach(linha => {
@@ -329,9 +330,19 @@ function escreverTexto(texto, x, largura, yInicial, doc) {
   return yInicial;
 }
 
+// 🔹 Conversão de cor HEX para RGB
+function hexToRgb(hex) {
+  const bigint = parseInt(hex.slice(1), 16);
+  return {
+    r: (bigint >> 16) & 255,
+    g: (bigint >> 8) & 255,
+    b: bigint & 255
+  };
+}
+
 // Função que monta o conteúdo do PDF (sem salvar)
 function finalizarPDF(doc, y, formatarDataBR) {
-  // 🔹 Configurações de estilo escolhidas pelo usuário
+  // Configurações de estilo escolhidas pelo usuário
   const fonte = document.getElementById("fontePDF").value || "helvetica";
   const corTitulos = document.getElementById("corTitulos").value || "#000000";
   const tamanhoTitulos = parseInt(document.getElementById("tamanhoTitulos").value) || 13;
@@ -518,19 +529,20 @@ function finalizarPDF(doc, y, formatarDataBR) {
     });
     y += 8;
   }
-
-   // Palavras-Chaves ocultas
+   
+  // Palavras-Chaves ocultas
   const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
   if (ativarPalavrasChaves) {
     const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value.trim();
     if (textoPalavrasChaves) {
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(6);
-      escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180);
+      y = escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180, y, doc);
       doc.setTextColor(0, 0, 0);
     }
   }
 }
+ 
 // Função para salvar como TXT
 function salvarComoTXT() {
   const nomeCompleto = document.getElementById("nomeCompleto").value.trim() || "curriculo";
@@ -691,6 +703,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
