@@ -214,16 +214,20 @@ function atualizarPreview() {
   }
 
   // Habilidades Técnicas
-  const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
-    .map(i => i.value.trim())
-    .filter(Boolean);
-  if (habilidades.length) {
-    html += `<h2>Habilidades Técnicas</h2><ul style="font-size:12px; line-height:1.3; margin:3px 0;">`;
-    habilidades.forEach(h => {
-      html += `<li>${h}</li>`;
-    });
-    html += `</ul>`;
-  }
+const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
+                         .map(h => h.value.trim())
+                         .filter(Boolean);
+if (habilidades.length > 0) {
+  y += 6;
+  doc.setFontSize(13);
+  doc.text("Habilidades Técnicas:", 10, y);
+  y += 6;
+  habilidades.forEach(h => {
+    doc.setFontSize(11);
+    doc.text(`· ${h}`, 12, y);
+    y += 4;
+  });
+}
 
   // Cursos
   const cursos = Array.from(document.querySelectorAll("#cursos div")).map(div => {
@@ -612,6 +616,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
