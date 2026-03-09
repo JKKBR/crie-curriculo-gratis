@@ -21,8 +21,11 @@
       <button type="button" class="btn-remover" onclick="removerFoto()">Remover Foto</button>
 
       <h2 class="secao">Dados de Contato</h2>
+      <label for="idade" class="sr-only">Idade</label>
+      <input type="number" id="idade" placeholder="Idade (Opcional)" min="0">
+
       <label for="telefone" class="sr-only">Telefone</label>
-      <input type="tel" id="telefone" placeholder="Telefone">
+      <input type="tel" id="telefone" placeholder="Telefone (00) 99999-9999" pattern="\(\d{2}\) \d{5}-\d{4}">
 
       <label for="email" class="sr-only">E-mail</label>
       <input type="email" id="email" placeholder="E-mail">
@@ -101,3 +104,4 @@
   <script src="script2.js"></script>
 </body>
 </html>
+
