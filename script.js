@@ -358,7 +358,7 @@ function gerarPDF() {
       y += 4;
     });
 
-    // Habilidades Técnicas em 3 colunas
+    // Habilidades Técnicas em 2 colunas
 y += 6;
 doc.setFontSize(13);
 doc.text("Habilidades Técnicas:", 10, y);
@@ -368,8 +368,8 @@ const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
   .map(h => h.value)
   .filter(Boolean);
 
-let colunas = 3;              // número de colunas
-let larguraColuna = 60;       // largura de cada coluna
+let colunas = 2;              // agora são 2 colunas
+let larguraColuna = 90;       // mais espaço por coluna
 let alturaLinha = 6;          // espaçamento vertical
 
 habilidades.forEach((h, idx) => {
@@ -464,5 +464,6 @@ y += Math.ceil(habilidades.length / colunas) * alturaLinha;
     finalizarPDF();
   }
 }
+
 
 
