@@ -10,8 +10,9 @@ Com uma interface simples e intuitiva, você pode criar, visualizar e salvar seu
 - **Criação rápida de currículos**: basta preencher seus dados e o sistema gera automaticamente o documento.  
 - **Interface amigável**: design limpo e fácil de usar, pensado para quem não tem experiência com ferramentas complexas.  
 - **Personalização**: escolha quais informações incluir e organize seu currículo da forma que preferir.  
-- **Exportação**: possibilidade de salvar ou imprimir seu currículo diretamente do navegador.  
+- **Exportação em PDF com quebra automática de páginas**: o conteúdo nunca é cortado, mesmo em currículos longos.  
 - **Backup e Importação**: salve seu currículo em formato `.txt` e importe novamente para continuar editando ou atualizar os dados.  
+- **Importação completa**: agora são restaurados também descrições de experiências, datas de início/fim e status de cursos (concluído ou cursando).  
 - **Compatibilidade com IA/ATS**: o conteúdo do currículo é totalmente legível por sistemas de análise automática (como Inteligência Artificial ou ATS), garantindo que suas informações sejam interpretadas corretamente.  
 - **Sem anúncios**: projeto aberto e gratuito, sem propagandas ou distrações.  
 - **Gratuito e acessível**: não exige cadastro, login ou pagamento é só entrar e usar.  
@@ -30,7 +31,7 @@ Com uma interface simples e intuitiva, você pode criar, visualizar e salvar seu
 ---
 
 ## 📄 Licença
-Este projeto está licenciado sob a **MIT License** você pode usar, modificar e distribuir livremente, desde que mantenha os créditos originais.
+Este projeto está licenciado sob a **MIT License** — você pode usar, modificar e distribuir livremente, desde que mantenha os créditos originais.
 
 ---
 
