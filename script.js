@@ -518,7 +518,7 @@ function salvarComoTXT() {
     const inicio = exp.querySelector(".inicio").value;
     const fim = exp.querySelector(".fim").value;
     const descricao = exp.querySelector("textarea").value;
-    conteudo += `- ${cargo} em ${empresa} (${inicio} - ${fim})\n  ${descricao}\n`;
+    conteudo += `- ${cargo} em ${empresa} (${inicio} - ${fim})\n${descricao}\n`;
   });
   conteudo += "\n";
 
@@ -529,7 +529,14 @@ function salvarComoTXT() {
     const instituicao = f.querySelector("input[placeholder='Instituição']").value;
     const ano = f.querySelector(".ano").value;
     const termino = f.querySelector(".termino").value;
-    conteudo += `- ${curso} - ${instituicao} (${ano || termino})\n`;
+    const status = f.querySelector("select").value;
+    if (status === "concluido") {
+      conteudo += `- ${curso} - ${instituicao} (${ano})\n`;
+    } else if (status === "cursando") {
+      conteudo += `- ${curso} - ${instituicao} (Previsão: ${termino})\n`;
+    } else {
+      conteudo += `- ${curso} - ${instituicao}\n`;
+    }
   });
   conteudo += "\n";
 
@@ -547,7 +554,14 @@ function salvarComoTXT() {
     const instituicao = c.querySelector("input[placeholder='Instituição']").value;
     const ano = c.querySelector(".ano").value;
     const termino = c.querySelector(".termino").value;
-    conteudo += `- ${nomeCurso} - ${instituicao} (${ano || termino})\n`;
+    const status = c.querySelector("select").value;
+    if (status === "concluido") {
+      conteudo += `- ${nomeCurso} - ${instituicao} (${ano})\n`;
+    } else if (status === "cursando") {
+      conteudo += `- ${nomeCurso} - ${instituicao} (Previsão: ${termino})\n`;
+    } else {
+      conteudo += `- ${nomeCurso} - ${instituicao}\n`;
+    }
   });
   conteudo += "\n";
 
@@ -558,7 +572,6 @@ function salvarComoTXT() {
     const nivel = i.querySelector(".nivel").value;
     const outro = i.querySelector(".idiomaOutro").value;
 
-    // Corrige acentos
     if (idiomaSelect === "portugues") idiomaSelect = "Português";
     else if (idiomaSelect === "ingles") idiomaSelect = "Inglês";
     else if (idiomaSelect === "espanhol") idiomaSelect = "Espanhol";
@@ -583,6 +596,7 @@ function importarTXT(event) {
   reader.onload = function(e) {
     const linhas = e.target.result.split("\n");
     let secaoAtual = "";
+    let ultimaDiv = null; // guarda o último bloco criado para preencher descrição
 
     linhas.forEach(linha => {
       if (linha.startsWith("Nome:")) document.getElementById("nomeCompleto").value = linha.replace("Nome:", "").trim();
@@ -601,53 +615,77 @@ function importarTXT(event) {
       else if (linha.startsWith("-")) {
         if (secaoAtual === "experiencia") {
           addExperiencia();
-          const div = document.querySelector("#experiencias div:last-child");
+          ultimaDiv = document.querySelector("#experiencias div:last-child");
           const partes = linha.replace("-", "").trim().split(" em ");
-          div.querySelector("input[placeholder='Cargo']").value = partes[0].split("(")[0].trim();
-          div.querySelector("input[placeholder='Empresa']").value = partes[1]?.split("(")[0].trim() || "";
+          const cargo = partes[0].split("(")[0].trim();
+          const empresa = partes[1]?.split("(")[0].trim() || "";
+          const datas = linha.match(/\((.*?)\)/)?.[1] || "";
+          const [inicio, fim] = datas.split(" - ");
+
+          ultimaDiv.querySelector("input[placeholder='Cargo']").value = cargo;
+          ultimaDiv.querySelector("input[placeholder='Empresa']").value = empresa;
+          ultimaDiv.querySelector(".inicio").value = inicio || "";
+          ultimaDiv.querySelector(".fim").value = fim || "";
         }
         if (secaoAtual === "formacao") {
           addFormacao();
-          const div = document.querySelector("#formacoes div:last-child");
+          ultimaDiv = document.querySelector("#formacoes div:last-child");
           const partes = linha.replace("-", "").trim().split(" - ");
-          div.querySelector("input[placeholder='Curso']").value = partes[0];
-          div.querySelector("input[placeholder='Instituição']").value = partes[1]?.split("(")[0].trim() || "";
+          ultimaDiv.querySelector("input[placeholder='Curso']").value = partes[0];
+          ultimaDiv.querySelector("input[placeholder='Instituição']").value = partes[1]?.split("(")[0].trim() || "";
+          const anoOuTermino = linha.match(/\((.*?)\)/)?.[1] || "";
+          if (/^\d{4}$/.test(anoOuTermino)) {
+            ultimaDiv.querySelector("select").value = "concluido";
+            ultimaDiv.querySelector(".ano").value = anoOuTermino;
+          } else if (anoOuTermino) {
+            ultimaDiv.querySelector("select").value = "cursando";
+            ultimaDiv.querySelector(".termino").value = anoOuTermino;
+          }
         }
         if (secaoAtual === "habilidade") {
           addHabilidade();
-          const div = document.querySelector("#habilidades div:last-child");
-          div.querySelector("input").value = linha.replace("-", "").trim();
+          ultimaDiv = document.querySelector("#habilidades div:last-child");
+          ultimaDiv.querySelector("input").value = linha.replace("-", "").trim();
         }
         if (secaoAtual === "curso") {
           addCurso();
-          const div = document.querySelector("#cursos div:last-child");
+          ultimaDiv = document.querySelector("#cursos div:last-child");
           const partes = linha.replace("-", "").trim().split(" - ");
-          div.querySelector("input[placeholder='Nome do Curso']").value = partes[0];
-          div.querySelector("input[placeholder='Instituição']").value = partes[1]?.split("(")[0].trim() || "";
+          ultimaDiv.querySelector("input[placeholder='Nome do Curso']").value = partes[0];
+          ultimaDiv.querySelector("input[placeholder='Instituição']").value = partes[1]?.split("(")[0].trim() || "";
+          const anoOuTermino = linha.match(/\((.*?)\)/)?.[1] || "";
+          if (/^\d{4}$/.test(anoOuTermino)) {
+            ultimaDiv.querySelector("select").value = "concluido";
+            ultimaDiv.querySelector(".ano").value = anoOuTermino;
+          } else if (anoOuTermino) {
+            ultimaDiv.querySelector("select").value = "cursando";
+            ultimaDiv.querySelector(".termino").value = anoOuTermino;
+          }
         }
         if (secaoAtual === "idioma") {
           addIdioma();
-          const div = document.querySelector("#idiomas div:last-child");
+          ultimaDiv = document.querySelector("#idiomas div:last-child");
           const partes = linha.replace("-", "").trim().split("(");
           const idiomaTxt = partes[0].trim();
           const nivelTxt = partes[1]?.replace(")", "").trim() || "";
 
-          // Ajusta select conforme idioma
           if (idiomaTxt.toLowerCase() === "português") {
-            div.querySelector(".idioma").value = "portugues";
+            ultimaDiv.querySelector(".idioma").value = "portugues";
           } else if (idiomaTxt.toLowerCase() === "inglês") {
-            div.querySelector(".idioma").value = "ingles";
+            ultimaDiv.querySelector(".idioma").value = "ingles";
           } else if (idiomaTxt.toLowerCase() === "espanhol") {
-            div.querySelector(".idioma").value = "espanhol";
+            ultimaDiv.querySelector(".idioma").value = "espanhol";
           } else {
-            div.querySelector(".idioma").value = "outro";
-            div.querySelector(".idiomaOutro").value = idiomaTxt;
+            ultimaDiv.querySelector(".idioma").value = "outro";
+            ultimaDiv.querySelector(".idiomaOutro").value = idiomaTxt;
           }
-
-          div.querySelector(".nivel").value = nivelTxt;
+          ultimaDiv.querySelector(".nivel").value = nivelTxt;
         }
       } else if (secaoAtual === "objetivo" && linha.trim() !== "") {
         document.getElementById("objetivo").value += linha + "\n";
+      } else if (secaoAtual === "experiencia" && ultimaDiv && linha.trim() !== "") {
+        // linha seguinte é a descrição
+        ultimaDiv.querySelector("textarea").value += linha.trim() + "\n";
       }
     });
 
@@ -655,6 +693,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
