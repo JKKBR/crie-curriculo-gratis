@@ -334,10 +334,12 @@ function escreverTexto(texto, x, largura, yInicial, doc) {
 function finalizarPDF(doc, y, formatarDataBR) {
   doc.setFont("helvetica", "normal");
 
-  // Cabeçalho
+  // Cabeçalho - Nome em negrito
   const nomeCompleto = (document.getElementById("nomeCompleto") || {}).value || "";
   doc.setFontSize(20);
+  doc.setFont("helvetica", "bold"); // Negrito
   if (nomeCompleto) y = escreverTexto(nomeCompleto, 50, 150, 25, doc);
+  doc.setFont("helvetica", "normal"); // volta ao normal
   y = 55;
 
   // Dados de contato
@@ -350,7 +352,9 @@ function finalizarPDF(doc, y, formatarDataBR) {
 
   if (idade || telefone || email || localizacao || linkedin || portfolio) {
     doc.setFontSize(13);
+    doc.setFont("helvetica", "bold"); // título em negrito
     y = escreverTexto("Dados de Contato:", 10, 180, y, doc);
+    doc.setFont("helvetica", "normal"); // conteúdo normal
     doc.setFontSize(11);
     if (idade) y = escreverTexto(`· Idade: ${idade}`, 12, 170, y, doc);
     if (telefone) y = escreverTexto(`· Telefone: ${telefone}`, 12, 170, y, doc);
@@ -365,7 +369,9 @@ function finalizarPDF(doc, y, formatarDataBR) {
   const objetivo = document.getElementById("objetivo").value.trim();
   if (objetivo) {
     doc.setFontSize(13);
+    doc.setFont("helvetica", "bold"); // título em negrito
     y = escreverTexto("Objetivo:", 10, 180, y, doc);
+    doc.setFont("helvetica", "normal"); // conteúdo normal
     doc.setFontSize(11);
     y = escreverTexto(objetivo, 12, 180, y, doc);
     y += 8;
@@ -377,7 +383,9 @@ function finalizarPDF(doc, y, formatarDataBR) {
                                exp.querySelector("input[placeholder='Cargo']").value.trim() ||
                                exp.querySelector("textarea").value.trim())) {
     doc.setFontSize(13);
+    doc.setFont("helvetica", "bold"); // título em negrito
     y = escreverTexto("Experiência Profissional:", 10, 180, y, doc);
+    doc.setFont("helvetica", "normal"); // conteúdo normal
     experiencias.forEach(exp => {
       const empresa = exp.querySelector("input[placeholder='Empresa']").value.trim();
       const cargo = exp.querySelector("input[placeholder='Cargo']").value.trim();
@@ -401,7 +409,9 @@ function finalizarPDF(doc, y, formatarDataBR) {
   if (formacoes.some(f => f.querySelector("input[placeholder='Curso']").value.trim() ||
                           f.querySelector("input[placeholder='Instituição']").value.trim())) {
     doc.setFontSize(13);
+    doc.setFont("helvetica", "bold"); // título em negrito
     y = escreverTexto("Formação Acadêmica:", 10, 180, y, doc);
+    doc.setFont("helvetica", "normal"); // conteúdo normal
     formacoes.forEach(f => {
       const curso = f.querySelector("input[placeholder='Curso']").value.trim();
       const instituicao = f.querySelector("input[placeholder='Instituição']").value.trim();
@@ -421,7 +431,9 @@ function finalizarPDF(doc, y, formatarDataBR) {
                            .filter(Boolean);
   if (habilidades.length > 0) {
     doc.setFontSize(13);
+    doc.setFont("helvetica", "bold"); // título em negrito
     y = escreverTexto("Habilidades Técnicas:", 10, 180, y, doc);
+    doc.setFont("helvetica", "normal"); // conteúdo normal
     habilidades.forEach(h => {
       doc.setFontSize(11);
       y = escreverTexto(`· ${h}`, 12, 170, y, doc);
@@ -434,7 +446,9 @@ function finalizarPDF(doc, y, formatarDataBR) {
   if (cursos.some(c => c.querySelector("input[placeholder='Nome do Curso']").value.trim() ||
                        c.querySelector("input[placeholder='Instituição']").value.trim())) {
     doc.setFontSize(13);
+    doc.setFont("helvetica", "bold"); // título em negrito
     y = escreverTexto("Cursos:", 10, 180, y, doc);
+    doc.setFont("helvetica", "normal"); // conteúdo normal
     cursos.forEach(c => {
       const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value.trim();
       const instituicao = c.querySelector("input[placeholder='Instituição']").value.trim();
@@ -452,12 +466,14 @@ function finalizarPDF(doc, y, formatarDataBR) {
     y += 8;
   }
 
-  // Idiomas
+    // Idiomas
   let idiomas = Array.from(document.querySelectorAll("#idiomas div"));
   if (idiomas.some(i => i.querySelector(".idioma").value.trim() ||
                         i.querySelector(".idiomaOutro").value.trim())) {
     doc.setFontSize(13);
+    doc.setFont("helvetica", "bold"); // título em negrito
     y = escreverTexto("Idiomas:", 10, 180, y, doc);
+    doc.setFont("helvetica", "normal"); // conteúdo normal
     idiomas.forEach(i => {
       let idiomaSelect = i.querySelector(".idioma").value.trim();
       let nivel = i.querySelector(".nivel").value.trim();
@@ -482,12 +498,12 @@ function finalizarPDF(doc, y, formatarDataBR) {
     y += 8;
   }
 
-  // Palavras-Chaves ocultas
+  // Palavras-chave ocultas (se ativadas)
   const ativarPalavrasChaves = document.getElementById("ativarPalavrasChaves").checked;
   if (ativarPalavrasChaves) {
     const textoPalavrasChaves = document.getElementById("textoPalavrasChaves").value.trim();
     if (textoPalavrasChaves) {
-      doc.setTextColor(255, 255, 255);   // imprime invisível
+      doc.setTextColor(255, 255, 255);   // invisível
       doc.setFontSize(6);
       y = escreverTexto(`Palavras-chave: ${textoPalavrasChaves}`, 10, 180, y, doc);
       doc.setTextColor(0, 0, 0);         // volta ao normal
@@ -693,6 +709,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
