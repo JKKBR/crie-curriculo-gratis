@@ -167,6 +167,7 @@ function atualizarPreview() {
   const localizacao = document.getElementById("localizacao").value;
   const linkedin = document.getElementById("linkedin").value;
   const portfolio = document.getElementById("portfolio").value;
+  const pretensao = document.getElementById("pretensaoSalarial").value.trim();
 
   if (idade || telefone || email || localizacao || linkedin || portfolio) {
     html += `<h2>Dados de Contato</h2><ul style="font-size:12px; line-height:1.3;">`;
@@ -176,6 +177,7 @@ function atualizarPreview() {
     if (localizacao) html += `<li>Localização: ${localizacao}</li>`;
     if (linkedin) html += `<li>LinkedIn: ${linkedin}</li>`;
     if (portfolio) html += `<li>Portfólio: ${portfolio}</li>`;
+    if (pretensao) html += `<li>Pretensão Salarial: ${pretensao}</li>`;
     html += `</ul>`;
   }
 
@@ -202,18 +204,26 @@ function atualizarPreview() {
     html += `<h2>Experiência Profissional</h2>${experiencias}`;
   }
 
-  // Formação Acadêmica
-  const formacoes = Array.from(document.querySelectorAll("#formacoes div")).map(div => {
-    const curso = (div.querySelector("input[placeholder='Curso']") || {}).value || "";
-    const instituicao = (div.querySelector("input[placeholder='Instituição']") || {}).value || "";
-    const ano = div.querySelector(".ano")?.value || "";
-    const termino = div.querySelector(".termino")?.value || "";
-    if (!curso && !instituicao) return "";
-    return `<li>${curso} - ${instituicao} (${ano || termino || ""})</li>`;
-  }).filter(Boolean).join("");
-  if (formacoes) {
-    html += `<h2>Formação Acadêmica</h2><ul style="font-size:12px; line-height:1.3; margin:3px 0;">${formacoes}</ul>`;
-  }
+ // Formação Acadêmica
+const formacoes = Array.from(document.querySelectorAll("#formacoes div")).map(div => {
+  const curso = (div.querySelector("input[placeholder='Curso']") || {}).value || "";
+  const instituicao = (div.querySelector("input[placeholder='Instituição']") || {}).value || "";
+  const ano = div.querySelector(".ano")?.value || "";
+  const termino = div.querySelector(".termino")?.value || "";
+  const status = div.querySelector("select").value;
+
+  if (!curso && !instituicao) return "";
+
+  let infoAno = "";
+  if (status === "concluido" && ano) infoAno = ano;
+  if (status === "cursando" && termino) infoAno = "Previsão: " + termino;
+
+  return `<li>${curso} - ${instituicao} (${infoAno})</li>`;
+}).filter(Boolean).join("");
+
+if (formacoes) {
+  html += `<h2>Formação Acadêmica</h2><ul style="font-size:12px; line-height:1.3; margin:3px 0;">${formacoes}</ul>`;
+}
 
   // Habilidades Técnicas
   const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
@@ -349,6 +359,7 @@ function finalizarPDF(doc, y, formatarDataBR) {
   const localizacao = document.getElementById("localizacao").value.trim();
   const linkedin = document.getElementById("linkedin").value.trim();
   const portfolio = document.getElementById("portfolio").value.trim();
+  const pretensao = document.getElementById("pretensaoSalarial").value.trim();
 
   if (idade || telefone || email || localizacao || linkedin || portfolio) {
     doc.setFontSize(13);
@@ -362,6 +373,7 @@ function finalizarPDF(doc, y, formatarDataBR) {
     if (localizacao) y = escreverTexto(`· Localização: ${localizacao}`, 12, 170, y, doc);
     if (linkedin) y = escreverTexto(`· LinkedIn: ${linkedin}`, 12, 170, y, doc);
     if (portfolio) y = escreverTexto(`· Portfólio: ${portfolio}`, 12, 170, y, doc);
+    if (pretensao) y = escreverTexto(`· Pretensão Salarial: ${pretensao}`, 12, 170, y, doc);
     y += 8;
   }
 
@@ -404,26 +416,33 @@ function finalizarPDF(doc, y, formatarDataBR) {
     y += 8;
   }
 
-  // Formação Acadêmica
-  let formacoes = Array.from(document.querySelectorAll("#formacoes div"));
-  if (formacoes.some(f => f.querySelector("input[placeholder='Curso']").value.trim() ||
-                          f.querySelector("input[placeholder='Instituição']").value.trim())) {
-    doc.setFontSize(13);
-    doc.setFont("helvetica", "bold"); // título em negrito
-    y = escreverTexto("Formação Acadêmica:", 10, 180, y, doc);
-    doc.setFont("helvetica", "normal"); // conteúdo normal
-    formacoes.forEach(f => {
-      const curso = f.querySelector("input[placeholder='Curso']").value.trim();
-      const instituicao = f.querySelector("input[placeholder='Instituição']").value.trim();
-      const ano = formatarDataBR(f.querySelector(".ano").value);
-      const termino = formatarDataBR(f.querySelector(".termino").value);
-      if (curso || instituicao) {
-        doc.setFontSize(11);
-        y = escreverTexto(`· ${curso} - ${instituicao} (${ano || termino || ""})`, 12, 170, y, doc);
-      }
-    });
-    y += 8;
-  }
+// Formação Acadêmica
+let formacoes = Array.from(document.querySelectorAll("#formacoes div"));
+if (formacoes.some(f => f.querySelector("input[placeholder='Curso']").value.trim() ||
+                        f.querySelector("input[placeholder='Instituição']").value.trim())) {
+  doc.setFontSize(13);
+  doc.setFont("helvetica", "bold"); // título em negrito
+  y = escreverTexto("Formação Acadêmica:", 10, 180, y, doc);
+  doc.setFont("helvetica", "normal"); // conteúdo normal
+
+  formacoes.forEach(f => {
+    const curso = f.querySelector("input[placeholder='Curso']").value.trim();
+    const instituicao = f.querySelector("input[placeholder='Instituição']").value.trim();
+    const ano = formatarDataBR(f.querySelector(".ano").value);
+    const termino = formatarDataBR(f.querySelector(".termino").value);
+    const status = f.querySelector("select").value;
+
+    if (curso || instituicao) {
+      let textoFormacao = `· ${curso} - ${instituicao}`;
+      if (status === "concluido" && ano) textoFormacao += ` (${ano})`;
+      if (status === "cursando" && termino) textoFormacao += ` (Previsão: ${termino})`;
+
+      doc.setFontSize(11);
+      y = escreverTexto(textoFormacao, 12, 170, y, doc);
+    }
+  });
+  y += 8;
+}
 
   // Habilidades Técnicas
   const habilidades = Array.from(document.querySelectorAll("#habilidades input"))
@@ -441,30 +460,33 @@ function finalizarPDF(doc, y, formatarDataBR) {
     y += 8;
   }
 
-  // Cursos
-  let cursos = Array.from(document.querySelectorAll("#cursos div"));
-  if (cursos.some(c => c.querySelector("input[placeholder='Nome do Curso']").value.trim() ||
-                       c.querySelector("input[placeholder='Instituição']").value.trim())) {
-    doc.setFontSize(13);
-    doc.setFont("helvetica", "bold"); // título em negrito
-    y = escreverTexto("Cursos:", 10, 180, y, doc);
-    doc.setFont("helvetica", "normal"); // conteúdo normal
-    cursos.forEach(c => {
-      const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value.trim();
-      const instituicao = c.querySelector("input[placeholder='Instituição']").value.trim();
-      const ano = formatarDataBR(c.querySelector(".ano").value);
-      const termino = formatarDataBR(c.querySelector(".termino").value);
-      const status = c.querySelector("select").value;
-      if (nomeCurso || instituicao) {
-        let textoCurso = `· ${nomeCurso} - ${instituicao}`;
-        if (status === "concluido" && ano) textoCurso += ` (${ano})`;
-        if (status === "cursando" && termino) textoCurso += ` (Previsão: ${termino})`;
-        doc.setFontSize(11);
-        y = escreverTexto(textoCurso, 12, 170, y, doc);
-      }
-    });
-    y += 8;
-  }
+// Cursos
+let cursos = Array.from(document.querySelectorAll("#cursos div"));
+if (cursos.some(c => c.querySelector("input[placeholder='Nome do Curso']").value.trim() ||
+                     c.querySelector("input[placeholder='Instituição']").value.trim())) {
+  doc.setFontSize(13);
+  doc.setFont("helvetica", "bold"); // título em negrito
+  y = escreverTexto("Cursos:", 10, 180, y, doc);
+  doc.setFont("helvetica", "normal"); // conteúdo normal
+
+  cursos.forEach(c => {
+    const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value.trim();
+    const instituicao = c.querySelector("input[placeholder='Instituição']").value.trim();
+    const ano = formatarDataBR(c.querySelector(".ano").value);
+    const termino = formatarDataBR(c.querySelector(".termino").value);
+    const status = c.querySelector("select").value;
+
+    if (nomeCurso || instituicao) {
+      let textoCurso = `· ${nomeCurso} - ${instituicao}`;
+      if (status === "concluido" && ano) textoCurso += ` (${ano})`;
+      if (status === "cursando" && termino) textoCurso += ` (Previsão: ${termino})`;
+
+      doc.setFontSize(11);
+      y = escreverTexto(textoCurso, 12, 170, y, doc);
+    }
+  });
+  y += 8;
+}
 
     // Idiomas
   let idiomas = Array.from(document.querySelectorAll("#idiomas div"));
@@ -514,6 +536,7 @@ function finalizarPDF(doc, y, formatarDataBR) {
 // Função para salvar como TXT
 function salvarComoTXT() {
   const nomeCompleto = document.getElementById("nomeCompleto").value.trim() || "curriculo";
+  const pretensao = document.getElementById("pretensaoSalarial").value.trim();
 
   let conteudo = "";
   conteudo += `Nome: ${nomeCompleto}\n`;
@@ -522,9 +545,12 @@ function salvarComoTXT() {
   conteudo += `E-mail: ${document.getElementById("email").value}\n`;
   conteudo += `Localização: ${document.getElementById("localizacao").value}\n`;
   conteudo += `LinkedIn: ${document.getElementById("linkedin").value}\n`;
-  conteudo += `Portfólio: ${document.getElementById("portfolio").value}\n\n`;
+  conteudo += `Portfólio: ${document.getElementById("portfolio").value}\n`;
 
-  conteudo += `Objetivo:\n${document.getElementById("objetivo").value}\n\n`;
+  // só adiciona se tiver preenchido
+  if (pretensao) conteudo += `Pretensão Salarial: ${pretensao}\n`;
+
+  conteudo += `\nObjetivo:\n${document.getElementById("objetivo").value}\n\n`;
 
   // Experiências
   conteudo += "Experiência Profissional:\n";
@@ -538,48 +564,51 @@ function salvarComoTXT() {
   });
   conteudo += "\n";
 
-  // Formação
-  conteudo += "Formação Acadêmica:\n";
-  Array.from(document.querySelectorAll("#formacoes div")).forEach(f => {
-    const curso = f.querySelector("input[placeholder='Curso']").value;
-    const instituicao = f.querySelector("input[placeholder='Instituição']").value;
-    const ano = f.querySelector(".ano").value;
-    const termino = f.querySelector(".termino").value;
-    const status = f.querySelector("select").value;
-    if (status === "concluido") {
-      conteudo += `- ${curso} - ${instituicao} (${ano})\n`;
-    } else if (status === "cursando") {
-      conteudo += `- ${curso} - ${instituicao} (Previsão: ${termino})\n`;
-    } else {
-      conteudo += `- ${curso} - ${instituicao}\n`;
-    }
-  });
-  conteudo += "\n";
+ 
+// Formação
+conteudo += "Formação Acadêmica:\n";
+Array.from(document.querySelectorAll("#formacoes div")).forEach(f => {
+  const curso = f.querySelector("input[placeholder='Curso']").value;
+  const instituicao = f.querySelector("input[placeholder='Instituição']").value;
+  const ano = f.querySelector(".ano").value;
+  const termino = f.querySelector(".termino").value;
+  const status = f.querySelector("select").value;
 
-  // Habilidades
-  conteudo += "Habilidades Técnicas:\n";
-  Array.from(document.querySelectorAll("#habilidades input")).forEach(h => {
-    if (h.value.trim()) conteudo += `- ${h.value}\n`;
-  });
-  conteudo += "\n";
+  if (status === "concluido" && (curso || instituicao)) {
+    conteudo += `- ${curso} - ${instituicao} (${ano})\n`;
+  } else if (status === "cursando" && (curso || instituicao)) {
+    conteudo += `- ${curso} - ${instituicao} (Previsão: ${termino})\n`;
+  } else if (curso || instituicao) {
+    conteudo += `- ${curso} - ${instituicao}\n`;
+  }
+});
+conteudo += "\n";
 
-  // Cursos
-  conteudo += "Cursos:\n";
-  Array.from(document.querySelectorAll("#cursos div")).forEach(c => {
-    const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
-    const instituicao = c.querySelector("input[placeholder='Instituição']").value;
-    const ano = c.querySelector(".ano").value;
-    const termino = c.querySelector(".termino").value;
-    const status = c.querySelector("select").value;
-    if (status === "concluido") {
-      conteudo += `- ${nomeCurso} - ${instituicao} (${ano})\n`;
-    } else if (status === "cursando") {
-      conteudo += `- ${nomeCurso} - ${instituicao} (Previsão: ${termino})\n`;
-    } else {
-      conteudo += `- ${nomeCurso} - ${instituicao}\n`;
-    }
-  });
-  conteudo += "\n";
+// Habilidades
+conteudo += "Habilidades Técnicas:\n";
+Array.from(document.querySelectorAll("#habilidades input")).forEach(h => {
+  if (h.value.trim()) conteudo += `- ${h.value}\n`;
+});
+conteudo += "\n";
+
+// Cursos
+conteudo += "Cursos:\n";
+Array.from(document.querySelectorAll("#cursos div")).forEach(c => {
+  const nomeCurso = c.querySelector("input[placeholder='Nome do Curso']").value;
+  const instituicao = c.querySelector("input[placeholder='Instituição']").value;
+  const ano = c.querySelector(".ano").value;
+  const termino = c.querySelector(".termino").value;
+  const status = c.querySelector("select").value;
+
+  if (status === "concluido" && (nomeCurso || instituicao)) {
+    conteudo += `- ${nomeCurso} - ${instituicao} (${ano})\n`;
+  } else if (status === "cursando" && (nomeCurso || instituicao)) {
+    conteudo += `- ${nomeCurso} - ${instituicao} (Previsão: ${termino})\n`;
+  } else if (nomeCurso || instituicao) {
+    conteudo += `- ${nomeCurso} - ${instituicao}\n`;
+  }
+});
+conteudo += "\n";
 
   // Idiomas
   conteudo += "Idiomas:\n";
@@ -622,6 +651,8 @@ function importarTXT(event) {
       else if (linha.startsWith("Localização:")) document.getElementById("localizacao").value = linha.replace("Localização:", "").trim();
       else if (linha.startsWith("LinkedIn:")) document.getElementById("linkedin").value = linha.replace("LinkedIn:", "").trim();
       else if (linha.startsWith("Portfólio:")) document.getElementById("portfolio").value = linha.replace("Portfólio:", "").trim();
+      else if (linha.startsWith("Pretensão Salarial:")){document.getElementById("pretensaoSalarial").value = linha.replace("Pretensão Salarial:", "").trim();
+}
       else if (linha.startsWith("Objetivo:")) secaoAtual = "objetivo";
       else if (linha.startsWith("Experiência Profissional:")) secaoAtual = "experiencia";
       else if (linha.startsWith("Formação Acadêmica:")) secaoAtual = "formacao";
@@ -643,41 +674,45 @@ function importarTXT(event) {
           ultimaDiv.querySelector(".inicio").value = inicio || "";
           ultimaDiv.querySelector(".fim").value = fim || "";
         }
-        if (secaoAtual === "formacao") {
-          addFormacao();
-          ultimaDiv = document.querySelector("#formacoes div:last-child");
-          const partes = linha.replace("-", "").trim().split(" - ");
-          ultimaDiv.querySelector("input[placeholder='Curso']").value = partes[0];
-          ultimaDiv.querySelector("input[placeholder='Instituição']").value = partes[1]?.split("(")[0].trim() || "";
-          const anoOuTermino = linha.match(/\((.*?)\)/)?.[1] || "";
-          if (/^\d{4}$/.test(anoOuTermino)) {
-            ultimaDiv.querySelector("select").value = "concluido";
-            ultimaDiv.querySelector(".ano").value = anoOuTermino;
-          } else if (anoOuTermino) {
-            ultimaDiv.querySelector("select").value = "cursando";
-            ultimaDiv.querySelector(".termino").value = anoOuTermino;
-          }
-        }
-        if (secaoAtual === "habilidade") {
-          addHabilidade();
-          ultimaDiv = document.querySelector("#habilidades div:last-child");
-          ultimaDiv.querySelector("input").value = linha.replace("-", "").trim();
-        }
-        if (secaoAtual === "curso") {
-          addCurso();
-          ultimaDiv = document.querySelector("#cursos div:last-child");
-          const partes = linha.replace("-", "").trim().split(" - ");
-          ultimaDiv.querySelector("input[placeholder='Nome do Curso']").value = partes[0];
-          ultimaDiv.querySelector("input[placeholder='Instituição']").value = partes[1]?.split("(")[0].trim() || "";
-          const anoOuTermino = linha.match(/\((.*?)\)/)?.[1] || "";
-          if (/^\d{4}$/.test(anoOuTermino)) {
-            ultimaDiv.querySelector("select").value = "concluido";
-            ultimaDiv.querySelector(".ano").value = anoOuTermino;
-          } else if (anoOuTermino) {
-            ultimaDiv.querySelector("select").value = "cursando";
-            ultimaDiv.querySelector(".termino").value = anoOuTermino;
-          }
-        }
+       if (secaoAtual === "formacao") {
+  addFormacao();
+  ultimaDiv = document.querySelector("#formacoes div:last-child");
+  const partes = linha.replace("-", "").trim().split(" - ");
+  ultimaDiv.querySelector("input[placeholder='Curso']").value = partes[0];
+  ultimaDiv.querySelector("input[placeholder='Instituição']").value = partes[1]?.split("(")[0].trim() || "";
+  const anoOuTermino = linha.match(/\((.*?)\)/)?.[1] || "";
+
+  if (/^\d{4}$/.test(anoOuTermino)) {
+    ultimaDiv.querySelector("select").value = "concluido";
+    ultimaDiv.querySelector(".ano").value = anoOuTermino;
+  } else if (anoOuTermino) {
+    ultimaDiv.querySelector("select").value = "cursando";
+    ultimaDiv.querySelector(".termino").value = anoOuTermino.replace("Previsão:", "").trim();
+  }
+}
+
+if (secaoAtual === "habilidade") {
+  addHabilidade();
+  ultimaDiv = document.querySelector("#habilidades div:last-child");
+  ultimaDiv.querySelector("input").value = linha.replace("-", "").trim();
+}
+
+if (secaoAtual === "curso") {
+  addCurso();
+  ultimaDiv = document.querySelector("#cursos div:last-child");
+  const partes = linha.replace("-", "").trim().split(" - ");
+  ultimaDiv.querySelector("input[placeholder='Nome do Curso']").value = partes[0];
+  ultimaDiv.querySelector("input[placeholder='Instituição']").value = partes[1]?.split("(")[0].trim() || "";
+  const anoOuTermino = linha.match(/\((.*?)\)/)?.[1] || "";
+
+  if (/^\d{4}$/.test(anoOuTermino)) {
+    ultimaDiv.querySelector("select").value = "concluido";
+    ultimaDiv.querySelector(".ano").value = anoOuTermino;
+  } else if (anoOuTermino) {
+    ultimaDiv.querySelector("select").value = "cursando";
+    ultimaDiv.querySelector(".termino").value = anoOuTermino.replace("Previsão:", "").trim();
+  }
+}
         if (secaoAtual === "idioma") {
           addIdioma();
           ultimaDiv = document.querySelector("#idiomas div:last-child");
@@ -709,6 +744,7 @@ function importarTXT(event) {
   };
   reader.readAsText(file);
 }
+
 
 
 
