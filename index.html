@@ -36,19 +36,7 @@
       <button type="button" onclick="addExperiencia()">+ Adicionar Experiência</button>
 
       <h2 class="secao">Formação Acadêmica</h2>
-      <div id="formacoes">
-        <div>
-          <input type="text" placeholder="Curso">
-          <input type="text" placeholder="Instituição">
-          <input type="text" class="ano" placeholder="Ano de conclusão">
-          <input type="text" class="termino" placeholder="Previsão de término">
-          <select>
-            <option value="concluido">Concluído</option>
-            <option value="cursando">Cursando</option>
-          </select>
-          <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
-        </div>
-      </div>
+      <div id="formacoes"></div>
       <button type="button" onclick="addFormacao()">+ Adicionar Formação</button>
 
       <h2 class="secao">Habilidades Técnicas</h2>
@@ -56,39 +44,11 @@
       <button type="button" onclick="addHabilidade()">+ Adicionar Habilidade</button>
 
       <h2 class="secao">Cursos</h2>
-      <div id="cursos">
-        <div>
-          <input type="text" placeholder="Nome do Curso">
-          <input type="text" placeholder="Instituição">
-          <input type="text" class="ano" placeholder="Ano de conclusão">
-          <input type="text" class="termino" placeholder="Previsão de término">
-          <select>
-            <option value="concluido">Concluído</option>
-            <option value="cursando">Cursando</option>
-          </select>
-          <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
-        </div>
-      </div>
+      <div id="cursos"></div>
       <button type="button" onclick="addCurso()">+ Adicionar Curso</button>
 
       <h2 class="secao">Idiomas</h2>
-      <div id="idiomas">
-        <div>
-          <select onchange="toggleIdiomaOutro(this)" class="idioma">
-            <option value="portugues">Português</option>
-            <option value="espanhol">Espanhol</option>
-            <option value="ingles">Inglês</option>
-            <option value="outro">Outro</option>
-          </select>
-          <select class="nivel">
-            <option value="basico">Básico</option>
-            <option value="intermediario">Intermediário</option>
-            <option value="avancado">Avançado</option>
-          </select>
-          <input type="text" class="idiomaOutro" placeholder="Informe o idioma" style="display:none;">
-          <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
-        </div>
-      </div>
+      <div id="idiomas"></div>
       <button type="button" onclick="addIdioma()">+ Adicionar Idioma</button>
 
       <h2 class="secao">Palavras-Chaves</h2>
