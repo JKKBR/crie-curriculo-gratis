@@ -26,6 +26,7 @@
       <input type="text" id="localizacao" placeholder="Localização">
       <input type="text" id="linkedin" placeholder="LinkedIn">
       <input type="text" id="portfolio" placeholder="Portfólio (Opcional)">
+      <input type="text" id="pretensaoSalarial" placeholder="Ex: R$ 5.000,00">
 
       <h2 class="secao">Objetivo</h2>
       <textarea id="objetivo" rows="3" placeholder="Descreva seu objetivo profissional"></textarea>
@@ -35,7 +36,19 @@
       <button type="button" onclick="addExperiencia()">+ Adicionar Experiência</button>
 
       <h2 class="secao">Formação Acadêmica</h2>
-      <div id="formacoes"></div>
+      <div id="formacoes">
+        <div>
+          <input type="text" placeholder="Curso">
+          <input type="text" placeholder="Instituição">
+          <input type="text" class="ano" placeholder="Ano de conclusão">
+          <input type="text" class="termino" placeholder="Previsão de término">
+          <select>
+            <option value="concluido">Concluído</option>
+            <option value="cursando">Cursando</option>
+          </select>
+          <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
+        </div>
+      </div>
       <button type="button" onclick="addFormacao()">+ Adicionar Formação</button>
 
       <h2 class="secao">Habilidades Técnicas</h2>
@@ -43,11 +56,39 @@
       <button type="button" onclick="addHabilidade()">+ Adicionar Habilidade</button>
 
       <h2 class="secao">Cursos</h2>
-      <div id="cursos"></div>
+      <div id="cursos">
+        <div>
+          <input type="text" placeholder="Nome do Curso">
+          <input type="text" placeholder="Instituição">
+          <input type="text" class="ano" placeholder="Ano de conclusão">
+          <input type="text" class="termino" placeholder="Previsão de término">
+          <select>
+            <option value="concluido">Concluído</option>
+            <option value="cursando">Cursando</option>
+          </select>
+          <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
+        </div>
+      </div>
       <button type="button" onclick="addCurso()">+ Adicionar Curso</button>
 
       <h2 class="secao">Idiomas</h2>
-      <div id="idiomas"></div>
+      <div id="idiomas">
+        <div>
+          <select onchange="toggleIdiomaOutro(this)" class="idioma">
+            <option value="portugues">Português</option>
+            <option value="espanhol">Espanhol</option>
+            <option value="ingles">Inglês</option>
+            <option value="outro">Outro</option>
+          </select>
+          <select class="nivel">
+            <option value="basico">Básico</option>
+            <option value="intermediario">Intermediário</option>
+            <option value="avancado">Avançado</option>
+          </select>
+          <input type="text" class="idiomaOutro" placeholder="Informe o idioma" style="display:none;">
+          <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
+        </div>
+      </div>
       <button type="button" onclick="addIdioma()">+ Adicionar Idioma</button>
 
       <h2 class="secao">Palavras-Chaves</h2>
@@ -66,7 +107,6 @@
       <div id="blocoPalavrasChaves" style="display:none; margin-top:10px;">
         <textarea id="textoPalavrasChaves" placeholder="Digite aqui suas palavras-chave..." rows="4" style="width:100%;"></textarea>
       </div>
-
 
       <!-- Botões de ação -->
       <div style="margin-top:20px; text-align:center;">
@@ -102,4 +142,3 @@
   </script>
 </body>
 </html>
-
