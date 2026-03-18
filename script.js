@@ -117,6 +117,8 @@ function addIdioma() {
       <option value="basico">Básico</option>
       <option value="intermediario">Intermediário</option>
       <option value="avancado">Avançado</option>
+      <option value="nativo">Nativo</option>
+      <option value="tecnico">Técnico</option>
     </select>
     <input type="text" class="idiomaOutro" placeholder="Informe o idioma" style="display:none;">
     <button type="button" class="btn-excluir" onclick="confirmarExclusao(this)">Excluir</button>
@@ -265,9 +267,11 @@ const idiomas = Array.from(document.querySelectorAll("#idiomas div")).map(div =>
   else if (idioma === "outro") idioma = outro;
 
   // Normaliza os níveis
-  if (nivel === "basico") nivel = "Básico";
-  else if (nivel === "intermediario") nivel = "Intermediário";
-  else if (nivel === "avancado") nivel = "Avançado";
+if (nivel === "basico") nivel = "Básico";
+else if (nivel === "intermediario") nivel = "Intermediário";
+else if (nivel === "avancado") nivel = "Avançado";
+else if (nivel === "nativo") nivel = "Nativo";
+else if (nivel === "tecnico") nivel = "Técnico";
 
   return `<li>${idioma} - ${nivel}</li>`;
 }).filter(Boolean).join("");
@@ -513,9 +517,11 @@ if (idiomas.some(i => i.querySelector(".idioma").value.trim() ||
     else if (idiomaSelect === "espanhol") idiomaSelect = "Espanhol";
     else if (idiomaSelect === "outro") idiomaSelect = outro;
 
-    if (nivel === "basico") nivel = "Básico";
-    else if (nivel === "intermediario") nivel = "Intermediário";
-    else if (nivel === "avancado") nivel = "Avançado";
+   if (nivel === "basico") nivel = "Básico";
+else if (nivel === "intermediario") nivel = "Intermediário";
+else if (nivel === "avancado") nivel = "Avançado";
+else if (nivel === "nativo") nivel = "Nativo";
+else if (nivel === "tecnico") nivel = "Técnico";
 
     idiomaSelect = idiomaSelect.normalize("NFC");
 
@@ -632,8 +638,10 @@ Array.from(document.querySelectorAll("#idiomas div")).forEach(i => {
 
   // Normaliza os níveis
   if (nivel === "basico") nivel = "Básico";
-  else if (nivel === "intermediario") nivel = "Intermediário";
-  else if (nivel === "avancado") nivel = "Avançado";
+else if (nivel === "intermediario") nivel = "Intermediário";
+else if (nivel === "avancado") nivel = "Avançado";
+else if (nivel === "nativo") nivel = "Nativo";
+else if (nivel === "tecnico") nivel = "Técnico";
 
   conteudo += `- ${idiomaSelect.normalize("NFC")} (${nivel})\n`;
 });
@@ -746,9 +754,12 @@ if (secaoAtual === "curso") {
   }
 
   // Normaliza nível
-  if (nivelTxt === "básico") ultimaDiv.querySelector(".nivel").value = "basico";
-  else if (nivelTxt === "intermediário") ultimaDiv.querySelector(".nivel").value = "intermediario";
-  else if (nivelTxt === "avançado") ultimaDiv.querySelector(".nivel").value = "avancado";
+// Normaliza nível
+if (nivelTxt === "básico") ultimaDiv.querySelector(".nivel").value = "basico";
+else if (nivelTxt === "intermediário") ultimaDiv.querySelector(".nivel").value = "intermediario";
+else if (nivelTxt === "avançado") ultimaDiv.querySelector(".nivel").value = "avancado";
+else if (nivelTxt === "nativo") ultimaDiv.querySelector(".nivel").value = "nativo";
+else if (nivelTxt === "técnico") ultimaDiv.querySelector(".nivel").value = "tecnico";
 }
       } else if (secaoAtual === "objetivo" && linha.trim() !== "") {
         document.getElementById("objetivo").value += linha + "\n";
